@@ -1,29 +1,77 @@
-import * as React from "react";
-
-import { Flex, Box, Text } from "@chakra-ui/react";
-import { Activity } from "tabler-icons-react";
+import React, { useCallback, Component, useRef } from "react";
+import { useDropzone } from "react-dropzone";
+import { v4 as uuidv4 } from "uuid";
 
 import useStore from "../../services/store";
 
+import { Box, Flex, Center, Text } from "@chakra-ui/react";
+import { Video as VideoIcon } from "tabler-icons-react";
+
+import Video from "../Video/Video";
+
 export default function VideoList() {
   const videos = useStore((state) => state.videos);
+  const addVideo = useStore((state) => state.addVideo);
 
-  if (videos.length === 0) {
-    return (
-      <Flex grow={"1"} align={"center"} justify={"center"}>
-        <Box>
-          <Activity size={24} />
-          <Text fontSize={"lg"} color={"whiteAlpha.400"}>
-            <em>Drag and drop videos here to get started</em>
-          </Text>
-        </Box>
-      </Flex>
-    );
-  }
+  const handleDrop = useCallback(
+    (files: File[]) => {
+      files.forEach((file) => {
+        const id = uuidv4();
+        const name = `Untitled #${videos.length + 1}`;
+        const el = document.createElement("video");
+
+        el.src = file.path;
+
+        addVideo({
+          id,
+          name,
+          file,
+          el,
+          volume: 0.8,
+        });
+      });
+    },
+    [videos]
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: handleDrop,
+    accept: "video/mp4, video/webm, video/ogg",
+    useFsAccessApi: false,
+  });
+
+  const renderedVideos = videos.map((video) => {
+    return <Video key={video.id} video={video} />;
+  });
 
   return (
-    <Flex grow={"1"} align={"center"} justify={"center"}>
-      Do something with videos
+    <Flex grow={"1"} direction={"column"} overflowY={"scroll"}>
+      <Box>{renderedVideos}</Box>
+      <Flex
+        flexGrow={"1"}
+        color={"gray.600"}
+        {...getRootProps()}
+        m={4}
+        padding={"4"}
+        align={"center"}
+        justifyContent={"center"}
+      >
+        <Box>
+          <input {...getInputProps()} />
+          <Center>
+            <VideoIcon size={48} />
+          </Center>
+          <Center>
+            <Text align={"center"}>
+              {isDragActive ? (
+                <span>Click or drag and drop the files here...</span>
+              ) : (
+                <span>Drop videos here to get started</span>
+              )}
+            </Text>
+          </Center>
+        </Box>
+      </Flex>
     </Flex>
   );
 }
