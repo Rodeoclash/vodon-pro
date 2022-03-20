@@ -7,10 +7,11 @@
     "noImplicitAny": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "jsxImportSource": "@emotion/react",
     "paths": {
       "*": ["node_modules/*"]
     }

@@ -1,12 +1,21 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { css } from "@emotion/react";
 
 import useStore from "../services/store";
 
 import { Flex, Box, Text, ButtonGroup, IconButton } from "@chakra-ui/react";
 import { PlayerPlay as PlayerPlayIcon, PlayerPause as PlayerPauseIcon } from "tabler-icons-react";
+import { Link } from "react-router-dom";
 
 import VideoList from "../components/VideoList/VideoList";
+
+const videoStyle = css`
+  video {
+    height: 100%;
+    aspect-ratio: 16 / 9;
+  }
+`;
 
 export default function Home() {
   const videoRef = useRef(null);
@@ -47,12 +56,10 @@ export default function Home() {
   }, [activeVideo]);
 
   return (
-    <Flex height="100vh" width="100vw">
+    <Flex>
       <Flex grow="1" direction="column" width="75vw">
-        <Flex flexGrow="1" bgColor={"black"} align={"center"}>
-          <div ref={videoRef} />
-        </Flex>
-        <Flex align="center" bgColor={"gray.700"} p={"4"}>
+        <Flex flexGrow={"1"} flexShrink={"1"} bgColor={"black"} align={"center"} ref={videoRef} css={videoStyle} />
+        <Flex flexGrow={"0"} align="center" bgColor={"black"} p={"4"}>
           <ButtonGroup>
             <IconButton
               onClick={startPlaying}
@@ -69,7 +76,7 @@ export default function Home() {
           </ButtonGroup>
         </Flex>
       </Flex>
-      <Flex direction={"column"} bgColor={"gray.800"} align={"stretch"} justifyContent={"stretch"} width="25vw">
+      <Flex direction={"column"} align={"stretch"} justifyContent={"stretch"} width="25vw">
         <VideoList />
       </Flex>
     </Flex>

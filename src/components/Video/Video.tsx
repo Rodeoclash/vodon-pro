@@ -1,4 +1,6 @@
-import React, { Component, useEffect, useRef, useState, useLayoutEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import { css } from "@emotion/react";
+
 import useStore from "../../services/store";
 
 import { Box, Heading, Flex, Button, Center } from "@chakra-ui/react";
@@ -12,7 +14,6 @@ interface Props {
 
 export default function Video({ video }: Props) {
   const videoRef = useRef(null);
-  const [dimensions, setDimensions] = useState(null);
 
   const activeVideoId = useStore((state) => state.activeVideoId);
   const playing = useStore((state) => state.playing);
@@ -34,18 +35,7 @@ export default function Video({ video }: Props) {
     setActiveVideoId(null);
   }
 
-  function handleResize() {
-    if (currentActive === true) {
-      return;
-    }
-
-    setDimensions([video.el.offsetWidth, video.el.offsetHeight]);
-  }
-
-  function handleLoadedMetaData() {
-    handleResize();
-  }
-
+  // when this video becomes inactive, replace it in the list
   useEffect(() => {
     if (videoRef.current === null) {
       return;
@@ -57,7 +47,7 @@ export default function Video({ video }: Props) {
     }
   }, [currentActive]);
 
-  // watch playing state
+  // watch playing state and play / pause as needed
   useEffect(() => {
     if (playing === true) {
       video.el.play();
@@ -66,33 +56,16 @@ export default function Video({ video }: Props) {
     }
   }, [playing]);
 
-  // monitor aspect ratio of video for placeholder
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    video.el.addEventListener("loadedmetadata", handleLoadedMetaData);
+  const videoStyles = css`
+    display: ${currentActive ? "none" : "block"};
+    z-index: 0;
+  `;
 
-    return function () {
-      window.removeEventListener("resize", handleResize);
-      video.el.removeEventListener("loadedmetadata", handleLoadedMetaData);
-    };
-  }, []);
-
-  const renderedResetButton =
-    dimensions === null ? null : (
-      <Flex
-        style={{ zIndex: 0, display: currentActive ? "flex" : "none" }}
-        width={dimensions[0]}
-        height={dimensions[1]}
-        onClick={handleClickVideo}
-        align={"center"}
-        justify={"center"}
-        bgColor={"gray.700"}
-      >
-        <Button onClick={handleClickReset} leftIcon={<RefreshIcon />}>
-          Reset
-        </Button>
-      </Flex>
-    );
+  const resetStyles = css`
+    aspect-ratio: 16 / 9;
+    display: ${currentActive ? "flex" : "none"};
+    z-index: 0;
+  `;
 
   return (
     <Box position={"relative"}>
@@ -112,8 +85,12 @@ export default function Video({ video }: Props) {
           {video.name}
         </Heading>
       </Flex>
-      <div style={{ zIndex: 0, display: currentActive ? "none" : "block" }} onClick={handleClickVideo} ref={videoRef} />
-      {renderedResetButton}
+      <div css={videoStyles} onClick={handleClickVideo} ref={videoRef} />
+      <Flex css={resetStyles} onClick={handleClickVideo} align={"center"} justify={"center"} bgColor={"gray.700"}>
+        <Button onClick={handleClickReset} leftIcon={<RefreshIcon />}>
+          Reset
+        </Button>
+      </Flex>
     </Box>
   );
 }

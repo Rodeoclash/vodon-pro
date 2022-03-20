@@ -92,9 +92,10 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^1.8.6",
-    "@emotion/react": "^11.8.1",
+    "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "electron-squirrel-startup": "^1.0.0",
+    "file-loader": "^6.2.0",
     "framer-motion": "^6.2.8",
     "install": "^0.13.0",
     "npm": "^8.5.5",
