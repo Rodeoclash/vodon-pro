@@ -17,7 +17,7 @@ const videoStyle = css`
   }
 `;
 
-export default function Home() {
+export default function ReviewVideos() {
   const videoRef = useRef(null);
 
   const startPlaying = useStore((state) => state.startPlaying);

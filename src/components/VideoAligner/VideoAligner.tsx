@@ -27,6 +27,7 @@ interface Props {
   video: Video;
 }
 
+// TODO: Frame rate should be found using FFMPEG
 const frameRate = 60;
 const frameLength = 1 / frameRate;
 

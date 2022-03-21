@@ -24,10 +24,12 @@ export default function VideoList() {
 
         addVideo({
           duration: null,
+          durationNormalised: null,
           el,
           file,
           id,
           name,
+          offsetNormalised: null,
           offset: 0.0,
           volume: 0.8,
         });
