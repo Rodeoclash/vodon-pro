@@ -23,10 +23,12 @@ export default function VideoList() {
         el.src = file.path;
 
         addVideo({
+          duration: null,
+          el,
+          file,
           id,
           name,
-          file,
-          el,
+          offset: 0.0,
           volume: 0.8,
         });
       });

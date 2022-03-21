@@ -37,10 +37,10 @@ export default function App() {
             </Heading>
             <Box as={"nav"} ml={"8"}>
               <Link as={RouterLink} to="/">
-                Player
+                Review
               </Link>
-              <Link as={RouterLink} to="/align_videos" ml={"8"}>
-                Align videos
+              <Link as={RouterLink} to="/manage_videos" ml={"8"}>
+                Manage videos
               </Link>
             </Box>
           </Flex>

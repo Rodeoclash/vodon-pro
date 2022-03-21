@@ -5,7 +5,7 @@ import useStore from "../services/store";
 
 import { VideoAligner } from "../components/VideoAligner/VideoAligner";
 
-export default function AlignVideos() {
+export default function AddVideos() {
   const videos = useStore((state) => state.videos);
   const [rowCount, setRowCount] = useState("2");
 
@@ -23,14 +23,23 @@ export default function AlignVideos() {
 
   return (
     <Box width={"100vw"}>
-      <Flex px={"4"} bgColor={"whiteAlpha.200"} flexGrow={"0"} height={"3rem"} align={"center"}>
-        <Text fontSize={"sm"}>Align all videos on this page to the same point in time to synchonise playback</Text>
-        <Spacer />
-        <Select value={rowCount} onChange={handleRowCountChange}>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </Select>
+      <Flex
+        px={"4"}
+        bgColor={"whiteAlpha.200"}
+        flexGrow={"0"}
+        height={"3rem"}
+        align={"center"}
+        justifyContent={"space-between"}
+      >
+        <Text fontSize={"sm"}>Align all videos here to the same point in time to synchonise playback</Text>
+        <Flex align={"center"}>
+          <label style={{ whiteSpace: "nowrap" }}>Videos per row:</label>
+          <Select value={rowCount} onChange={handleRowCountChange} ml={4}>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </Select>
+        </Flex>
       </Flex>
       <Box overflowY={"auto"} height={"calc(100vh - 9rem)"}>
         <Grid templateColumns={`repeat(${rowCount}, 1fr)`} gap={0}>
