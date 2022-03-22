@@ -29,6 +29,8 @@ interface State {
   stopPlaying: () => void;
 
   activeVideoId: null | string;
+  globalTime: number;
+  maxDuration: number | null;
   playing: boolean;
   videos: Video[];
 }
@@ -42,6 +44,21 @@ export function findMinOffset(videos: Video[]): number | null {
   return videos.reduce(function (acc: number | null, video: Video): number {
     if (acc === null || video.offset < acc) {
       return video.offset;
+    }
+
+    return acc;
+  }, null);
+}
+
+// Finds the max normalised duration of the videos
+export function findMaxNormalisedDuration(videos: Video[]): number | null {
+  if (videos.length === 0) {
+    return null;
+  }
+
+  return videos.reduce(function (acc: number | null, video: Video): number {
+    if (acc === null || video.durationNormalised > acc) {
+      return video.durationNormalised;
     }
 
     return acc;
@@ -84,7 +101,8 @@ const useStore = create<State>((set) => ({
           video.durationNormalised = video.offsetNormalised + video.duration;
         });
 
-        console.log(JSON.stringify(state.videos, null, 2));
+        // Set the max duration of all the videos. This is used to construct the global slider
+        state.maxDuration = findMaxNormalisedDuration(state.videos);
       })
     ),
 
@@ -93,6 +111,8 @@ const useStore = create<State>((set) => ({
   stopPlaying: () => set((state) => ({ playing: false })),
 
   activeVideoId: null,
+  globalTime: 0.0,
+  maxDuration: null,
   playing: false,
   videos: [],
 }));

@@ -4,9 +4,18 @@ import { css } from "@emotion/react";
 
 import useStore from "../services/store";
 
-import { Flex, Box, Text, ButtonGroup, IconButton } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Text,
+  ButtonGroup,
+  IconButton,
+  SliderTrack,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+} from "@chakra-ui/react";
 import { PlayerPlay as PlayerPlayIcon, PlayerPause as PlayerPauseIcon } from "tabler-icons-react";
-import { Link } from "react-router-dom";
 
 import VideoList from "../components/VideoList/VideoList";
 
@@ -73,6 +82,12 @@ export default function ReviewVideos() {
               aria-label="Pause"
               variant={playing === true ? "outline" : "solid"}
             />
+            <Slider aria-label="Global time control" defaultValue={0} mx={4} min={0}>
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb />
+            </Slider>
           </ButtonGroup>
         </Flex>
       </Flex>

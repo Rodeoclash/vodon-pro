@@ -2,18 +2,7 @@ import { useRef, useLayoutEffect } from "react";
 
 import useStore from "../../services/store";
 
-import {
-  Box,
-  Flex,
-  IconButton,
-  ButtonGroup,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderMark,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Flex, IconButton, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Text } from "@chakra-ui/react";
 
 import {
   PlayerPlay as PlayerPlayIcon,
@@ -40,7 +29,7 @@ export function VideoAligner({ video }: Props) {
   useLayoutEffect(() => {
     function handleLoadedMetaData(event: Event) {
       setVideoDuration(video, videoRef.current.duration);
-      setVideoOffset(video, videoRef.current.currentTime);
+      videoRef.current.currentTime = video.offset;
     }
 
     function handleSeeked(event: Event) {
@@ -86,8 +75,8 @@ export function VideoAligner({ video }: Props) {
         </Text>
 
         <Slider
-          aria-label="slider-ex-1"
-          defaultValue={0}
+          aria-label="Align video scrubbing slider"
+          defaultValue={video.offset ?? 0}
           mx={4}
           min={0}
           max={video.duration}
