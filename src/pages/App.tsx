@@ -8,6 +8,8 @@ import { Link as RouterLink } from "react-router-dom";
 
 import { Outlet } from "react-router-dom";
 
+import NavLink from "../components/NavLink/NavLink";
+
 export default function App() {
   return (
     <>
@@ -35,14 +37,10 @@ export default function App() {
             <Heading fontWeight={"normal"} fontFamily={"Garet"} fontSize={"2xl"}>
               VODON PRO
             </Heading>
-            <Box as={"nav"} ml={"8"}>
-              <Link as={RouterLink} to="/">
-                Review
-              </Link>
-              <Link as={RouterLink} to="/manage_videos" ml={"8"}>
-                Manage videos
-              </Link>
-            </Box>
+            <Flex as={"nav"} ml={"4"}>
+              <NavLink to="/">Setup videos</NavLink>
+              <NavLink to="/review">Review</NavLink>
+            </Flex>
           </Flex>
           <Flex as={"main"} height={"calc(100vh - 5rem)"}>
             <Outlet />

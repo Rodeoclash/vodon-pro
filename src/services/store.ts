@@ -22,16 +22,18 @@ export interface Video {
 
 interface State {
   addVideo: (video: Video) => void;
+  setActiveVideoId: (id: string | null) => void;
+  setCurrentTime: (currentTime: number) => void;
   setVideoDuration: (video: Video, duration: number) => void;
   setVideoOffset: (video: Video, offset: number) => void;
-  setActiveVideoId: (id: string | null) => void;
   startPlaying: () => void;
   stopPlaying: () => void;
+  togglePlaying: () => void;
 
   activeVideoId: null | string;
-  globalTime: number;
   maxDuration: number | null;
   playing: boolean;
+  currentTime: number;
   videos: Video[];
 }
 
@@ -66,6 +68,9 @@ export function findMaxNormalisedDuration(videos: Video[]): number | null {
 }
 
 const useStore = create<State>((set) => ({
+  /**
+   * Video control
+   */
   addVideo: (video: Video) => set((state) => ({ videos: state.videos.concat([video]) })),
 
   setVideoDuration: (video: Video, duration: number) =>
@@ -107,11 +112,22 @@ const useStore = create<State>((set) => ({
     ),
 
   setActiveVideoId: (id: string | null) => set((state) => ({ activeVideoId: id })),
+
+  /**
+   * Play control
+   */
+  setCurrentTime: (currentTime: number) =>
+    set((state) => {
+      return {
+        currentTime,
+      };
+    }),
   startPlaying: () => set((state) => ({ playing: true })),
   stopPlaying: () => set((state) => ({ playing: false })),
+  togglePlaying: () => set((state) => ({ playing: !state.playing })),
 
   activeVideoId: null,
-  globalTime: 0.0,
+  currentTime: 0,
   maxDuration: null,
   playing: false,
   videos: [],

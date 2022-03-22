@@ -20,7 +20,7 @@ interface Props {
 const frameRate = 60;
 const frameLength = 1 / frameRate;
 
-export function VideoAligner({ video }: Props) {
+export default function VideoAligner({ video }: Props) {
   const setVideoDuration = useStore((state) => state.setVideoDuration);
   const setVideoOffset = useStore((state) => state.setVideoOffset);
 
@@ -45,17 +45,17 @@ export function VideoAligner({ video }: Props) {
     };
   }, []);
 
-  function handleSliderChangeEnd(newTime: number) {
+  function handleSliderChange(newTime: number) {
     videoRef.current.currentTime = newTime;
   }
 
   function handleClickStep(direction: number, event: MouseEvent) {
     const distance = (() => {
-      if (event.getModifierState("Shift")) {
-        return frameLength;
+      if (event.getModifierState("Ctrl")) {
+        return 1;
       }
 
-      return 1;
+      return frameLength;
     })();
 
     videoRef.current.currentTime = videoRef.current.currentTime + distance * direction;
@@ -80,7 +80,7 @@ export function VideoAligner({ video }: Props) {
           mx={4}
           min={0}
           max={video.duration}
-          onChange={handleSliderChangeEnd}
+          onChange={handleSliderChange}
           step={frameLength}
         >
           <SliderTrack>

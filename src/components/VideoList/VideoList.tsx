@@ -7,7 +7,7 @@ import useStore from "../../services/store";
 import { Box, Flex, Center, Text } from "@chakra-ui/react";
 import { Video as VideoIcon } from "tabler-icons-react";
 
-import Video from "../Video/Video";
+import Video from "../VideoThumbnail/VideoThumbnail";
 
 export default function VideoList() {
   const videos = useStore((state) => state.videos);

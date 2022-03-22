@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 
 import useStore from "../../services/store";
 
-import { Box, Heading, Flex, Button, Center } from "@chakra-ui/react";
+import { Box, Heading, Flex, Button, Text } from "@chakra-ui/react";
 import { Refresh as RefreshIcon, Settings as SettingsIcon } from "tabler-icons-react";
 
 import type { Video } from "../../services/store";
@@ -15,10 +15,14 @@ interface Props {
 export default function Video({ video }: Props) {
   const videoRef = useRef(null);
 
-  const activeVideoId = useStore((state) => state.activeVideoId);
-  const playing = useStore((state) => state.playing);
   const setActiveVideoId = useStore((state) => state.setActiveVideoId);
 
+  const activeVideoId = useStore((state) => state.activeVideoId);
+  const currentTime = useStore((state) => state.currentTime);
+  const playing = useStore((state) => state.playing);
+
+  const isBeforeRange = currentTime < video.offsetNormalised;
+  const isAfterRange = currentTime > video.durationNormalised;
   const currentActive = activeVideoId === video.id;
 
   function handleClickName(event: React.SyntheticEvent<EventTarget>) {
@@ -43,7 +47,7 @@ export default function Video({ video }: Props) {
 
     if (currentActive === false) {
       videoRef.current.appendChild(video.el);
-      video.el.volume = 0;
+      video.el.volume = 0; // TODO: Remove from this, control in store
     }
   }, [currentActive]);
 
@@ -56,19 +60,36 @@ export default function Video({ video }: Props) {
     }
   }, [playing]);
 
+  // watch current time and update as needed
+  useEffect(() => {
+    if (playing === true) {
+      return;
+    }
+
+    video.el.currentTime = currentTime + video.offsetNormalised;
+  }, [playing, currentTime]);
+
   const videoStyles = css`
-    display: ${currentActive ? "none" : "block"};
-    z-index: 0;
+    display: ${currentActive === true || isBeforeRange === true || isAfterRange === true ? "none" : "block"};
+  `;
+
+  const beforeRangeStyles = css`
+    aspect-ratio: 16 / 9;
+    display: ${currentActive === false && isBeforeRange === true ? "block" : "none"};
+  `;
+
+  const afterRangeStyles = css`
+    aspect-ratio: 16 / 9;
+    display: ${currentActive === false && isAfterRange === true ? "block" : "none"};
   `;
 
   const resetStyles = css`
     aspect-ratio: 16 / 9;
-    display: ${currentActive ? "flex" : "none"};
-    z-index: 0;
+    display: ${currentActive === true ? "flex" : "none"};
   `;
 
   return (
-    <Box position={"relative"}>
+    <Box position={"relative"} cursor={"pointer"}>
       <Flex
         onClick={handleClickName}
         align={"center"}
@@ -76,7 +97,6 @@ export default function Video({ video }: Props) {
         top={"0"}
         left={"0"}
         p={"2"}
-        cursor={"pointer"}
         zIndex={1}
         bgColor={"blackAlpha.600"}
       >
@@ -85,12 +105,20 @@ export default function Video({ video }: Props) {
           {video.name}
         </Heading>
       </Flex>
-      <div css={videoStyles} onClick={handleClickVideo} ref={videoRef} />
-      <Flex css={resetStyles} onClick={handleClickVideo} align={"center"} justify={"center"} bgColor={"gray.700"}>
-        <Button onClick={handleClickReset} leftIcon={<RefreshIcon />}>
-          Reset
-        </Button>
-      </Flex>
+      <Box zIndex={"0"}>
+        <Box css={videoStyles} onClick={handleClickVideo} ref={videoRef} />
+        <Flex css={beforeRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
+          <Text>BEFORE RANGE</Text>
+        </Flex>
+        <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
+          <Text>AFTER RANGE</Text>
+        </Flex>
+        <Flex css={resetStyles} onClick={handleClickVideo} align={"center"} justify={"center"} bgColor={"gray.700"}>
+          <Button onClick={handleClickReset} leftIcon={<RefreshIcon />}>
+            Reset
+          </Button>
+        </Flex>
+      </Box>
     </Box>
   );
 }

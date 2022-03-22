@@ -18,6 +18,7 @@ import {
 import { PlayerPlay as PlayerPlayIcon, PlayerPause as PlayerPauseIcon } from "tabler-icons-react";
 
 import VideoList from "../components/VideoList/VideoList";
+import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
 
 const videoStyle = css`
   video {
@@ -31,8 +32,11 @@ export default function ReviewVideos() {
 
   const startPlaying = useStore((state) => state.startPlaying);
   const stopPlaying = useStore((state) => state.stopPlaying);
+  const setCurrentTime = useStore((state) => state.setCurrentTime);
 
   const activeVideoId = useStore((state) => state.activeVideoId);
+  const currentTime = useStore((state) => state.currentTime);
+  const maxDuration = useStore((state) => state.maxDuration);
   const playing = useStore((state) => state.playing);
   const videos = useStore((state) => state.videos);
 
@@ -40,10 +44,11 @@ export default function ReviewVideos() {
     return activeVideoId === video.id;
   });
 
+  // spacebar starts / stop play
   useHotkeys(
     "space",
     () => {
-      if (playing) {
+      if (playing === true) {
         stopPlaying();
       } else {
         startPlaying();
@@ -64,35 +69,103 @@ export default function ReviewVideos() {
     activeVideo.el.volume = activeVideo.volume;
   }, [activeVideo]);
 
+  // when play is in progress, recalculate the currentTime
+  useEffect(() => {
+    if (playing === false) {
+      return;
+    }
+
+    const lastTick = Date.now();
+
+    const timer = setTimeout(() => {
+      setCurrentTime(currentTime + (Date.now() - lastTick) / 1000);
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [playing, currentTime]);
+
+  function handleSliderChange(newTime: number) {
+    stopPlaying();
+    setCurrentTime(newTime);
+  }
+
+  const renderedGlobalTimeSlider = (() => {
+    if (maxDuration === null) {
+      return null;
+    }
+
+    const contents = (
+      <>
+        <SliderTrack>
+          <SliderFilledTrack />
+        </SliderTrack>
+        <SliderThumb />
+      </>
+    );
+
+    if (playing === false) {
+      return (
+        <Slider
+          key="notplaying"
+          aria-label="Global time control"
+          defaultValue={currentTime}
+          min={0}
+          max={maxDuration}
+          onChange={handleSliderChange}
+          step={0.25}
+        >
+          {contents}
+        </Slider>
+      );
+    } else {
+      return (
+        <Slider
+          key="playing"
+          aria-label="Global time control"
+          value={currentTime}
+          min={0}
+          max={maxDuration}
+          onChange={handleSliderChange}
+          step={0.25}
+        >
+          {contents}
+        </Slider>
+      );
+    }
+  })();
+
+  const renderedVideoThumbnails = videos.map((video) => {
+    return <VideoThumbnail key={video.id} video={video} />;
+  });
+
   return (
     <Flex>
       <Flex grow="1" direction="column" width="75vw">
         <Flex flexGrow={"1"} flexShrink={"1"} bgColor={"black"} align={"center"} ref={videoRef} css={videoStyle} />
         <Flex flexGrow={"0"} align="center" bgColor={"black"} p={"4"}>
-          <ButtonGroup>
+          <ButtonGroup flexShrink={"1"}>
             <IconButton
               onClick={startPlaying}
               icon={<PlayerPlayIcon />}
               aria-label="Play"
-              variant={playing === true ? "solid" : "outline"}
+              variant={playing !== null ? "solid" : "outline"}
             />
             <IconButton
               onClick={stopPlaying}
               icon={<PlayerPauseIcon />}
               aria-label="Pause"
-              variant={playing === true ? "outline" : "solid"}
+              variant={playing === null ? "outline" : "solid"}
             />
-            <Slider aria-label="Global time control" defaultValue={0} mx={4} min={0}>
-              <SliderTrack>
-                <SliderFilledTrack />
-              </SliderTrack>
-              <SliderThumb />
-            </Slider>
           </ButtonGroup>
+          <Box flexGrow={"1"} ml={"4"}>
+            {renderedGlobalTimeSlider}
+          </Box>
         </Flex>
       </Flex>
       <Flex direction={"column"} align={"stretch"} justifyContent={"stretch"} width="25vw">
-        <VideoList />
+        {renderedVideoThumbnails}
       </Flex>
     </Flex>
   );
