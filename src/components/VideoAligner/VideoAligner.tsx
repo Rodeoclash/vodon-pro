@@ -51,8 +51,12 @@ export default function VideoAligner({ video }: Props) {
 
   function handleClickStep(direction: number, event: MouseEvent) {
     const distance = (() => {
-      if (event.getModifierState("Ctrl")) {
+      if (event.getModifierState("Control")) {
         return 1;
+      }
+
+      if (event.getModifierState("Shift")) {
+        return 10;
       }
 
       return frameLength;

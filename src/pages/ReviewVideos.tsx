@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 
 import { PlayerPlay as PlayerPlayIcon, PlayerPause as PlayerPauseIcon } from "tabler-icons-react";
+import { Link } from "react-router-dom";
 
 import WithSidebar from "../layouts/WithSidebar";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
@@ -137,13 +138,23 @@ export default function ReviewVideos() {
     }
   })();
 
-  const renderedVideoThumbnails = videos.map((video) => {
+  const renderedSidebar = videos.map((video) => {
     return <VideoThumbnail key={video.id} video={video} />;
   });
 
-  return (
-    <WithSidebar sidebar={renderedVideoThumbnails}>
-      <Flex direction="column" width="100%" height={"calc(100vh - 6rem)"}>
+  const renderedContent = (() => {
+    if (videos.length === 0) {
+      return (
+        <Flex flexGrow={"1"} align={"center"} justifyContent={"center"} fontSize={"3xl"} color={"whiteAlpha.400"}>
+          <Link to="/">
+            <Text>Please setup some videos first</Text>
+          </Link>
+        </Flex>
+      );
+    }
+
+    return (
+      <>
         <Flex flexGrow={"1"} flexShrink={"1"} align={"center"} ref={videoRef} css={videoStyle} />
         <Flex flexGrow={"0"} align="center" p={"4"}>
           <ButtonGroup flexShrink={"1"}>
@@ -164,6 +175,14 @@ export default function ReviewVideos() {
             {renderedGlobalTimeSlider}
           </Box>
         </Flex>
+      </>
+    );
+  })();
+
+  return (
+    <WithSidebar sidebar={renderedSidebar}>
+      <Flex direction="column" width="100%" height={"calc(100vh - 6rem)"}>
+        {renderedContent}
       </Flex>
     </WithSidebar>
   );

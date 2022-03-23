@@ -3,17 +3,15 @@ import { css } from "@emotion/react";
 
 import {
   Box,
-  Text,
   Flex,
   Grid,
   GridItem,
   Select,
   Heading,
-  List,
   ListItem,
-  ListIcon,
   OrderedList,
   UnorderedList,
+  Kbd,
 } from "@chakra-ui/react";
 
 import useStore from "../services/store";
@@ -49,6 +47,7 @@ export default function AddVideos() {
     );
   });
 
+  // TODO: Think about bringing this back if needed
   function handleRowCountChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setRowCount(event.target.value);
   }
@@ -56,7 +55,7 @@ export default function AddVideos() {
   const renderedSidebar = (
     <Box p={4} color={"whiteAlpha.600"}>
       <Heading color={"white"} fontSize={"lg"} mb={"4"}>
-        Help
+        Getting started
       </Heading>
       <OrderedList my={"4"}>
         <ListItem mb={"4"}>Either click to add a video or drag and drop them from your desktop.</ListItem>
@@ -64,15 +63,20 @@ export default function AddVideos() {
           Pick a point in time that is easy to identify in all the videos (countdowns before a round start works well
           here)
         </ListItem>
-        <ListItem mb={"4"}>Align all the videos to the same point in time.</ListItem>
+        <ListItem mb={"4"}>Align all the videos to the same point in time using the controls on each video.</ListItem>
+        <ListItem mb={"4"}>When all videos are aligned, go to the "Review" tab to start the VOD review</ListItem>
       </OrderedList>
 
       <Heading color={"white"} fontSize={"lg"} mb={"4"} mt={"8"}>
         Hints
       </Heading>
       <UnorderedList my={"4"}>
+        <ListItem mb={"4"}>The arrow controls move you back and forward by one frame</ListItem>
         <ListItem mb={"4"}>
-          You can control click the forward and back arrows to skip forward or back one second at a time.
+          Hold <Kbd>Control</Kbd> when clicking the arrow controls to move forward and back by one second
+        </ListItem>
+        <ListItem mb={"4"}>
+          Hold <Kbd>Shift</Kbd> when clicking the arrow controls to move forward and back by ten seconds
         </ListItem>
       </UnorderedList>
 
