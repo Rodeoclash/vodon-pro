@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useLayoutEffect } from "react";
 import { css } from "@emotion/react";
 
 import useStore from "../../services/store";
@@ -68,6 +68,20 @@ export default function Video({ video }: Props) {
 
     video.el.currentTime = currentTime + video.offsetNormalised;
   }, [playing, currentTime]);
+
+  useLayoutEffect(() => {
+    const handleFrame = (time: number, metadata: VideoFrameMetadata) => {
+      //console.log(time, metadata, metadata.mediaTime)
+      //handleFrameAdvanced(metadata.mediaTime, getFramesFromSeconds(videoData.fps, metadata.mediaTime));
+      video.el.requestVideoFrameCallback(handleFrame);
+    };
+
+    const id = video.el.requestVideoFrameCallback(handleFrame);
+
+    return () => {
+      video.el.cancelVideoFrameCallback(id);
+    };
+  }, [currentTime]);
 
   const videoStyles = css`
     display: ${currentActive === true || isBeforeRange === true || isAfterRange === true ? "none" : "block"};

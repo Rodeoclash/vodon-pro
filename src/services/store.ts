@@ -31,6 +31,9 @@ export interface Video {
 
   /** Stored volume (TODO: Volume should be dynamic) */
   volume: number;
+
+  /** What time this video is currently at, used to calculate the global time */
+  //currentTime: number | null;
 }
 
 interface State {

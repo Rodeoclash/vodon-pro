@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { css } from "@emotion/react";
 import { useBus } from "react-bus";
@@ -29,6 +29,7 @@ const videoStyle = css`
 export default function ReviewVideos() {
   const bus = useBus();
   const videoRef = useRef(null);
+  const [startedPlayingAt, setStartedPlayingAt] = useState(null);
 
   const startPlaying = useStore((state) => state.startPlaying);
   const stopPlaying = useStore((state) => state.stopPlaying);
@@ -72,19 +73,27 @@ export default function ReviewVideos() {
   // when play is in progress, recalculate the currentTime
   useEffect(() => {
     if (playing === false) {
+      return setStartedPlayingAt(null);
+    }
+
+    setStartedPlayingAt(Date.now());
+  }, [playing]);
+
+  useEffect(() => {
+    if (startedPlayingAt === null) {
       return;
     }
 
-    const lastTick = Date.now();
+    console.log(startedPlayingAt);
 
-    const timer = setTimeout(() => {
-      setCurrentTime(currentTime + (Date.now() - lastTick) / 1000);
+    const timer = setInterval(() => {
+      setCurrentTime(currentTime + (Date.now() - startedPlayingAt) / 1000);
     }, 50);
 
     return () => {
-      clearTimeout(timer);
+      clearInterval(timer);
     };
-  }, [playing, currentTime]);
+  }, [startedPlayingAt]);
 
   function handleSliderChange(newTime: number) {
     stopPlaying();
@@ -165,7 +174,14 @@ export default function ReviewVideos() {
           ref={videoRef}
           css={videoStyle}
         />
-        <Flex flexGrow={"0"} align="center" p={"4"}>
+        <Flex
+          flexGrow={"0"}
+          align="center"
+          p={"4"}
+          boxSizing={"border-box"}
+          borderTop={"1px"}
+          borderColor={"whiteAlpha.300"}
+        >
           <Box mr={"4"}>
             {!playing && <IconButton onClick={startPlaying} icon={<PlayerPlayIcon />} aria-label="Play" />}
             {playing && <IconButton onClick={stopPlaying} icon={<PlayerPauseIcon />} aria-label="Pause" />}
@@ -185,7 +201,7 @@ export default function ReviewVideos() {
 
   return (
     <WithSidebar sidebar={renderedSidebar}>
-      <Flex direction="column" width="100%" height={"calc(100vh - 6rem)"}>
+      <Flex direction="column" width="100%" height={"calc(100vh - 5rem)"}>
         {renderedContent}
       </Flex>
     </WithSidebar>

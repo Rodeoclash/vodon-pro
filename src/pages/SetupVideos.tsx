@@ -96,7 +96,7 @@ export default function AddVideos() {
 
   return (
     <WithSidebar sidebar={renderedSidebar}>
-      <Box overflowY={"auto"} height={"calc(100vh - 6rem)"} width={"100%"}>
+      <Box overflowY={"auto"} height={"calc(100vh - 5rem)"} width={"100%"}>
         <Grid templateColumns={`repeat(${rowCount}, 1fr)`} gap={0}>
           {renderedVideos}
           <GridItem>
