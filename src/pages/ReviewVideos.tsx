@@ -15,9 +15,10 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from "@chakra-ui/react";
+
 import { PlayerPlay as PlayerPlayIcon, PlayerPause as PlayerPauseIcon } from "tabler-icons-react";
 
-import VideoList from "../components/VideoList/VideoList";
+import WithSidebar from "../layouts/WithSidebar";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
 
 const videoStyle = css`
@@ -141,8 +142,8 @@ export default function ReviewVideos() {
   });
 
   return (
-    <Flex>
-      <Flex grow="1" direction="column" width="75vw">
+    <WithSidebar sidebar={renderedVideoThumbnails}>
+      <Flex direction="column" width="100%" height={"calc(100vh - 6rem)"}>
         <Flex flexGrow={"1"} flexShrink={"1"} bgColor={"black"} align={"center"} ref={videoRef} css={videoStyle} />
         <Flex flexGrow={"0"} align="center" bgColor={"black"} p={"4"}>
           <ButtonGroup flexShrink={"1"}>
@@ -164,9 +165,6 @@ export default function ReviewVideos() {
           </Box>
         </Flex>
       </Flex>
-      <Flex direction={"column"} align={"stretch"} justifyContent={"stretch"} width="25vw">
-        {renderedVideoThumbnails}
-      </Flex>
-    </Flex>
+    </WithSidebar>
   );
 }

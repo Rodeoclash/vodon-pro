@@ -27,7 +27,7 @@ export default function App() {
       <ChakraProvider theme={theme}>
         <Flex direction={"column"} height={"100vh"} width={"100vw"}>
           <Flex
-            px={4}
+            px={8}
             as={"header"}
             align={"center"}
             borderBottom={"1px"}
