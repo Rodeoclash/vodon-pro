@@ -101,7 +101,6 @@
     "install": "^0.13.0",
     "npm": "^8.5.5",
     "react": "^17.0.2",
-    "react-bus": "^3.0.0",
     "react-dom": "^17.0.2",
     "react-dropzone": "^12.0.4",
     "react-hotkeys-hook": "^3.4.4",

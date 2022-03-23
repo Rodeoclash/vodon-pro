@@ -26,10 +26,11 @@ export default function VideoAdd() {
           durationNormalised: null,
           el,
           filePath,
+          frameRate: 60,
           id,
           name,
-          offsetNormalised: null,
           offset: 0.0,
+          offsetNormalised: null,
           volume: 0.8,
         });
       });

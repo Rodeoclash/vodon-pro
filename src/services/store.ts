@@ -7,9 +7,20 @@ export interface Video {
 
   /** Base video duration plus the normalisedOffset */
   durationNormalised: number | null;
+
+  /** Video element used for playback */
   el: HTMLVideoElement;
+
+  /** Path to the file on disk */
   filePath: string;
+
+  /** Unique id for this video */
   id: string;
+
+  /** Frame rate of this video (needs to be determined using FFPROBE) */
+  frameRate: number;
+
+  /** Name of this video (usually the player who was recorded) */
   name: string;
 
   /** User selected offset to align the video against others in the set */
@@ -17,6 +28,8 @@ export interface Video {
 
   /** Offset (in seconds) normalised against other video offsets in the set */
   offsetNormalised: number | null;
+
+  /** Stored volume (TODO: Volume should be dynamic) */
   volume: number;
 }
 
