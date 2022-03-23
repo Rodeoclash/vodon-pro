@@ -16,7 +16,12 @@ import {
   SliderThumb,
 } from "@chakra-ui/react";
 
-import { PlayerPlay as PlayerPlayIcon, PlayerPause as PlayerPauseIcon } from "tabler-icons-react";
+import {
+  PlayerPlay as PlayerPlayIcon,
+  PlayerPause as PlayerPauseIcon,
+  PlayerTrackPrev as PlayerTrackPrevIcon,
+  PlayerTrackNext as PlayerTrackNextIcon,
+} from "tabler-icons-react";
 import { Link } from "react-router-dom";
 
 import WithSidebar from "../layouts/WithSidebar";
@@ -93,6 +98,24 @@ export default function ReviewVideos() {
     setCurrentTime(newTime);
   }
 
+  function handleClickStep(direction: number, event: MouseEvent) {
+    /*
+    const distance = (() => {
+      if (event.getModifierState("Control")) {
+        return 1;
+      }
+
+      if (event.getModifierState("Shift")) {
+        return 10;
+      }
+
+      return frameLength;
+    })();
+
+    videoRef.current.currentTime = videoRef.current.currentTime + distance * direction;
+    */
+  }
+
   const renderedGlobalTimeSlider = (() => {
     if (maxDuration === null) {
       return null;
@@ -157,23 +180,26 @@ export default function ReviewVideos() {
       <>
         <Flex flexGrow={"1"} flexShrink={"1"} align={"center"} ref={videoRef} css={videoStyle} />
         <Flex flexGrow={"0"} align="center" p={"4"}>
-          <ButtonGroup flexShrink={"1"}>
-            <IconButton
-              onClick={startPlaying}
-              icon={<PlayerPlayIcon />}
-              aria-label="Play"
-              variant={playing !== null ? "solid" : "outline"}
-            />
-            <IconButton
-              onClick={stopPlaying}
-              icon={<PlayerPauseIcon />}
-              aria-label="Pause"
-              variant={playing === null ? "outline" : "solid"}
-            />
-          </ButtonGroup>
+          {!playing && <IconButton onClick={startPlaying} icon={<PlayerPlayIcon />} aria-label="Play" />}
+          {playing && <IconButton onClick={stopPlaying} icon={<PlayerPauseIcon />} aria-label="Pause" />}
+
+          <IconButton
+            icon={<PlayerTrackPrevIcon />}
+            aria-label="Step backwards"
+            ml={4}
+            onClick={handleClickStep.bind(this, -1)}
+          />
+
           <Box flexGrow={"1"} ml={"4"}>
             {renderedGlobalTimeSlider}
           </Box>
+
+          <IconButton
+            icon={<PlayerTrackNextIcon />}
+            aria-label="Step forwards"
+            ml={4}
+            onClick={handleClickStep.bind(this, 1)}
+          />
         </Flex>
       </>
     );
