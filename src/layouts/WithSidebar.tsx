@@ -25,7 +25,13 @@ export default function WithSidebar({ children, sidebar }: Props) {
       <Box width={mainStyleWidth} bgColor={"black"}>
         {children}
       </Box>
-      <Box width={sidebarStyleWidth} boxSizing={"border-box"} borderLeft={"1px"} borderColor={"whiteAlpha.300"}>
+      <Box
+        width={sidebarStyleWidth}
+        boxSizing={"border-box"}
+        borderLeft={"1px"}
+        borderColor={"whiteAlpha.300"}
+        overflowY={"auto"}
+      >
         {sidebar}
       </Box>
     </Flex>

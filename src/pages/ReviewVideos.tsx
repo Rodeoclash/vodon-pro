@@ -1,20 +1,11 @@
 import { useRef, useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { css } from "@emotion/react";
+import { useBus } from "react-bus";
 
 import useStore from "../services/store";
 
-import {
-  Flex,
-  Box,
-  Text,
-  ButtonGroup,
-  IconButton,
-  SliderTrack,
-  Slider,
-  SliderFilledTrack,
-  SliderThumb,
-} from "@chakra-ui/react";
+import { Flex, Box, Text, IconButton, SliderTrack, Slider, SliderFilledTrack, SliderThumb } from "@chakra-ui/react";
 
 import {
   PlayerPlay as PlayerPlayIcon,
@@ -35,6 +26,7 @@ const videoStyle = css`
 `;
 
 export default function ReviewVideos() {
+  const bus = useBus();
   const videoRef = useRef(null);
 
   const startPlaying = useStore((state) => state.startPlaying);
@@ -86,7 +78,7 @@ export default function ReviewVideos() {
 
     const timer = setTimeout(() => {
       setCurrentTime(currentTime + (Date.now() - lastTick) / 1000);
-    }, 100);
+    }, 50);
 
     return () => {
       clearTimeout(timer);
@@ -178,7 +170,14 @@ export default function ReviewVideos() {
 
     return (
       <>
-        <Flex flexGrow={"1"} flexShrink={"1"} align={"center"} ref={videoRef} css={videoStyle} />
+        <Flex
+          flexGrow={"1"}
+          flexShrink={"1"}
+          align={"center"}
+          justifyContent={"center"}
+          ref={videoRef}
+          css={videoStyle}
+        />
         <Flex flexGrow={"0"} align="center" p={"4"}>
           {!playing && <IconButton onClick={startPlaying} icon={<PlayerPlayIcon />} aria-label="Play" />}
           {playing && <IconButton onClick={stopPlaying} icon={<PlayerPauseIcon />} aria-label="Pause" />}
