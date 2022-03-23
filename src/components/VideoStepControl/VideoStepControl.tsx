@@ -12,9 +12,7 @@ export default function VideoStepControl({ onClick, frameRate, direction }: Prop
   const [value, Icon] = direction === "forwards" ? [1, <PlayerTrackNextIcon />] : [-1, <PlayerTrackPrevIcon />];
   const frameLength = 1 / frameRate;
 
-  function handleClick(event: any) {
-    console.log("fix any", event);
-
+  function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     const distance = (() => {
       if (event.getModifierState("Control")) {
         return 1;
@@ -26,8 +24,6 @@ export default function VideoStepControl({ onClick, frameRate, direction }: Prop
 
       return frameLength;
     })();
-
-    console.log(distance * value);
 
     onClick(distance * value);
   }

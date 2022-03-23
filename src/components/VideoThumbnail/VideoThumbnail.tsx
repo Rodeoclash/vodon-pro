@@ -4,7 +4,7 @@ import { css } from "@emotion/react";
 import useStore from "../../services/store";
 
 import { Box, Heading, Flex, Button, Text } from "@chakra-ui/react";
-import { Refresh as RefreshIcon, Settings as SettingsIcon } from "tabler-icons-react";
+import { Refresh as RefreshIcon } from "tabler-icons-react";
 
 import type { Video } from "../../services/store";
 
@@ -104,35 +104,30 @@ export default function Video({ video }: Props) {
 
   return (
     <Box position={"relative"} cursor={"pointer"}>
-      <Flex
-        onClick={handleClickName}
-        align={"center"}
+      <Heading
         position={"absolute"}
         top={"0"}
         left={"0"}
-        p={"2"}
-        zIndex={1}
-        bgColor={"blackAlpha.600"}
+        right={"0"}
+        bgColor={"blackAlpha.800"}
+        padding={"2"}
+        fontSize={"md"}
+        fontWeight={"normal"}
       >
-        <SettingsIcon />
-        <Heading fontSize={"medium"} ml={"2"} fontWeight={"normal"} textDecoration={"underline"}>
-          {video.name}
-        </Heading>
+        {video.name}
+      </Heading>
+      <Box css={videoStyles} onClick={handleClickVideo} ref={videoRef} />
+      <Flex css={beforeRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
+        <Text>BEFORE RANGE</Text>
       </Flex>
-      <Box zIndex={"0"}>
-        <Box css={videoStyles} onClick={handleClickVideo} ref={videoRef} />
-        <Flex css={beforeRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
-          <Text>BEFORE RANGE</Text>
-        </Flex>
-        <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
-          <Text>AFTER RANGE</Text>
-        </Flex>
-        <Flex css={resetStyles} onClick={handleClickVideo} align={"center"} justify={"center"} bgColor={"gray.700"}>
-          <Button onClick={handleClickReset} leftIcon={<RefreshIcon />}>
-            Reset
-          </Button>
-        </Flex>
-      </Box>
+      <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
+        <Text>AFTER RANGE</Text>
+      </Flex>
+      <Flex css={resetStyles} onClick={handleClickVideo} align={"center"} justify={"center"} bgColor={"gray.700"}>
+        <Button onClick={handleClickReset} leftIcon={<RefreshIcon />}>
+          Reset
+        </Button>
+      </Flex>
     </Box>
   );
 }

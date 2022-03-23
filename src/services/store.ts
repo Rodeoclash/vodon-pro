@@ -38,10 +38,12 @@ export interface Video {
 
 interface State {
   addVideo: (video: Video) => void;
+  removeVideo: (video: Video) => void;
   setActiveVideoId: (id: string | null) => void;
   setCurrentTime: (currentTime: number) => void;
   setVideoDuration: (video: Video, duration: number) => void;
   setVideoOffset: (video: Video, offset: number) => void;
+  setVideoName: (video: Video, name: string) => void;
   startPlaying: () => void;
   stopPlaying: () => void;
   togglePlaying: () => void;
@@ -89,6 +91,16 @@ const useStore = create<State>((set) => ({
    */
   addVideo: (video: Video) => set((state) => ({ videos: state.videos.concat([video]) })),
 
+  removeVideo: (video: Video) =>
+    set(
+      produce((state: State) => {
+        state.videos = state.videos.filter((innerVideo) => {
+          return video.id !== innerVideo.id;
+        });
+      })
+    ),
+
+  // TODO: Combine with name update
   setVideoDuration: (video: Video, duration: number) =>
     set(
       produce((state: State) => {
@@ -97,6 +109,18 @@ const useStore = create<State>((set) => ({
         });
 
         state.videos[index].duration = duration;
+      })
+    ),
+
+  // TODO: Combine with duration update
+  setVideoName: (video: Video, name: string) =>
+    set(
+      produce((state: State) => {
+        const index = state.videos.findIndex((innerVideo) => {
+          return innerVideo.id === video.id;
+        });
+
+        state.videos[index].name = name;
       })
     ),
 

@@ -59,6 +59,30 @@ export default function ReviewVideos() {
     [playing]
   );
 
+  useHotkeys(
+    "left",
+    () => {
+      if (playing === true) {
+        return;
+      }
+      setCurrentTime(currentTime - 1 / 60);
+    },
+    {},
+    [playing, currentTime]
+  );
+
+  useHotkeys(
+    "right",
+    () => {
+      if (playing === true) {
+        return;
+      }
+      setCurrentTime(currentTime + 1 / 60);
+    },
+    {},
+    [playing, currentTime]
+  );
+
   // mount the active video into the main player when it changes
   useEffect(() => {
     if (activeVideo === undefined || videoRef.current === null) {

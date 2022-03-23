@@ -13,9 +13,9 @@ export default function VideoAdd() {
 
   const handleDrop = useCallback(
     (files: File[]) => {
-      files.forEach((file) => {
+      files.forEach((file, index) => {
         const id = uuidv4();
-        const name = `Untitled #${videos.length + 1}`;
+        const name = `Untitled #${videos.length + 1 + index}`;
         const filePath = file.path;
         const el = document.createElement("video");
 
