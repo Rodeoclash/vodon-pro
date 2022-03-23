@@ -3,8 +3,7 @@ import { Global, css } from "@emotion/react";
 import theme from "../services/theme";
 import garet from "../assets/fonts/Garet-Heavy.otf";
 
-import { ChakraProvider, ColorModeScript, Box, Heading, Flex, Link } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+import { ChakraProvider, ColorModeScript, Text, Heading, Flex, Spacer } from "@chakra-ui/react";
 
 import { Outlet } from "react-router-dom";
 
@@ -41,6 +40,8 @@ export default function App() {
               <NavLink to="/">Setup videos</NavLink>
               <NavLink to="/review">Review</NavLink>
             </Flex>
+            <Spacer />
+            <Text fontSize={"sm"}>Version 1.0</Text>
           </Flex>
           <Flex as={"main"} height={"calc(100vh - 5rem)"}>
             <Outlet />

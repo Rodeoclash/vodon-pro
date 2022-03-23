@@ -8,7 +8,7 @@ export interface Video {
   /** Base video duration plus the normalisedOffset */
   durationNormalised: number | null;
   el: HTMLVideoElement;
-  file: File;
+  filePath: string;
   id: string;
   name: string;
 

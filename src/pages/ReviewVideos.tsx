@@ -144,8 +144,8 @@ export default function ReviewVideos() {
   return (
     <WithSidebar sidebar={renderedVideoThumbnails}>
       <Flex direction="column" width="100%" height={"calc(100vh - 6rem)"}>
-        <Flex flexGrow={"1"} flexShrink={"1"} bgColor={"black"} align={"center"} ref={videoRef} css={videoStyle} />
-        <Flex flexGrow={"0"} align="center" bgColor={"black"} p={"4"}>
+        <Flex flexGrow={"1"} flexShrink={"1"} align={"center"} ref={videoRef} css={videoStyle} />
+        <Flex flexGrow={"0"} align="center" p={"4"}>
           <ButtonGroup flexShrink={"1"}>
             <IconButton
               onClick={startPlaying}

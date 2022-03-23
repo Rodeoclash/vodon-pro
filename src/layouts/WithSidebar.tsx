@@ -22,8 +22,12 @@ const sidebarStyleWidth = {
 export default function WithSidebar({ children, sidebar }: Props) {
   return (
     <Flex>
-      <Box width={mainStyleWidth}>{children}</Box>
-      <Box width={sidebarStyleWidth}>{sidebar}</Box>
+      <Box width={mainStyleWidth} bgColor={"black"}>
+        {children}
+      </Box>
+      <Box width={sidebarStyleWidth} boxSizing={"border-box"} borderLeft={"1px"} borderColor={"whiteAlpha.300"}>
+        {sidebar}
+      </Box>
     </Flex>
   );
 }

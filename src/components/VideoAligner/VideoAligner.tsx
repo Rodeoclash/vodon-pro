@@ -100,7 +100,7 @@ export default function VideoAligner({ video }: Props) {
   return (
     <Box position={"relative"}>
       <Flex align={"center"} justifyContent={"center"}>
-        <video src={video.file.path} ref={videoRef} />
+        <video src={video.filePath} ref={videoRef} />
       </Flex>
       {renderedControls}
     </Box>

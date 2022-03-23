@@ -16,15 +16,16 @@ export default function VideoAdd() {
       files.forEach((file) => {
         const id = uuidv4();
         const name = `Untitled #${videos.length + 1}`;
+        const filePath = file.path;
         const el = document.createElement("video");
 
-        el.src = file.path;
+        el.src = filePath;
 
         addVideo({
           duration: null,
           durationNormalised: null,
           el,
-          file,
+          filePath,
           id,
           name,
           offsetNormalised: null,
@@ -63,7 +64,7 @@ export default function VideoAdd() {
             {isDragActive ? (
               <span>Click or drag and drop the files here...</span>
             ) : (
-              <span>Drop videos here to get started</span>
+              <span>Drop video(s) here to get started</span>
             )}
           </Text>
         </Center>
