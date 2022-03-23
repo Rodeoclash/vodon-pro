@@ -46,7 +46,6 @@ export default function VideoAligner({ video }: Props) {
   }
 
   function handleClickStep(distance: number) {
-    console.log("handleClickStep", distance);
     videoRef.current.currentTime = videoRef.current.currentTime + distance;
   }
 

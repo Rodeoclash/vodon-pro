@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { css } from "@emotion/react";
 import { useBus } from "react-bus";
@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 
 import WithSidebar from "../layouts/WithSidebar";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
+import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 
 const videoStyle = css`
   video {
@@ -90,22 +91,8 @@ export default function ReviewVideos() {
     setCurrentTime(newTime);
   }
 
-  function handleClickStep(direction: number, event: MouseEvent) {
-    /*
-    const distance = (() => {
-      if (event.getModifierState("Control")) {
-        return 1;
-      }
-
-      if (event.getModifierState("Shift")) {
-        return 10;
-      }
-
-      return frameLength;
-    })();
-
-    videoRef.current.currentTime = videoRef.current.currentTime + distance * direction;
-    */
+  function handleClickStep(distance: number) {
+    setCurrentTime(currentTime + distance);
   }
 
   const renderedGlobalTimeSlider = (() => {
@@ -179,26 +166,18 @@ export default function ReviewVideos() {
           css={videoStyle}
         />
         <Flex flexGrow={"0"} align="center" p={"4"}>
-          {!playing && <IconButton onClick={startPlaying} icon={<PlayerPlayIcon />} aria-label="Play" />}
-          {playing && <IconButton onClick={stopPlaying} icon={<PlayerPauseIcon />} aria-label="Pause" />}
+          <Box mr={"4"}>
+            {!playing && <IconButton onClick={startPlaying} icon={<PlayerPlayIcon />} aria-label="Play" />}
+            {playing && <IconButton onClick={stopPlaying} icon={<PlayerPauseIcon />} aria-label="Pause" />}
+          </Box>
 
-          <IconButton
-            icon={<PlayerTrackPrevIcon />}
-            aria-label="Step backwards"
-            ml={4}
-            onClick={handleClickStep.bind(this, -1)}
-          />
+          <VideoStepControl direction="backwards" frameRate={60} onClick={handleClickStep} />
 
-          <Box flexGrow={"1"} ml={"4"}>
+          <Box flexGrow={"1"} mx={"4"}>
             {renderedGlobalTimeSlider}
           </Box>
 
-          <IconButton
-            icon={<PlayerTrackNextIcon />}
-            aria-label="Step forwards"
-            ml={4}
-            onClick={handleClickStep.bind(this, 1)}
-          />
+          <VideoStepControl direction="forwards" frameRate={60} onClick={handleClickStep} />
         </Flex>
       </>
     );
