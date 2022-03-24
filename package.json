@@ -1,7 +1,7 @@
 {
   "name": "vodon-pro",
   "productName": "vodon-pro",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
@@ -42,6 +42,17 @@
         {
           "name": "@electron-forge/maker-rpm",
           "config": {}
+        }
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "Rodeoclash",
+              "name": "vodon-pro"
+            }
+          }
         }
       ],
       "plugins": [
@@ -92,6 +103,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^1.8.6",
+    "@electron-forge/publisher-github": "^6.0.0-beta.63",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "electron-squirrel-startup": "^1.0.0",

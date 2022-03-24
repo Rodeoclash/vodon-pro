@@ -9,6 +9,8 @@ import { Outlet } from "react-router-dom";
 
 import NavLink from "../components/NavLink/NavLink";
 
+const VERSION = "1.1.0"; // TODO: Should be fetched from package.json
+
 export default function App() {
   return (
     <>
@@ -40,9 +42,10 @@ export default function App() {
               <Flex as={"nav"} ml={"4"}>
                 <NavLink to="/">Setup videos</NavLink>
                 <NavLink to="/review">Review</NavLink>
+                <NavLink to="/about">About</NavLink>
               </Flex>
               <Spacer />
-              <Text fontSize={"sm"}>Version 1.0</Text>
+              <Text fontSize={"sm"}>Version {VERSION}</Text>
             </Flex>
             <Flex as={"main"} height={"calc(100vh - 5rem)"}>
               <Outlet />
