@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState, useLayoutEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { css } from "@emotion/react";
-import { useBus } from "react-bus";
 
 import useStore from "../services/store";
 import { getRatioDimensions } from "../services/layout";
@@ -21,7 +20,6 @@ import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
 import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 
 export default function ReviewVideos() {
-  const bus = useBus();
   const videoRef = useRef(null);
 
   const [startedPlayingAt, setStartedPlayingAt] = useState(null);
