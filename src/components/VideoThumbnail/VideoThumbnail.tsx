@@ -53,12 +53,12 @@ export default function Video({ video }: Props) {
 
   // watch playing state and play / pause as needed
   useEffect(() => {
-    if (playing === true) {
+    if (playing === true && isBeforeRange === false && isAfterRange === false) {
       video.el.play();
     } else {
       video.el.pause();
     }
-  }, [playing]);
+  }, [playing, isBeforeRange, isAfterRange]);
 
   // watch current time and update as needed
   useEffect(() => {
@@ -71,6 +71,7 @@ export default function Video({ video }: Props) {
 
   useLayoutEffect(() => {
     const handleFrame = (time: number, metadata: VideoFrameMetadata) => {
+      // TODO: Is this better for tracking time elapsed?
       //console.log(time, metadata, metadata.mediaTime)
       //handleFrameAdvanced(metadata.mediaTime, getFramesFromSeconds(videoData.fps, metadata.mediaTime));
       video.el.requestVideoFrameCallback(handleFrame);
@@ -89,12 +90,12 @@ export default function Video({ video }: Props) {
 
   const beforeRangeStyles = css`
     aspect-ratio: 16 / 9;
-    display: ${currentActive === false && isBeforeRange === true ? "block" : "none"};
+    display: ${currentActive === false && isBeforeRange === true ? "flex" : "none"};
   `;
 
   const afterRangeStyles = css`
     aspect-ratio: 16 / 9;
-    display: ${currentActive === false && isAfterRange === true ? "block" : "none"};
+    display: ${currentActive === false && isAfterRange === true ? "flex" : "none"};
   `;
 
   const resetStyles = css`
@@ -108,7 +109,6 @@ export default function Video({ video }: Props) {
         position={"absolute"}
         top={"0"}
         left={"0"}
-        right={"0"}
         bgColor={"blackAlpha.800"}
         padding={"2"}
         fontSize={"md"}
@@ -118,10 +118,10 @@ export default function Video({ video }: Props) {
       </Heading>
       <Box css={videoStyles} onClick={handleClickVideo} ref={videoRef} />
       <Flex css={beforeRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
-        <Text>BEFORE RANGE</Text>
+        <Text fontSize={"sm"}>Starts in {Math.round(video.offsetNormalised - currentTime)}s</Text>
       </Flex>
       <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
-        <Text>AFTER RANGE</Text>
+        <Text fontSize={"sm"}>Finished {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago</Text>
       </Flex>
       <Flex css={resetStyles} onClick={handleClickVideo} align={"center"} justify={"center"} bgColor={"gray.700"}>
         <Button onClick={handleClickReset} leftIcon={<RefreshIcon />}>
