@@ -48,6 +48,8 @@
         {
           "name": "@electron-forge/publisher-github",
           "config": {
+            "prerelease": false,
+            "draft": false,
             "repository": {
               "owner": "Rodeoclash",
               "name": "vodon-pro"
