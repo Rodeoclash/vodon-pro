@@ -147,51 +147,6 @@ export default function ReviewVideos() {
     }
   `;
 
-  const renderedGlobalTimeSlider = (() => {
-    if (maxDuration === null) {
-      return null;
-    }
-
-    const contents = (
-      <>
-        <SliderTrack>
-          <SliderFilledTrack />
-        </SliderTrack>
-        <SliderThumb />
-      </>
-    );
-
-    if (playing === false) {
-      return (
-        <Slider
-          key="notplaying"
-          aria-label="Global time control"
-          defaultValue={currentTime}
-          min={0}
-          max={maxDuration}
-          onChange={handleSliderChange}
-          step={0.25}
-        >
-          {contents}
-        </Slider>
-      );
-    } else {
-      return (
-        <Slider
-          key="playing"
-          aria-label="Global time control"
-          value={currentTime}
-          min={0}
-          max={maxDuration}
-          onChange={handleSliderChange}
-          step={0.25}
-        >
-          {contents}
-        </Slider>
-      );
-    }
-  })();
-
   const renderedSidebar = videos.map((video) => {
     return <VideoThumbnail key={video.id} video={video} />;
   });
@@ -234,7 +189,20 @@ export default function ReviewVideos() {
           <VideoStepControl direction="backwards" frameRate={60} onClick={handleClickStep} />
 
           <Box flexGrow={"1"} mx={"4"}>
-            {renderedGlobalTimeSlider}
+            <Slider
+              key="playing"
+              aria-label="Global time control"
+              value={currentTime}
+              min={0}
+              max={maxDuration}
+              onChange={handleSliderChange}
+              step={0.25}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb />
+            </Slider>
           </Box>
 
           <VideoStepControl direction="forwards" frameRate={60} onClick={handleClickStep} />
