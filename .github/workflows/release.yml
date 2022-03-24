@@ -23,6 +23,6 @@ jobs:
           node-version: 17.5.0
 
       - name: Release
-        run: npm run publish
+        run: npm install && npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
