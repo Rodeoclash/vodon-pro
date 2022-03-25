@@ -21,13 +21,8 @@ export default function Video({ video }: Props) {
   const currentTime = useStore((state) => state.currentTime);
   const playing = useStore((state) => state.playing);
 
-  const isBeforeRange = currentTime < video.offsetNormalised;
   const isAfterRange = currentTime > video.durationNormalised;
   const currentActive = activeVideoId === video.id;
-
-  function handleClickName(event: React.SyntheticEvent<EventTarget>) {
-    event.stopPropagation();
-  }
 
   function handleClickVideo(event: React.SyntheticEvent<EventTarget>) {
     event.stopPropagation();
@@ -53,12 +48,12 @@ export default function Video({ video }: Props) {
 
   // watch playing state and play / pause as needed
   useEffect(() => {
-    if (playing === true && isBeforeRange === false && isAfterRange === false) {
+    if (playing === true) {
       video.el.play();
     } else {
       video.el.pause();
     }
-  }, [playing, isBeforeRange, isAfterRange]);
+  }, [playing]);
 
   // watch current time and update as needed
   useEffect(() => {
@@ -85,12 +80,7 @@ export default function Video({ video }: Props) {
   }, [currentTime]);
 
   const videoStyles = css`
-    display: ${currentActive === true || isBeforeRange === true || isAfterRange === true ? "none" : "block"};
-  `;
-
-  const beforeRangeStyles = css`
-    aspect-ratio: 16 / 9;
-    display: ${currentActive === false && isBeforeRange === true ? "flex" : "none"};
+    display: ${currentActive === true || isAfterRange === true ? "none" : "block"};
   `;
 
   const afterRangeStyles = css`
@@ -116,10 +106,7 @@ export default function Video({ video }: Props) {
       >
         {video.name}
       </Heading>
-      <Box css={videoStyles} onClick={handleClickVideo} ref={videoRef} />
-      <Flex css={beforeRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
-        <Text fontSize={"sm"}>Starts in {Math.round(video.offsetNormalised - currentTime)}s</Text>
-      </Flex>
+      <Box onClick={handleClickVideo} ref={videoRef} css={videoStyles} />
       <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
         <Text fontSize={"sm"}>Finished {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago</Text>
       </Flex>

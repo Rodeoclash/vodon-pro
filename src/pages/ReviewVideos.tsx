@@ -188,6 +188,10 @@ export default function ReviewVideos() {
 
           <VideoStepControl direction="backwards" frameRate={60} onClick={handleClickStep} />
 
+          <Text whiteSpace={"nowrap"} fontSize={"sm"} mx={"2"} align={"center"} width={"32"}>
+            {currentTime.toFixed(2)} / {maxDuration.toFixed(2)}
+          </Text>
+
           <Box flexGrow={"1"} mx={"4"}>
             <Slider
               key="playing"
