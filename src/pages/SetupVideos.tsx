@@ -114,9 +114,11 @@ export default function SetupVideos() {
   return (
     <WithSidebar sidebar={renderedSidebar}>
       <Box overflowY={"auto"} height={"calc(100vh - 5rem)"} width={"100%"}>
-        <Flex my={4} align={"center"} justifyContent={"center"}>
-          <Box width={`${maxDuration}px`}>{renderedVisualAlignment}</Box>
-        </Flex>
+        {videos.length > 0 && (
+          <Flex my={4} align={"center"} justifyContent={"center"}>
+            <Box width={`${maxDuration}px`}>{renderedVisualAlignment}</Box>
+          </Flex>
+        )}
         <Grid templateColumns={`repeat(${rowCount}, 1fr)`} gap={0}>
           {renderedVideos}
           <GridItem>
