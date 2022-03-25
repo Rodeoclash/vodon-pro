@@ -14,7 +14,7 @@ import {
   Kbd,
 } from "@chakra-ui/react";
 
-import useStore from "../services/store";
+import useStore, { findMaxNormalisedDuration } from "../services/store";
 
 import VideoAdd from "../components/VideoAdd/VideoAdd";
 import VideoAligner from "../components/VideoAligner/VideoAligner";
@@ -35,8 +35,10 @@ const addVideoCellStyles = css`
   background-size: 56.57px 56.57px;
 `;
 
-export default function AddVideos() {
+export default function SetupVideos() {
   const videos = useStore((state) => state.videos);
+  const maxDuration = useStore((state) => state.maxDuration);
+
   const [rowCount, setRowCount] = useState("2");
 
   const renderedVideos = videos.map((video) => {
@@ -94,9 +96,29 @@ export default function AddVideos() {
     </Box>
   );
 
+  const renderedVisualAlignment = videos.map((video) => {
+    return (
+      <Box
+        key={video.id}
+        mb={"1px"}
+        bgColor={"whiteAlpha.300"}
+        p={"2"}
+        ml={`${video.offsetNormalised}px`}
+        width={video.duration}
+      >
+        <Box fontSize={"small"}>{video.name}</Box>
+      </Box>
+    );
+  });
+
   return (
     <WithSidebar sidebar={renderedSidebar}>
       <Box overflowY={"auto"} height={"calc(100vh - 5rem)"} width={"100%"}>
+        {videos.length > 0 && (
+          <Flex my={4} align={"center"} justifyContent={"center"}>
+            <Box width={`${maxDuration}px`}>{renderedVisualAlignment}</Box>
+          </Flex>
+        )}
         <Grid templateColumns={`repeat(${rowCount}, 1fr)`} gap={0}>
           {renderedVideos}
           <GridItem>

@@ -8,7 +8,7 @@ import { Outlet } from "react-router-dom";
 
 import NavLink from "../components/NavLink/NavLink";
 
-const VERSION = "1.1.1"; // TODO: Should be fetched from package.json
+const VERSION = "1.1.2"; // TODO: Should be fetched from Electron
 
 export default function App() {
   return (
