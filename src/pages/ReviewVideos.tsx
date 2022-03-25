@@ -201,6 +201,7 @@ export default function ReviewVideos() {
               max={maxDuration}
               onChange={handleSliderChange}
               step={0.25}
+              focusThumbOnChange={false}
             >
               <SliderTrack>
                 <SliderFilledTrack />
