@@ -17,7 +17,7 @@ Vodon Pro is a **synchronised**, desktop video player for esport "VOD" reviews.
 
 Add viewpoints from each of the players in a match, tell Vodon how to synchronise the videos then use its video playback with the ability to instantly jump to any of the viewpoints.
 
-![Watch the introduction video](https://www.youtube.com/watch?v=ywkz7xYkS7M)
+[Watch the introduction video](https://www.youtube.com/watch?v=ywkz7xYkS7M)
 
 </div>
 
