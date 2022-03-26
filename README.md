@@ -17,11 +17,17 @@ Vodon Pro is a **synchronised**, desktop video player for esport "VOD" reviews.
 
 Add viewpoints from each of the players in a match, tell Vodon how to synchronise the videos then use its video playback with the ability to instantly jump to any of the viewpoints.
 
+![Watch the introduction video](https://www.youtube.com/watch?v=ywkz7xYkS7M)
+
 </div>
 
-## Video introduction
+## Features
 
-I have a short video introduction to the tool which will go over the basics of what it can do. This can be viewed at https://www.youtube.com/watch?v=ywkz7xYkS7M
+- Supports unlimited videos (only restricted by your systems performance)
+
+## Getting started
+
+Want to give Vodon Pro a try? Head over to the [releases page](https://github.com/Rodeoclash/vodon-pro/releases) and download.
 
 ## Screenshots
 
@@ -32,7 +38,3 @@ I have a short video introduction to the tool which will go over the basics of w
 ### Synchronising videos
 
 ![Setup videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/setup.png)
-
-## Getting started
-
-Want to give Vodon Pro a try? Head over to the [releases page](https://github.com/Rodeoclash/vodon-pro/releases) and download.
