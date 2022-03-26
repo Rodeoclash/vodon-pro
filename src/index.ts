@@ -15,6 +15,7 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     width: 1280,
     height: 1024,
+    title: "Vodon Pro",
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
