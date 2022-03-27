@@ -15,11 +15,13 @@ import {
 } from "tabler-icons-react";
 import { Link } from "react-router-dom";
 
+import Drawing from "../components/Drawing/Drawing";
 import WithSidebar from "../layouts/WithSidebar";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
 import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 
 export default function ReviewVideos() {
+  const overlayRef = useRef(null);
   const videoRef = useRef(null);
 
   const [startedPlayingAt, setStartedPlayingAt] = useState(null);
@@ -114,11 +116,11 @@ export default function ReviewVideos() {
   // watch for the video element being resized and adjust accordingly
   useLayoutEffect(() => {
     const handleResize = () => {
-      if (videoRef.current === null) {
+      if (overlayRef.current === null) {
         return;
       }
 
-      const dimensions = getRatioDimensions(videoRef.current);
+      const dimensions = getRatioDimensions(overlayRef.current);
       setVideoDimensions(dimensions);
     };
 
@@ -139,6 +141,11 @@ export default function ReviewVideos() {
   function handleClickStep(distance: number) {
     setCurrentTime(currentTime + distance);
   }
+
+  const overlayStyle = css`
+    width: ${videoDimensions ? videoDimensions[0] : ""}px;
+    height: ${videoDimensions ? videoDimensions[1] : ""}px;
+  `;
 
   const videoStyle = css`
     video {
@@ -166,13 +173,21 @@ export default function ReviewVideos() {
       <>
         <Flex
           align={"center"}
-          css={videoStyle}
           flexGrow={"1"}
           flexShrink={"1"}
           justifyContent={"center"}
+          ref={overlayRef}
           overflow={"hidden"}
-          ref={videoRef}
-        />
+        >
+          <Box position={"relative"} css={overlayStyle}>
+            {playing === false && activeVideoId !== null && (
+              <Box position={"absolute"} top={"0"} left={"0"} right={"0"} bottom={"0"}>
+                <Drawing />
+              </Box>
+            )}
+            <Box css={videoStyle} ref={videoRef} />
+          </Box>
+        </Flex>
         <Flex
           flexGrow={"0"}
           align="center"
