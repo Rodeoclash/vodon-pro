@@ -20,6 +20,12 @@ Add viewpoints from each of the players in a match, tell Vodon how to synchronis
 
 Want to give Vodon Pro a try? Head over to the [releases page](https://github.com/Rodeoclash/vodon-pro/releases) and download.
 
+## Frequently asked questions
+
+### Why do I get warned about the download?
+
+When you download, you may see one or more warnings about the download being "unsafe". This is due to code signing and while I can pay (about $100AUD) to sign my downloads, I haven't got this in place just yet.
+
 ## Screenshots
 
 ### Reviewing videos
