@@ -15,6 +15,7 @@ Add viewpoints from each of the players in a match, tell Vodon how to synchronis
 - Supports an unlimited number of videos, restricted only by your systems performance
 - Drawing tools powered by [TLDraw](https://github.com/tldraw/tldraw)
 - Frame advance and rewind controls
+- Supports most video formats (MP4, WebM)
 
 ## Getting started
 
@@ -39,3 +40,9 @@ When you download, you may see one or more warnings about the download being "un
 ### Synchronising videos
 
 ![Setup videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/setup.png)
+
+## What's next?
+
+Vodon Pro is under active development. Future features include:
+
+- **Loading and saving projects**: Synchronise your videos ahead of time and save your project. When you're ready to review, simply load the project again and get started!
