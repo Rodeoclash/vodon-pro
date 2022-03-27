@@ -21,6 +21,10 @@ export default function App() {
             font-weight: normal;
             font-style: normal;
           }
+
+          .tl-container {
+            background-color: transparent !important;
+          }
         `}
       />
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
