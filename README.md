@@ -1,12 +1,3 @@
-<!-- markdownlint-configure-file {
-  "MD013": {
-    "code_blocks": false,
-    "tables": false
-  },
-  "MD033": false,
-  "MD041": false
-} -->
-
 <div align="center">
 
 # Vodon Pro
@@ -15,15 +6,15 @@
 
 Vodon Pro is a **synchronised**, desktop video player for esport "VOD" reviews.
 
-Add viewpoints from each of the players in a match, tell Vodon how to synchronise the videos then use its video playback with the ability to instantly jump to any of the viewpoints.
-
-[Watch the introduction video](https://www.youtube.com/watch?v=ywkz7xYkS7M)
+Add viewpoints from each of the players in a match, tell Vodon how to synchronise the videos then use its video playback with the ability to instantly jump to any of the viewpoints to review your game.
 
 </div>
 
 ## Features
 
-- Supports unlimited videos (only restricted by your systems performance)
+- Supports an unlimited number of videos, restricted only by your systems performance
+- Drawing tools powered by [TLDraw](https://github.com/tldraw/tldraw)
+- Frame advance and rewind controls
 
 ## Getting started
 
@@ -34,6 +25,10 @@ Want to give Vodon Pro a try? Head over to the [releases page](https://github.co
 ### Reviewing videos
 
 ![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/review.png)
+
+### Drawing on frames
+
+![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/drawing.png)
 
 ### Synchronising videos
 
