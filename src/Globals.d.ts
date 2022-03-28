@@ -1,6 +1,12 @@
 declare module "*.module.css";
 declare module "*.otf";
 
+interface Window {
+  appDetails: {
+    getVersion: () => Promise<string>;
+  };
+}
+
 interface VideoFrameMetadata {
   presentationTime: DOMHighResTimeStamp;
   expectedDisplayTime: DOMHighResTimeStamp;

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Global, css } from "@emotion/react";
 
 import theme from "../services/theme";
@@ -8,9 +9,16 @@ import { Outlet } from "react-router-dom";
 
 import NavLink from "../components/NavLink/NavLink";
 
-const VERSION = "1.2.0"; // TODO: Should be fetched from Electron
-
 export default function App() {
+  const [version, setVersion] = useState(null);
+
+  // On load, fetch the version of the app
+  useEffect(() => {
+    window.appDetails.getVersion().then((result: string) => {
+      setVersion(result);
+    });
+  }, []);
+
   return (
     <>
       <Global
@@ -47,7 +55,7 @@ export default function App() {
               <NavLink to="/about">About</NavLink>
             </Flex>
             <Spacer />
-            <Text fontSize={"sm"}>Version {VERSION}</Text>
+            <Text fontSize={"sm"}>Version {version}</Text>
           </Flex>
           <Flex as={"main"} height={"calc(100vh - 5rem)"}>
             <Outlet />

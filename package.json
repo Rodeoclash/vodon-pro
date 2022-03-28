@@ -1,7 +1,7 @@
 {
   "name": "vodon-pro",
   "productName": "vodon-pro",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
@@ -68,7 +68,10 @@
                 {
                   "html": "./src/index.html",
                   "js": "./src/renderer.ts",
-                  "name": "main_window"
+                  "name": "main_window",
+                  "preload": {
+                    "js": "./src/preload.ts"
+                  }
                 }
               ]
             }
