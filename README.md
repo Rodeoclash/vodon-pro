@@ -27,6 +27,12 @@ Want to give Vodon Pro a try? Head over to the [releases page](https://github.co
 
 When you download, you may see one or more warnings about the download being "unsafe". This is due to code signing and while I can pay (about $100AUD) to sign my downloads, I haven't got this in place just yet.
 
+### Why use this over the inbuilt replay tools?
+
+If you're performing VOD reviews on games with inbuilt replay tools then Vodon Pro will be a poor substitute for those tools... use them instead! That said, not all games support replay files or allow you to easily find and share them.
+
+Finally, if you're studying a game by a competing team, you may only have access to video replays or streams of their games (nothing stops you from using Vodon Pro on your competitors)
+
 ## Screenshots
 
 ### Reviewing videos
