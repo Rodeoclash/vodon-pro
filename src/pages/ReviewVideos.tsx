@@ -307,7 +307,7 @@ export default function ReviewVideos() {
   })();
 
   return (
-    <WithSidebar sidebar={renderedSidebar}>
+    <WithSidebar sidebar={renderedSidebar} disableSidebar={videos.length < 2}>
       <Flex direction="column" width="100%" height={"calc(100vh - 5rem)"} ref={contentRef}>
         {renderedContent}
       </Flex>

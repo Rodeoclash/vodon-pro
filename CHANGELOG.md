@@ -6,3 +6,4 @@
 - Added ability to toggle drawing controls on or off. Drawing controls are off by default.
 - Adding a video will automatically default it to being active on the review video page.
 - Removed placeholder when a video is "popped out"
+- Removed sidebar video selector when only one video being reviewed.
