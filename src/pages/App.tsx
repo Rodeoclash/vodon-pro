@@ -14,7 +14,7 @@ export default function App() {
 
   // On load, fetch the version of the app
   useEffect(() => {
-    window.appDetails.getVersion().then((result: string) => {
+    window.app.getVersion().then((result: string) => {
       setVersion(result);
     });
   }, []);

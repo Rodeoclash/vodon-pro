@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { v4 as uuidv4 } from "uuid";
 
 import useStore from "../../services/store";
+import Video from "../../services/models/Video";
 
 import { Box, Center, Text, Flex } from "@chakra-ui/react";
 import { Plus as PlusIcon } from "tabler-icons-react";
@@ -13,13 +14,20 @@ export default function VideoAdd() {
 
   const handleDrop = useCallback(
     (files: File[]) => {
-      files.forEach((file, index) => {
+      files.forEach(async (file, index) => {
         const id = uuidv4();
         const name = `Untitled #${videos.length + 1 + index}`;
         const filePath = file.path;
         const el = document.createElement("video");
 
         el.src = filePath;
+
+        const video = new Video({
+          filePath,
+          name,
+        });
+
+        await video.updateMetadata();
 
         addVideo({
           duration: null,
