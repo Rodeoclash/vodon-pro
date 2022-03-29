@@ -27,15 +27,11 @@ import { Settings as SettingsIcon, X as XIcon } from "tabler-icons-react";
 
 import VideoStepControl from "../VideoStepControl/VideoStepControl";
 
-import type { Video } from "../../services/store";
+import type { Video } from "../../services/models/Video";
 
 interface Props {
   video: Video;
 }
-
-// TODO: Frame rate should be found using FFMPEG
-const frameRate = 60;
-const frameLength = 1 / frameRate;
 
 export default function VideoAligner({ video }: Props) {
   const setVideoDuration = useStore((state) => state.setVideoDuration);
@@ -91,9 +87,9 @@ export default function VideoAligner({ video }: Props) {
   }
 
   const renderedControls =
-    video.duration === null || video.offset === null ? null : (
+    video.duration === null ? null : (
       <Flex p={2} bgColor={"blackAlpha.800"} position={"absolute"} bottom={"0"} left={"0"} right={"0"} align={"center"}>
-        <VideoStepControl direction="backwards" frameRate={60} onClick={handleClickStep} />
+        <VideoStepControl direction="backwards" frameRate={video.frameRate} onClick={handleClickStep} />
 
         <Text whiteSpace={"nowrap"} fontSize={"sm"} mx={"2"} align={"center"} width={"32"}>
           {video.offset.toFixed(2)} / {Math.round(video.duration)}
@@ -106,7 +102,7 @@ export default function VideoAligner({ video }: Props) {
           min={0}
           max={video.duration}
           onChange={handleSliderChange}
-          step={frameLength}
+          step={1 / video.frameRate}
         >
           <SliderTrack>
             <SliderFilledTrack />
@@ -114,7 +110,7 @@ export default function VideoAligner({ video }: Props) {
           <SliderThumb />
         </Slider>
 
-        <VideoStepControl direction="forwards" frameRate={60} onClick={handleClickStep} />
+        <VideoStepControl direction="forwards" frameRate={video.frameRate} onClick={handleClickStep} />
       </Flex>
     );
 

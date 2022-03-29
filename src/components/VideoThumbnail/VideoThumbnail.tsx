@@ -6,13 +6,13 @@ import useStore from "../../services/store";
 import { Box, Heading, Flex, Button, Text } from "@chakra-ui/react";
 import { Refresh as RefreshIcon } from "tabler-icons-react";
 
-import type { Video } from "../../services/store";
+import type { Video } from "../../services/models/Video";
 
 interface Props {
   video: Video;
 }
 
-export default function Video({ video }: Props) {
+export default function VideoThumbnail({ video }: Props) {
   const videoRef = useRef(null);
 
   const setActiveVideoId = useStore((state) => state.setActiveVideoId);
@@ -79,7 +79,7 @@ export default function Video({ video }: Props) {
     };
   }, [currentTime]);
 
-  const videoStyles = css`
+  const containerStyles = css`
     display: ${currentActive === true || isAfterRange === true ? "none" : "block"};
   `;
 
@@ -88,13 +88,8 @@ export default function Video({ video }: Props) {
     display: ${currentActive === false && isAfterRange === true ? "flex" : "none"};
   `;
 
-  const resetStyles = css`
-    aspect-ratio: 16 / 9;
-    display: ${currentActive === true ? "flex" : "none"};
-  `;
-
   return (
-    <Box position={"relative"} cursor={"pointer"}>
+    <Box position={"relative"} cursor={"pointer"} css={containerStyles}>
       <Heading
         position={"absolute"}
         top={"0"}
@@ -106,14 +101,9 @@ export default function Video({ video }: Props) {
       >
         {video.name}
       </Heading>
-      <Box onClick={handleClickVideo} ref={videoRef} css={videoStyles} />
+      <Box onClick={handleClickVideo} ref={videoRef} />
       <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
         <Text fontSize={"sm"}>Finished {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago</Text>
-      </Flex>
-      <Flex css={resetStyles} onClick={handleClickVideo} align={"center"} justify={"center"} bgColor={"gray.700"}>
-        <Button onClick={handleClickReset} leftIcon={<RefreshIcon />}>
-          Reset
-        </Button>
       </Flex>
     </Box>
   );

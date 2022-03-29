@@ -5,13 +5,24 @@ import { css } from "@emotion/react";
 import useStore from "../services/store";
 import { getRatioDimensions } from "../services/layout";
 
-import { Flex, Box, Text, IconButton, SliderTrack, Slider, SliderFilledTrack, SliderThumb } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Text,
+  IconButton,
+  SliderTrack,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  Switch,
+  FormControl,
+  FormLabel,
+} from "@chakra-ui/react";
 
 import {
   PlayerPlay as PlayerPlayIcon,
   PlayerPause as PlayerPauseIcon,
-  PlayerTrackPrev as PlayerTrackPrevIcon,
-  PlayerTrackNext as PlayerTrackNextIcon,
+  Maximize as MaximizeIcon,
 } from "tabler-icons-react";
 import { Link } from "react-router-dom";
 
@@ -23,9 +34,12 @@ import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 export default function ReviewVideos() {
   const overlayRef = useRef(null);
   const videoRef = useRef(null);
+  const contentRef = useRef(null);
 
   const [startedPlayingAt, setStartedPlayingAt] = useState(null);
   const [videoDimensions, setVideoDimensions] = useState(null);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [drawing, setDrawing] = useState(false);
 
   const startPlaying = useStore((state) => state.startPlaying);
   const stopPlaying = useStore((state) => state.stopPlaying);
@@ -79,6 +93,15 @@ export default function ReviewVideos() {
     [playing, currentTime]
   );
 
+  useHotkeys(
+    "escape",
+    () => {
+      setFullscreen(false);
+    },
+    {},
+    []
+  );
+
   // mount the active video into the main player when it changes
   useEffect(() => {
     if (activeVideo === undefined || videoRef.current === null) {
@@ -90,37 +113,55 @@ export default function ReviewVideos() {
     activeVideo.el.volume = activeVideo.volume;
   }, [activeVideo]);
 
-  // when play is in progress, recalculate the currentTime
+  // when we start playing, store the time that play started
   useEffect(() => {
     if (playing === false) {
       return setStartedPlayingAt(null);
     }
 
+    setDrawing(false);
     setStartedPlayingAt(Date.now());
   }, [playing]);
 
+  // when we have a time we started playing at, start a click to update the current time
   useEffect(() => {
     if (startedPlayingAt === null) {
       return;
     }
 
-    const timer = setInterval(() => {
+    function updateCurrentTime() {
       setCurrentTime(currentTime + (Date.now() - startedPlayingAt) / 1000);
-    }, 50);
+    }
+
+    const timer = setInterval(updateCurrentTime, 50);
 
     return () => {
+      updateCurrentTime();
       clearInterval(timer);
     };
   }, [startedPlayingAt]);
 
+  // watch for fullscreen being set and trigger
+  useEffect(() => {
+    if (fullscreen === null) {
+      return;
+    }
+
+    if (fullscreen === true) {
+      contentRef.current.requestFullscreen();
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+  }, [fullscreen]);
+
   // watch for the video element being resized and adjust accordingly
   useLayoutEffect(() => {
     const handleResize = () => {
-      if (overlayRef.current === null) {
+      if (overlayRef.current === null || activeVideo === undefined) {
         return;
       }
 
-      const dimensions = getRatioDimensions(overlayRef.current);
+      const dimensions = getRatioDimensions(activeVideo.displayAspectRatio, overlayRef.current);
       setVideoDimensions(dimensions);
     };
 
@@ -131,7 +172,7 @@ export default function ReviewVideos() {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [activeVideo]);
 
   function handleSliderChange(newTime: number) {
     stopPlaying();
@@ -140,6 +181,14 @@ export default function ReviewVideos() {
 
   function handleClickStep(distance: number) {
     setCurrentTime(currentTime + distance);
+  }
+
+  function handleToggleDrawingChange() {
+    setDrawing(!drawing);
+  }
+
+  async function handleClickFullscreen() {
+    setFullscreen(!fullscreen);
   }
 
   const overlayStyle = css`
@@ -169,8 +218,36 @@ export default function ReviewVideos() {
       );
     }
 
+    if (activeVideo === undefined) {
+      return (
+        <Flex flexGrow={"1"} align={"center"} justifyContent={"center"} fontSize={"3xl"} color={"whiteAlpha.400"}>
+          <Link to="/">
+            <Text>Please choose a video</Text>
+          </Link>
+        </Flex>
+      );
+    }
+
     return (
       <>
+        <Flex
+          flexGrow={"0"}
+          align="center"
+          justifyContent={"center"}
+          p={"4"}
+          boxSizing={"border-box"}
+          borderBottom={"1px"}
+          borderColor={"whiteAlpha.300"}
+        >
+          <Box>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel htmlFor="email-alerts" mb="0">
+                Enable drawing
+              </FormLabel>
+              <Switch id="email-alerts" onChange={handleToggleDrawingChange} isChecked={drawing} disabled={playing} />
+            </FormControl>
+          </Box>
+        </Flex>
         <Flex
           align={"center"}
           flexGrow={"1"}
@@ -180,11 +257,7 @@ export default function ReviewVideos() {
           overflow={"hidden"}
         >
           <Box position={"relative"} css={overlayStyle}>
-            {playing === false && activeVideoId !== null && (
-              <Box position={"absolute"} top={"0"} left={"0"} right={"0"} bottom={"0"}>
-                <Drawing />
-              </Box>
-            )}
+            {activeVideoId !== null && drawing === true && <Drawing fullscreen={fullscreen} />}
             <Box css={videoStyle} ref={videoRef} />
           </Box>
         </Flex>
@@ -201,7 +274,7 @@ export default function ReviewVideos() {
             {playing && <IconButton onClick={stopPlaying} icon={<PlayerPauseIcon />} aria-label="Pause" />}
           </Box>
 
-          <VideoStepControl direction="backwards" frameRate={60} onClick={handleClickStep} />
+          <VideoStepControl direction="backwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
 
           <Text whiteSpace={"nowrap"} fontSize={"sm"} mx={"2"} align={"center"} width={"32"}>
             {currentTime.toFixed(2)} / {maxDuration.toFixed(2)}
@@ -215,7 +288,7 @@ export default function ReviewVideos() {
               min={0}
               max={maxDuration}
               onChange={handleSliderChange}
-              step={0.25}
+              step={1 / activeVideo.frameRate}
               focusThumbOnChange={false}
             >
               <SliderTrack>
@@ -225,15 +298,17 @@ export default function ReviewVideos() {
             </Slider>
           </Box>
 
-          <VideoStepControl direction="forwards" frameRate={60} onClick={handleClickStep} />
+          <VideoStepControl direction="forwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
+
+          <IconButton ml={"4"} onClick={handleClickFullscreen} icon={<MaximizeIcon />} aria-label="Fullscreen video" />
         </Flex>
       </>
     );
   })();
 
   return (
-    <WithSidebar sidebar={renderedSidebar}>
-      <Flex direction="column" width="100%" height={"calc(100vh - 5rem)"}>
+    <WithSidebar sidebar={renderedSidebar} disableSidebar={videos.length < 2}>
+      <Flex direction="column" width="100%" height={"calc(100vh - 5rem)"} ref={contentRef}>
         {renderedContent}
       </Flex>
     </WithSidebar>
