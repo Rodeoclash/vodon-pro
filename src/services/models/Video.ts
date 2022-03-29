@@ -1,31 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
+import { basename } from "../file";
 
-export type VideoConstructorAttrs = {
-  filePath: string;
-  name: string;
-};
-
-type AudioStreamMetadata = {
-  codec_type: "audio";
-};
-
-type VideoStreamMetadata = {
-  index: number;
-  codec_type: "video";
-  avg_frame_rate: string;
-  duration: number;
-};
-
-export type VideoMetadata = {
-  streams: Array<VideoStreamMetadata | AudioStreamMetadata>;
-};
-
-export default class Video {
+export type Video = {
   /** Average framerate of the video */
-  frameRate: number | null;
+  frameRate: number;
 
   /** Base duration of the video */
   duration: number | null;
+
+  /** Normalised offset + duration */
+  durationNormalised: number | null;
 
   /** Video element used for playback */
   el: HTMLVideoElement;
@@ -42,90 +26,99 @@ export default class Video {
   /** User selected offset to align the video against others in the set */
   offset: number;
 
+  /** Offset less the smallest shared offset */
+  offsetNormalised: number;
+
   /** Stored volume */
   volume: number;
 
-  /** Metadata about the video returned by ffprobe */
-  metadata: VideoMetadata | null;
+  /** Aspect ratio of the video */
+  displayAspectRatio: string;
+};
 
-  /** Metadata about the video returned by ffprobe */
-  videoStream: VideoStreamMetadata | null;
+type VideoConstructorAttrs = {
+  displayAspectRatio: string;
+  filePath: string;
+  frameRate: number;
+  name: string;
+};
 
-  // Finds the minimum offset on the videos. This is used to set the normalised offset.
-  static findMinOffset(videos: Video[]): number | null {
-    if (videos.length === 0) {
-      return null;
+type AudioStreamMetadata = {
+  codec_type: "audio";
+};
+
+type VideoStreamMetadata = {
+  index: number;
+  codec_type: "video";
+  avg_frame_rate: string;
+  displayAspectRatio: string;
+};
+
+export type VideoMetadata = {
+  streams: Array<VideoStreamMetadata | AudioStreamMetadata>;
+};
+
+// Finds the minimum offset on the videos. This is used to set the normalised offset.
+export function findMinOffset(videos: Video[]): number | null {
+  if (videos.length === 0) {
+    return null;
+  }
+
+  return videos.reduce(function (acc: number | null, video: Video): number {
+    if (acc === null || video.offset < acc) {
+      return video.offset;
     }
 
-    return videos.reduce(function (acc: number | null, video: Video): number {
-      if (acc === null || video.offset < acc) {
-        return video.offset;
-      }
+    return acc;
+  }, null);
+}
 
-      return acc;
-    }, null);
+// Finds the max normalised duration of the videos
+export function findMaxNormalisedDuration(videos: Video[]): number | null {
+  if (videos.length === 0) {
+    return null;
   }
 
-  // Finds the max normalised duration of the videos
-  /*
-  static findMaxNormalisedDuration(videos: Video[]): number | null {
-    if (videos.length === 0) {
-      return null;
+  return videos.reduce(function (acc: number | null, video: Video): number {
+    const durationNormalised = video.durationNormalised;
+
+    if (acc === null || durationNormalised > acc) {
+      return durationNormalised;
     }
-  
-    return videos.reduce(function (acc: number | null, video: Video): number {
-      if (acc === null || video.durationNormalised > acc) {
-        return video.durationNormalised;
-      }
-  
-      return acc;
-    }, null);
-  }
-  */
 
-  constructor({ name, filePath }: VideoConstructorAttrs) {
-    this.id = uuidv4();
-    this.name = name;
-    this.filePath = filePath;
-    this.el = document.createElement("video");
-    this.volume = 0.8;
-    this.offset = 0;
-    this.metadata = null;
-    this.videoStream = null;
-  }
+    return acc;
+  }, null);
+}
 
-  /**
-   * Introspects the attached video file path to determine framerate, duration, aspect ratio etc
-   */
-  async updateMetadata() {
-    this.metadata = await window.video.getMetadata(this.filePath);
+export async function createFromFile(filePath: string): Promise<Video> {
+  const metadata = await window.video.getMetadata(filePath);
 
-    // extract video stream
-    this.videoStream = this.metadata.streams.find((stream): stream is VideoStreamMetadata => {
-      return stream.codec_type === "video";
-    });
+  console.log(metadata);
 
-    // determine framerate
-    const [ratio_1, ratio_2] = this.videoStream.avg_frame_rate.split("/");
-    this.frameRate = Math.round(parseInt(ratio_1, 10) / parseInt(ratio_2));
+  // extract video stream
+  const videoStream = metadata.streams.find((stream: VideoStreamMetadata | AudioStreamMetadata) => {
+    return stream.codec_type === "video";
+  });
 
-    // determine duration
-    this.duration = this.videoStream.duration;
-  }
+  // determine framerate
+  const [ratio_1, ratio_2] = videoStream.avg_frame_rate.split("/");
+  const frameRate = Math.round(parseInt(ratio_1, 10) / parseInt(ratio_2));
 
-  /**
-   * Returns a normalised offset (the set offset, less the smallest offset of all videos)
-   * @param minimumOffset Smallest offset found in all the videos
-   */
-  offsetNormalised(baselineOffset: number): number {
-    return this.offset - baselineOffset;
-  }
+  // video element
+  const el = document.createElement("video");
+  el.src = filePath;
 
-  /**
-   * Returns the duration of the video including the normalised offset
-   * @param normalisedOffset The normalised offset of all the videos
-   */
-  durationNormalised(normalisedOffset: number): number {
-    return this.duration + normalisedOffset;
-  }
+  return {
+    displayAspectRatio: videoStream.displayAspectRatio,
+    duration: null,
+    durationNormalised: null,
+    el,
+    filePath,
+    frameRate,
+    id: uuidv4(),
+    name: basename(filePath),
+    offset: 0,
+    offsetNormalised: 0,
+    volume: 0.8,
+  };
 }

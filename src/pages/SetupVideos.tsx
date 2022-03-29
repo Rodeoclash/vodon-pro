@@ -14,7 +14,7 @@ import {
   Kbd,
 } from "@chakra-ui/react";
 
-import useStore, { findMaxNormalisedDuration } from "../services/store";
+import useStore from "../services/store";
 
 import VideoAdd from "../components/VideoAdd/VideoAdd";
 import VideoAligner from "../components/VideoAligner/VideoAligner";
@@ -43,7 +43,7 @@ export default function SetupVideos() {
 
   const renderedVideos = videos.map((video) => {
     return (
-      <GridItem key={video.id}>
+      <GridItem key={video.id} display={"flex"} alignItems={"center"} justifyContent={"center"}>
         <VideoAligner video={video} />
       </GridItem>
     );
@@ -106,7 +106,9 @@ export default function SetupVideos() {
         ml={`${video.offsetNormalised}px`}
         width={video.duration}
       >
-        <Box fontSize={"small"}>{video.name}</Box>
+        <Box fontSize={"small"} whiteSpace={"nowrap"}>
+          {video.name}
+        </Box>
       </Box>
     );
   });

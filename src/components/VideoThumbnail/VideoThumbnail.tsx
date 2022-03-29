@@ -6,13 +6,13 @@ import useStore from "../../services/store";
 import { Box, Heading, Flex, Button, Text } from "@chakra-ui/react";
 import { Refresh as RefreshIcon } from "tabler-icons-react";
 
-import type { Video } from "../../services/store";
+import type { Video } from "../../services/models/Video";
 
 interface Props {
   video: Video;
 }
 
-export default function Video({ video }: Props) {
+export default function VideoThumbnail({ video }: Props) {
   const videoRef = useRef(null);
 
   const setActiveVideoId = useStore((state) => state.setActiveVideoId);

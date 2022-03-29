@@ -27,7 +27,7 @@ import { Settings as SettingsIcon, X as XIcon } from "tabler-icons-react";
 
 import VideoStepControl from "../VideoStepControl/VideoStepControl";
 
-import type { Video } from "../../services/store";
+import type { Video } from "../../services/models/Video";
 
 interface Props {
   video: Video;
@@ -91,7 +91,7 @@ export default function VideoAligner({ video }: Props) {
   }
 
   const renderedControls =
-    video.duration === null || video.offset === null ? null : (
+    video.duration === null ? null : (
       <Flex p={2} bgColor={"blackAlpha.800"} position={"absolute"} bottom={"0"} left={"0"} right={"0"} align={"center"}>
         <VideoStepControl direction="backwards" frameRate={60} onClick={handleClickStep} />
 

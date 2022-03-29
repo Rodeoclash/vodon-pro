@@ -1,37 +1,9 @@
 import create from "zustand";
 import { produce } from "immer";
 
-export interface Video {
-  /** Base duration of the video */
-  duration: number | null;
+import { findMinOffset, findMaxNormalisedDuration } from "./models/Video";
 
-  /** Base video duration plus the normalisedOffset */
-  durationNormalised: number | null;
-
-  /** Video element used for playback */
-  el: HTMLVideoElement;
-
-  /** Path to the file on disk */
-  filePath: string;
-
-  /** Unique id for this video */
-  id: string;
-
-  /** Frame rate of this video (needs to be determined using FFPROBE) */
-  frameRate: number;
-
-  /** Name of this video (usually the player who was recorded) */
-  name: string;
-
-  /** User selected offset to align the video against others in the set */
-  offset: number;
-
-  /** Offset (in seconds) normalised against other video offsets in the set */
-  offsetNormalised: number | null;
-
-  /** Stored volume (TODO: Volume should be dynamic) */
-  volume: number;
-}
+import type { Video } from "./models/Video";
 
 interface State {
   addVideo: (video: Video) => void;
@@ -50,36 +22,6 @@ interface State {
   playing: boolean;
   currentTime: number;
   videos: Video[];
-}
-
-// Finds the minimum offset on the videos. This is used to set the normalised offset.
-export function findMinOffset(videos: Video[]): number | null {
-  if (videos.length === 0) {
-    return null;
-  }
-
-  return videos.reduce(function (acc: number | null, video: Video): number {
-    if (acc === null || video.offset < acc) {
-      return video.offset;
-    }
-
-    return acc;
-  }, null);
-}
-
-// Finds the max normalised duration of the videos
-export function findMaxNormalisedDuration(videos: Video[]): number | null {
-  if (videos.length === 0) {
-    return null;
-  }
-
-  return videos.reduce(function (acc: number | null, video: Video): number {
-    if (acc === null || video.durationNormalised > acc) {
-      return video.durationNormalised;
-    }
-
-    return acc;
-  }, null);
 }
 
 const useStore = create<State>((set) => ({
@@ -136,11 +78,7 @@ const useStore = create<State>((set) => ({
 
         state.videos.forEach((video) => {
           video.offsetNormalised = video.offset - minimumOffset;
-        });
-
-        // recalculate the normalised max duration of the videos
-        state.videos.forEach((video) => {
-          video.durationNormalised = video.offsetNormalised + video.duration;
+          video.durationNormalised = video.duration + video.offsetNormalised;
         });
 
         // Set the max duration of all the videos. This is used to construct the global slider
