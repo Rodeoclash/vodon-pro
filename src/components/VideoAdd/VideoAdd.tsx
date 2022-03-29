@@ -8,8 +8,6 @@ import { createFromFile } from "../../services/models/Video";
 import { Box, Center, Text, Flex } from "@chakra-ui/react";
 import { Plus as PlusIcon } from "tabler-icons-react";
 
-import type { Video } from "../../services/models/Video";
-
 export default function VideoAdd() {
   const videos = useStore((state) => state.videos);
   const addVideo = useStore((state) => state.addVideo);
