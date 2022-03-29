@@ -1,17 +1,17 @@
-const ratio169 = 16 / 9;
-const ratio916 = 9 / 16;
+export function getRatioDimensions(displayAspectRatio: string, element: HTMLElement): [number, number] {
+  const [widthSplit, heightSplit] = displayAspectRatio.split(":");
+  const width = parseInt(widthSplit, 10);
+  const height = parseInt(heightSplit, 10);
 
-export function getRatioDimensions(element: HTMLElement): [number, number] {
+  const ratioWidthHeight = width / height;
+  const ratioHeightWidth = height / width;
+
   const containerWidth = element.offsetWidth;
   const containerHeight = element.offsetHeight;
 
-  if (containerHeight * ratio169 <= containerWidth) {
-    const height = containerHeight;
-    const width = containerHeight * ratio169;
-    return [width, height];
+  if (containerHeight * ratioWidthHeight <= containerWidth) {
+    return [containerHeight * ratioWidthHeight, containerHeight];
   } else {
-    const width = containerWidth;
-    const height = containerWidth * ratio916;
-    return [width, height];
+    return [containerWidth, containerWidth * ratioHeightWidth];
   }
 }

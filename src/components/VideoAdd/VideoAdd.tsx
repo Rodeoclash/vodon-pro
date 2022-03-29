@@ -15,11 +15,11 @@ export default function VideoAdd() {
   const addVideo = useStore((state) => state.addVideo);
 
   const handleDrop = useCallback(
-    (files: File[]) => {
-      files.forEach(async (file, index) => {
+    async (files: File[]) => {
+      for (const file of files) {
         const video = await createFromFile(file.path);
         addVideo(video);
-      });
+      }
     },
     [videos]
   );

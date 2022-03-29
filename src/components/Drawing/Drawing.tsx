@@ -3,7 +3,11 @@ import { Tldraw } from "@tldraw/tldraw";
 
 import { Box } from "@chakra-ui/react";
 
-export default function Drawing() {
+type Props = {
+  fullscreen: boolean;
+};
+
+export default function Drawing({ fullscreen }: Props) {
   const tlDrawRef = useRef(null);
   const outerRef = useRef(null);
   const [originalWidth, setOriginalWidth] = useState(null);
@@ -22,7 +26,10 @@ export default function Drawing() {
   }, [scale]);
 
   useLayoutEffect(() => {
-    setOriginalWidth(outerRef.current.offsetWidth);
+    setTimeout(() => {
+      // WHY??
+      setOriginalWidth(outerRef.current.offsetWidth);
+    });
   }, []);
 
   useLayoutEffect(() => {
@@ -39,7 +46,13 @@ export default function Drawing() {
 
   return (
     <Box position="absolute" top={"0"} left={"0"} right={"0"} bottom={"0"} ref={outerRef}>
-      <Tldraw onMount={handleMount} showMenu={false} showPages={false} />
+      <Tldraw
+        onMount={handleMount}
+        showMenu={false}
+        showPages={false}
+        showStyles={fullscreen === false}
+        showZoom={false}
+      />
     </Box>
   );
 }

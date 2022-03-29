@@ -28,7 +28,11 @@ const useStore = create<State>((set) => ({
   /**
    * Video control
    */
-  addVideo: (video: Video) => set((state) => ({ videos: state.videos.concat([video]) })),
+  addVideo: (video: Video) =>
+    set((state) => ({
+      activeVideoId: state.activeVideoId === null ? video.id : state.activeVideoId,
+      videos: state.videos.concat([video]),
+    })),
 
   removeVideo: (video: Video) =>
     set(

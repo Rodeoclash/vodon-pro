@@ -79,7 +79,7 @@ export default function VideoThumbnail({ video }: Props) {
     };
   }, [currentTime]);
 
-  const videoStyles = css`
+  const containerStyles = css`
     display: ${currentActive === true || isAfterRange === true ? "none" : "block"};
   `;
 
@@ -88,13 +88,8 @@ export default function VideoThumbnail({ video }: Props) {
     display: ${currentActive === false && isAfterRange === true ? "flex" : "none"};
   `;
 
-  const resetStyles = css`
-    aspect-ratio: 16 / 9;
-    display: ${currentActive === true ? "flex" : "none"};
-  `;
-
   return (
-    <Box position={"relative"} cursor={"pointer"}>
+    <Box position={"relative"} cursor={"pointer"} css={containerStyles}>
       <Heading
         position={"absolute"}
         top={"0"}
@@ -106,14 +101,9 @@ export default function VideoThumbnail({ video }: Props) {
       >
         {video.name}
       </Heading>
-      <Box onClick={handleClickVideo} ref={videoRef} css={videoStyles} />
+      <Box onClick={handleClickVideo} ref={videoRef} />
       <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
         <Text fontSize={"sm"}>Finished {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago</Text>
-      </Flex>
-      <Flex css={resetStyles} onClick={handleClickVideo} align={"center"} justify={"center"} bgColor={"gray.700"}>
-        <Button onClick={handleClickReset} leftIcon={<RefreshIcon />}>
-          Reset
-        </Button>
       </Flex>
     </Box>
   );

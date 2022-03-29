@@ -51,7 +51,7 @@ type VideoStreamMetadata = {
   index: number;
   codec_type: "video";
   avg_frame_rate: string;
-  displayAspectRatio: string;
+  display_aspect_ratio: string;
 };
 
 export type VideoMetadata = {
@@ -93,8 +93,6 @@ export function findMaxNormalisedDuration(videos: Video[]): number | null {
 export async function createFromFile(filePath: string): Promise<Video> {
   const metadata = await window.video.getMetadata(filePath);
 
-  console.log(metadata);
-
   // extract video stream
   const videoStream = metadata.streams.find((stream: VideoStreamMetadata | AudioStreamMetadata) => {
     return stream.codec_type === "video";
@@ -109,7 +107,7 @@ export async function createFromFile(filePath: string): Promise<Video> {
   el.src = filePath;
 
   return {
-    displayAspectRatio: videoStream.displayAspectRatio,
+    displayAspectRatio: videoStream.display_aspect_ratio,
     duration: null,
     durationNormalised: null,
     el,
