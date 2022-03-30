@@ -133,7 +133,7 @@ export default function ReviewVideos() {
       setCurrentTime(currentTime + (Date.now() - startedPlayingAt) / 1000);
     }
 
-    const timer = setInterval(updateCurrentTime, 50);
+    const timer = setInterval(updateCurrentTime, 500);
 
     return () => {
       updateCurrentTime();
@@ -241,10 +241,10 @@ export default function ReviewVideos() {
         >
           <Box>
             <FormControl display="flex" alignItems="center">
-              <FormLabel htmlFor="email-alerts" mb="0">
+              <FormLabel htmlFor="toggle-drawing" mb="0">
                 Enable drawing
               </FormLabel>
-              <Switch id="email-alerts" onChange={handleToggleDrawingChange} isChecked={drawing} disabled={playing} />
+              <Switch id="toggle-drawing" onChange={handleToggleDrawingChange} isChecked={drawing} disabled={playing} />
             </FormControl>
           </Box>
         </Flex>

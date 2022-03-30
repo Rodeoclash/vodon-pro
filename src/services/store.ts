@@ -1,4 +1,5 @@
-import create from "zustand";
+import createStore from "zustand";
+import { configurePersist } from "zustand-persist";
 import { produce } from "immer";
 
 import { findMinOffset, findMaxNormalisedDuration } from "./models/Video";
@@ -11,105 +12,122 @@ interface State {
   setActiveVideoId: (id: string | null) => void;
   setCurrentTime: (currentTime: number) => void;
   setVideoDuration: (video: Video, duration: number) => void;
-  setVideoOffset: (video: Video, offset: number) => void;
   setVideoName: (video: Video, name: string) => void;
+  setVideoOffset: (video: Video, offset: number) => void;
   startPlaying: () => void;
   stopPlaying: () => void;
   togglePlaying: () => void;
+  toggleSlowCPUMode: () => void;
 
   activeVideoId: null | string;
+  currentTime: number;
   maxDuration: number | null;
   playing: boolean;
-  currentTime: number;
+  slowCPUMode: boolean;
   videos: Video[];
 }
 
-const useStore = create<State>((set) => ({
-  /**
-   * Video control
-   */
-  addVideo: (video: Video) =>
-    set((state) => ({
-      activeVideoId: state.activeVideoId === null ? video.id : state.activeVideoId,
-      videos: state.videos.concat([video]),
-    })),
+const { persist, purge } = configurePersist({
+  storage: localStorage,
+});
 
-  removeVideo: (video: Video) =>
-    set(
-      produce((state: State) => {
-        state.videos = state.videos.filter((innerVideo) => {
-          return video.id !== innerVideo.id;
-        });
-      })
-    ),
+const useStore = createStore<State>(
+  persist(
+    {
+      key: "store",
+      allowlist: ["slowCPUMode"],
+    },
+    (set) => ({
+      /**
+       * Video control
+       */
+      addVideo: (video: Video) =>
+        set((state) => ({
+          activeVideoId: state.activeVideoId === null ? video.id : state.activeVideoId,
+          videos: state.videos.concat([video]),
+        })),
 
-  // TODO: Combine with name update
-  setVideoDuration: (video: Video, duration: number) =>
-    set(
-      produce((state: State) => {
-        const index = state.videos.findIndex((innerVideo) => {
-          return innerVideo.id === video.id;
-        });
+      removeVideo: (video: Video) =>
+        set(
+          produce((state: State) => {
+            state.videos = state.videos.filter((innerVideo) => {
+              return video.id !== innerVideo.id;
+            });
+          })
+        ),
 
-        state.videos[index].duration = duration;
-      })
-    ),
+      // TODO: Combine with name update
+      setVideoDuration: (video: Video, duration: number) =>
+        set(
+          produce((state: State) => {
+            const index = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
 
-  // TODO: Combine with duration update
-  setVideoName: (video: Video, name: string) =>
-    set(
-      produce((state: State) => {
-        const index = state.videos.findIndex((innerVideo) => {
-          return innerVideo.id === video.id;
-        });
+            state.videos[index].duration = duration;
+          })
+        ),
 
-        state.videos[index].name = name;
-      })
-    ),
+      // TODO: Combine with duration update
+      setVideoName: (video: Video, name: string) =>
+        set(
+          produce((state: State) => {
+            const index = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
 
-  setVideoOffset: (video: Video, offset: number) =>
-    set(
-      produce((state: State) => {
-        const index = state.videos.findIndex((innerVideo) => {
-          return innerVideo.id === video.id;
-        });
+            state.videos[index].name = name;
+          })
+        ),
 
-        // update the set state
-        state.videos[index].offset = offset;
+      setVideoOffset: (video: Video, offset: number) =>
+        set(
+          produce((state: State) => {
+            const index = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
 
-        // recalculate the normalised offset and store against all the videos
-        const minimumOffset = findMinOffset(state.videos);
+            // update the set state
+            state.videos[index].offset = offset;
 
-        state.videos.forEach((video) => {
-          video.offsetNormalised = video.offset - minimumOffset;
-          video.durationNormalised = video.duration + video.offsetNormalised;
-        });
+            // recalculate the normalised offset and store against all the videos
+            const minimumOffset = findMinOffset(state.videos);
 
-        // Set the max duration of all the videos. This is used to construct the global slider
-        state.maxDuration = findMaxNormalisedDuration(state.videos);
-      })
-    ),
+            state.videos.forEach((video) => {
+              video.offsetNormalised = video.offset - minimumOffset;
+              video.durationNormalised = video.duration + video.offsetNormalised;
+            });
 
-  setActiveVideoId: (id: string | null) => set((state) => ({ activeVideoId: id })),
+            // Set the max duration of all the videos. This is used to construct the global slider
+            state.maxDuration = findMaxNormalisedDuration(state.videos);
+          })
+        ),
 
-  /**
-   * Play control
-   */
-  setCurrentTime: (currentTime: number) =>
-    set((state) => {
-      return {
-        currentTime,
-      };
-    }),
-  startPlaying: () => set((state) => ({ playing: true })),
-  stopPlaying: () => set((state) => ({ playing: false })),
-  togglePlaying: () => set((state) => ({ playing: !state.playing })),
+      setActiveVideoId: (id: string | null) => set((state) => ({ activeVideoId: id })),
 
-  activeVideoId: null,
-  currentTime: 0,
-  maxDuration: null,
-  playing: false,
-  videos: [],
-}));
+      /**
+       * Play control
+       */
+      setCurrentTime: (currentTime: number) =>
+        set((state) => {
+          return {
+            currentTime,
+          };
+        }),
+      startPlaying: () => set((state) => ({ playing: true })),
+      stopPlaying: () => set((state) => ({ playing: false })),
+      togglePlaying: () => set((state) => ({ playing: !state.playing })),
+
+      toggleSlowCPUMode: () => set((state) => ({ slowCPUMode: !state.slowCPUMode })),
+
+      activeVideoId: null,
+      currentTime: 0,
+      maxDuration: null,
+      playing: false,
+      slowCPUMode: false,
+      videos: [],
+    })
+  )
+);
 
 export default useStore;

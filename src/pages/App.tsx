@@ -52,6 +52,7 @@ export default function App() {
             <Flex as={"nav"} ml={"4"}>
               <NavLink to="/">Setup videos</NavLink>
               <NavLink to="/review">Review</NavLink>
+              <NavLink to="/settings">Settings</NavLink>
               <NavLink to="/about">About</NavLink>
             </Flex>
             <Spacer />

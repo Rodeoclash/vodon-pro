@@ -20,6 +20,7 @@ export default function VideoThumbnail({ video }: Props) {
   const activeVideoId = useStore((state) => state.activeVideoId);
   const currentTime = useStore((state) => state.currentTime);
   const playing = useStore((state) => state.playing);
+  const slowCPUMode = useStore((state) => state.slowCPUMode);
 
   const isAfterRange = currentTime > video.durationNormalised;
   const currentActive = activeVideoId === video.id;
@@ -48,7 +49,7 @@ export default function VideoThumbnail({ video }: Props) {
 
   // watch playing state and play / pause as needed
   useEffect(() => {
-    if (playing === true) {
+    if (playing === true && (currentActive === true || slowCPUMode === false)) {
       video.el.play();
     } else {
       video.el.pause();
@@ -57,12 +58,10 @@ export default function VideoThumbnail({ video }: Props) {
 
   // watch current time and update as needed
   useEffect(() => {
-    if (playing === true) {
-      return;
+    if (playing === false || (playing === true && currentActive === false && slowCPUMode === true)) {
+      video.el.currentTime = currentTime + video.offsetNormalised;
     }
-
-    video.el.currentTime = currentTime + video.offsetNormalised;
-  }, [playing, currentTime]);
+  }, [playing, currentTime, currentActive]);
 
   useLayoutEffect(() => {
     const handleFrame = (time: number, metadata: VideoFrameMetadata) => {

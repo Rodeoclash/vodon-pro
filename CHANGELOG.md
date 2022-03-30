@@ -1,3 +1,7 @@
+### 1.4.0
+
+- Added a "slow CPU" mode which disables smooth playback of the thumbnail videos.
+
 ### 1.3.0
 
 - Removed hardcoded 16:9 aspect ratio for videos, now supports actual video aspect ratio.
