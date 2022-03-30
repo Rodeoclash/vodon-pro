@@ -17,7 +17,7 @@ export default function About() {
         <Text my={"2"}>
           Want to say hi? Email me at{" "}
           <Link href="mailto:sam@richardson.co.nz" textDecoration={"underline"}>
-            sam@richardson.co.nz
+            sam@vodon.gg
           </Link>
           .
         </Text>

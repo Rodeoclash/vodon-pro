@@ -35,6 +35,10 @@ If you're performing VOD reviews on games with inbuilt replay tools then Vodon P
 
 Finally, if you're studying a game by a competing team, you may only have access to video replays or streams of their games (nothing stops you from using Vodon Pro on your competitors)
 
+### How can I get in touch?
+
+You can [email me](mailto:sam@vodon.gg) or join me and the other users on [our Discord](https://discord.gg/EaJdhHtZEk)
+
 ## Screenshots
 
 ### Reviewing videos
