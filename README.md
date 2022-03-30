@@ -12,10 +12,12 @@ Add viewpoints from each of the players in a match, tell Vodon how to synchronis
 
 ## Features
 
-- Supports an unlimited number of videos, restricted only by your systems performance
+- Supports an unlimited number of videos, restricted only by your systems performance.
+- Includes a "Slow CPU" mode to reduce load when many videos are loaded in at once.
 - Drawing tools powered by [TLDraw](https://github.com/tldraw/tldraw)
 - Frame advance and rewind controls
-- Supports most video formats (MP4, WebM)
+- Supports MP4 and WebM video formats
+- Supports any framerate or aspect ratio of videos.
 
 ## Getting started
 
