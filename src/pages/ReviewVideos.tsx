@@ -148,7 +148,10 @@ export default function ReviewVideos() {
     }
 
     if (fullscreen === true) {
-      contentRef.current.requestFullscreen();
+      (async () => {
+        await contentRef.current.requestFullscreen();
+        window.dispatchEvent(new Event("resize"));
+      })();
     } else if (document.fullscreenElement) {
       document.exitFullscreen();
     }
@@ -203,9 +206,15 @@ export default function ReviewVideos() {
     }
   `;
 
-  const renderedSidebar = videos.map((video) => {
+  const renderedSidebarVideos = videos.map((video) => {
     return <VideoThumbnail key={video.id} video={video} />;
   });
+
+  const renderedSidebar = (
+    <Flex direction={"column"} height={"calc(100vh - 5rem)"} justifyContent={"space-evenly"}>
+      {renderedSidebarVideos}
+    </Flex>
+  );
 
   const renderedContent = (() => {
     if (videos.length === 0) {

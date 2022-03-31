@@ -1,3 +1,11 @@
+### 1.4.1
+
+- Fix selecting a single video, removing it, then selecting another causing the videos not to activate.
+- Fix single video play not starting when play triggered
+- Trigger resize after fullscreen to recalculate video layout dimensions.
+- Improved layout algo to avoid needing to scroll sidebar.
+- Hide visual alignment tool when setting up videos
+
 ### 1.4.0
 
 - Added a "slow CPU" mode which disables smooth playback of the thumbnail videos.

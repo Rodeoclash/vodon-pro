@@ -1,3 +1,5 @@
+import { css } from "@emotion/react";
+
 import { Flex, Box } from "@chakra-ui/react";
 
 interface Props {
@@ -24,22 +26,25 @@ export default function WithSidebar({ children, sidebar, disableSidebar = false 
     "2xl": "25vw",
   };
 
+  const sidebarStyles = css`
+    display: ${disableSidebar === true ? "none" : "block"};
+  `;
+
   return (
     <Flex>
       <Box width={mainStyleWidth} bgColor={"black"}>
         {children}
       </Box>
-      {disableSidebar === false && (
-        <Box
-          width={sidebarStyleWidth}
-          boxSizing={"border-box"}
-          borderLeft={"1px"}
-          borderColor={"whiteAlpha.300"}
-          overflowY={"auto"}
-        >
-          {sidebar}
-        </Box>
-      )}
+      <Box
+        css={sidebarStyles}
+        width={sidebarStyleWidth}
+        boxSizing={"border-box"}
+        borderLeft={"1px"}
+        borderColor={"whiteAlpha.300"}
+        overflowY={"auto"}
+      >
+        {sidebar}
+      </Box>
     </Flex>
   );
 }

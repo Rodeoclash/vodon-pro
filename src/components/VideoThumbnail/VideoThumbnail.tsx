@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useLayoutEffect } from "react";
+import React, { useEffect, useRef, useLayoutEffect, useState } from "react";
 import { css } from "@emotion/react";
 
 import useStore from "../../services/store";
+import { getRatioDimensions } from "../../services/layout";
 
 import { Box, Heading, Flex, Button, Text } from "@chakra-ui/react";
 import { Refresh as RefreshIcon } from "tabler-icons-react";
@@ -14,6 +15,7 @@ interface Props {
 
 export default function VideoThumbnail({ video }: Props) {
   const videoRef = useRef(null);
+  const containerRef = useRef(null);
 
   const setActiveVideoId = useStore((state) => state.setActiveVideoId);
 
@@ -21,6 +23,8 @@ export default function VideoThumbnail({ video }: Props) {
   const currentTime = useStore((state) => state.currentTime);
   const playing = useStore((state) => state.playing);
   const slowCPUMode = useStore((state) => state.slowCPUMode);
+
+  const [videoDimensions, setVideoDimensions] = useState(null);
 
   const isAfterRange = currentTime > video.durationNormalised;
   const currentActive = activeVideoId === video.id;
@@ -78,32 +82,70 @@ export default function VideoThumbnail({ video }: Props) {
     };
   }, [currentTime]);
 
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current === null) {
+        return;
+      }
+
+      const dimensions = getRatioDimensions(video.displayAspectRatio, containerRef.current);
+
+      setVideoDimensions(dimensions);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [currentActive]);
+
+  const innerStyles = css`
+    width: ${videoDimensions ? videoDimensions[0] : ""}px;
+    height: ${videoDimensions ? videoDimensions[1] : ""}px;
+
+    video {
+      width: ${videoDimensions ? videoDimensions[0] : ""}px;
+      height: ${videoDimensions ? videoDimensions[1] : ""}px;
+    }
+  `;
+
   const containerStyles = css`
-    display: ${currentActive === true || isAfterRange === true ? "none" : "block"};
+    display: ${currentActive === true || isAfterRange === true ? "none" : "flex"};
   `;
 
   const afterRangeStyles = css`
-    aspect-ratio: 16 / 9;
     display: ${currentActive === false && isAfterRange === true ? "flex" : "none"};
   `;
 
   return (
-    <Box position={"relative"} cursor={"pointer"} css={containerStyles}>
-      <Heading
-        position={"absolute"}
-        top={"0"}
-        left={"0"}
-        bgColor={"blackAlpha.800"}
-        padding={"2"}
-        fontSize={"md"}
-        fontWeight={"normal"}
-      >
-        {video.name}
-      </Heading>
-      <Box onClick={handleClickVideo} ref={videoRef} />
-      <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
-        <Text fontSize={"sm"}>Finished {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago</Text>
-      </Flex>
-    </Box>
+    <Flex
+      overflow={"hidden"}
+      ref={containerRef}
+      height="100%"
+      css={containerStyles}
+      align={"center"}
+      justifyContent={"center"}
+    >
+      <Box position={"relative"} cursor={"pointer"} css={innerStyles}>
+        <Heading
+          position={"absolute"}
+          top={"0"}
+          left={"0"}
+          bgColor={"blackAlpha.800"}
+          padding={"2"}
+          fontSize={"md"}
+          fontWeight={"normal"}
+        >
+          {video.name}
+        </Heading>
+        <Box onClick={handleClickVideo} ref={videoRef} />
+        <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
+          <Text fontSize={"sm"}>Finished {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago</Text>
+        </Flex>
+      </Box>
+    </Flex>
   );
 }

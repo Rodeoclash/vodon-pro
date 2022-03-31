@@ -96,31 +96,9 @@ export default function SetupVideos() {
     </Box>
   );
 
-  const renderedVisualAlignment = videos.map((video) => {
-    return (
-      <Box
-        key={video.id}
-        mb={"1px"}
-        bgColor={"whiteAlpha.300"}
-        p={"2"}
-        ml={`${video.offsetNormalised}px`}
-        width={video.duration}
-      >
-        <Box fontSize={"small"} whiteSpace={"nowrap"}>
-          {video.name}
-        </Box>
-      </Box>
-    );
-  });
-
   return (
     <WithSidebar sidebar={renderedSidebar}>
       <Box overflowY={"auto"} height={"calc(100vh - 5rem)"} width={"100%"}>
-        {videos.length > 0 && (
-          <Flex my={4} align={"center"} justifyContent={"center"}>
-            <Box width={`${maxDuration}px`}>{renderedVisualAlignment}</Box>
-          </Flex>
-        )}
         <Grid templateColumns={`repeat(${rowCount}, 1fr)`} gap={0}>
           {renderedVideos}
           <GridItem>

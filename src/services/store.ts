@@ -43,7 +43,7 @@ const useStore = createStore<State>(
        */
       addVideo: (video: Video) =>
         set((state) => ({
-          activeVideoId: state.activeVideoId === null ? video.id : state.activeVideoId,
+          activeVideoId: state.activeVideoId === null || state.videos.length === 0 ? video.id : state.activeVideoId,
           videos: state.videos.concat([video]),
         })),
 
