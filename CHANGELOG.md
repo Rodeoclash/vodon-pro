@@ -1,3 +1,7 @@
+### 1.5.1
+
+- Added volume control per video.
+
 ### 1.5.0
 
 - Auto save changes. Restore last state when loading app.

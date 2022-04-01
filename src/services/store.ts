@@ -8,18 +8,19 @@ import type { Video } from "./models/Video";
 
 interface State {
   addVideo: (video: Video) => void;
-  removeVideo: (video: Video) => void;
   clearVideos: () => void;
+  removeVideo: (video: Video) => void;
   setActiveVideoId: (id: string | null) => void;
   setCurrentTime: (currentTime: number) => void;
+  setShowSetupInstructions: (value: boolean) => void;
   setVideoDuration: (video: Video, duration: number) => void;
   setVideoName: (video: Video, name: string) => void;
   setVideoOffset: (video: Video, offset: number) => void;
+  setVideoVolume: (video: Video, volume: number) => void;
   startPlaying: () => void;
   stopPlaying: () => void;
   togglePlaying: () => void;
   toggleSlowCPUMode: () => void;
-  setShowSetupInstructions: (value: boolean) => void;
 
   activeVideoId: string | null;
   currentTime: number;
@@ -79,6 +80,18 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].name = name;
+          })
+        ),
+
+      // TODO: Combine with duration update
+      setVideoVolume: (video: Video, volume: number) =>
+        set(
+          produce((state: State) => {
+            const index = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
+
+            state.videos[index].volume = volume;
           })
         ),
 

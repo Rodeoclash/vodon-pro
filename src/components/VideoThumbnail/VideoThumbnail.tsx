@@ -63,9 +63,18 @@ export default function VideoThumbnail({ video }: Props) {
 
     if (currentActive === false) {
       videoRef.current.appendChild(video.el);
-      video.el.volume = 0; // TODO: Remove from this, control in store
+      video.el.volume = 0;
     }
   }, [currentActive]);
+
+  // set volume on the active video
+  useEffect(() => {
+    if (currentActive === false) {
+      return;
+    }
+
+    video.el.volume = video.volume;
+  }, [currentActive, video.volume]);
 
   // watch playing state and play / pause as needed
   useEffect(() => {

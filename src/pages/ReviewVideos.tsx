@@ -28,9 +28,10 @@ import {
 import { Link } from "react-router-dom";
 
 import Drawing from "../components/Drawing/Drawing";
-import WithSidebar from "../layouts/WithSidebar";
-import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
 import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
+import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
+import VideoVolume from "../components/VideoVolume/VideoVolume";
+import WithSidebar from "../layouts/WithSidebar";
 
 export default function ReviewVideos() {
   const overlayRef = useRef(null);
@@ -111,6 +112,7 @@ export default function ReviewVideos() {
 
     videoRef.current.innerHTML = "";
     videoRef.current.appendChild(activeVideo.el);
+
     activeVideo.el.volume = activeVideo.volume;
   }, [activeVideo]);
 
@@ -305,7 +307,7 @@ export default function ReviewVideos() {
 
           <VideoStepControl direction="backwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
 
-          <Text whiteSpace={"nowrap"} fontSize={"sm"} mx={"2"} align={"center"} width={"32"}>
+          <Text whiteSpace={"nowrap"} fontSize={"sm"} align={"center"} width={"32"}>
             {currentTime.toFixed(2)} / {maxDuration.toFixed(2)}
           </Text>
 
@@ -325,6 +327,10 @@ export default function ReviewVideos() {
               </SliderTrack>
               <SliderThumb />
             </Slider>
+          </Box>
+
+          <Box mx={"4"}>
+            <VideoVolume video={activeVideo} />
           </Box>
 
           <VideoStepControl direction="forwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
