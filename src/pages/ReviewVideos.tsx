@@ -300,18 +300,20 @@ export default function ReviewVideos() {
           borderTop={"1px"}
           borderColor={"whiteAlpha.300"}
         >
-          <Box mr={"4"}>
+          <Box mr={"2"}>
             {!playing && <IconButton onClick={startPlaying} icon={<PlayerPlayIcon />} aria-label="Play" />}
             {playing && <IconButton onClick={stopPlaying} icon={<PlayerPauseIcon />} aria-label="Pause" />}
           </Box>
 
-          <VideoStepControl direction="backwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
+          <Box mx={"2"}>
+            <VideoStepControl direction="backwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
+          </Box>
 
           <Text whiteSpace={"nowrap"} fontSize={"sm"} align={"center"} width={"32"}>
             {currentTime.toFixed(2)} / {maxDuration.toFixed(2)}
           </Text>
 
-          <Box flexGrow={"1"} mx={"4"}>
+          <Box flexGrow={"1"} mx={"2"}>
             <Slider
               key="playing"
               aria-label="Global time control"
@@ -329,13 +331,17 @@ export default function ReviewVideos() {
             </Slider>
           </Box>
 
-          <Box mx={"4"}>
+          <Box mx={"2"}>
             <VideoVolume video={activeVideo} />
           </Box>
 
-          <VideoStepControl direction="forwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
+          <Box mx={"2"}>
+            <VideoStepControl direction="forwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
+          </Box>
 
-          <IconButton ml={"4"} onClick={handleClickFullscreen} icon={<MaximizeIcon />} aria-label="Fullscreen video" />
+          <Box ml={"2"}>
+            <IconButton onClick={handleClickFullscreen} icon={<MaximizeIcon />} aria-label="Fullscreen video" />
+          </Box>
         </Flex>
       </>
     );
