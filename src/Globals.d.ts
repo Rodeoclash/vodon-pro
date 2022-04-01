@@ -10,6 +10,7 @@ interface Window {
 
   video: {
     getMetadata: (filepath: string) => Promise<VideoMetadata>;
+    exists: (filepath: string) => Promise<boolean>;
   };
 }
 

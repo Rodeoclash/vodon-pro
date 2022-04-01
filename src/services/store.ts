@@ -1,5 +1,5 @@
 import createStore from "zustand";
-import { configurePersist } from "zustand-persist";
+import { persist } from "zustand/middleware";
 import { produce } from "immer";
 
 import { findMinOffset, findMaxNormalisedDuration } from "./models/Video";
@@ -9,6 +9,7 @@ import type { Video } from "./models/Video";
 interface State {
   addVideo: (video: Video) => void;
   removeVideo: (video: Video) => void;
+  clearVideos: () => void;
   setActiveVideoId: (id: string | null) => void;
   setCurrentTime: (currentTime: number) => void;
   setVideoDuration: (video: Video, duration: number) => void;
@@ -18,26 +19,20 @@ interface State {
   stopPlaying: () => void;
   togglePlaying: () => void;
   toggleSlowCPUMode: () => void;
+  setShowSetupInstructions: (value: boolean) => void;
 
-  activeVideoId: null | string;
+  activeVideoId: string | null;
   currentTime: number;
   maxDuration: number | null;
   playing: boolean;
+  showSetupInstructions: boolean | undefined;
   slowCPUMode: boolean;
   videos: Video[];
 }
 
-const { persist, purge } = configurePersist({
-  storage: localStorage,
-});
-
 const useStore = createStore<State>(
   persist(
-    {
-      key: "store",
-      allowlist: ["slowCPUMode"],
-    },
-    (set) => ({
+    (set, get) => ({
       /**
        * Video control
        */
@@ -53,6 +48,13 @@ const useStore = createStore<State>(
             state.videos = state.videos.filter((innerVideo) => {
               return video.id !== innerVideo.id;
             });
+          })
+        ),
+
+      clearVideos: () =>
+        set(
+          produce((state: State) => {
+            state.videos = [];
           })
         ),
 
@@ -119,14 +121,64 @@ const useStore = createStore<State>(
       togglePlaying: () => set((state) => ({ playing: !state.playing })),
 
       toggleSlowCPUMode: () => set((state) => ({ slowCPUMode: !state.slowCPUMode })),
+      setShowSetupInstructions: (value) => set((state) => ({ showSetupInstructions: value })),
 
       activeVideoId: null,
       currentTime: 0,
       maxDuration: null,
       playing: false,
+      showSetupInstructions: true,
       slowCPUMode: false,
       videos: [],
-    })
+    }),
+    {
+      name: "vodon-store-v1",
+      serialize: (state) => {
+        // remove video elements
+        const updatedState = produce(state.state, (state: State) => {
+          state.videos = state.videos.map((video) => {
+            return {
+              ...video,
+              el: null,
+            };
+          });
+        });
+
+        return JSON.stringify({ ...state, state: updatedState });
+      },
+      deserialize: async (str) => {
+        const parsedStr = JSON.parse(str);
+
+        // When restoring state, we need to handle videos that might have been moved
+        // TODO: This should register an error or similar that the video was removed
+        const updatedState = produce(parsedStr.state, async (state: State) => {
+          let videos = [];
+
+          for (const video of state.videos) {
+            const exists = await window.video.exists(video.filePath);
+
+            if (exists === false) {
+              continue;
+            }
+
+            const el = document.createElement("video");
+            el.src = video.filePath;
+
+            videos.push({
+              ...video,
+              el,
+            });
+          }
+
+          state.videos = videos;
+        });
+
+        return {
+          ...parsedStr,
+          state: updatedState,
+        };
+      },
+    }
   )
 );
 

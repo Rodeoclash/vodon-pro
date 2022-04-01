@@ -1,3 +1,11 @@
+### 1.5.0
+
+- Auto save changes. Restore last state when loading app.
+- Reworked "Setup Videos" UI by moving instructions to a dialog box. Allows more room to setup videos.
+- It's now possible to hold the mouse button down when using the frame advance / rewind functionality
+- Added the name of the currently active video
+- Changed navigation from "Setup videos" to "videos".
+
 ### 1.4.1
 
 - Fix selecting a single video, removing it, then selecting another causing the videos not to activate.

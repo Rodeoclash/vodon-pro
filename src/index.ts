@@ -2,6 +2,7 @@ import { app, BrowserWindow, session, protocol, ipcMain } from "electron";
 
 import ffprobe from "@ffprobe-installer/ffprobe";
 import ffmpeg from "fluent-ffmpeg";
+const { promises: fs } = require("fs");
 
 ffmpeg.setFfprobePath(ffprobe.path);
 
@@ -71,6 +72,15 @@ ipcMain.handle("video:getMetadata", async (event, filePath: string) => {
   });
 
   return metadata;
+});
+
+ipcMain.handle("video:exists", async (event, filePath: string) => {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
 });
 
 // allow local videos

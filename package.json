@@ -1,7 +1,7 @@
 {
   "name": "vodon-pro",
   "productName": "vodon-pro",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
@@ -129,7 +129,6 @@
     "react-router-dom": "^6.2.2",
     "tabler-icons-react": "^1.37.0",
     "uuid": "^8.3.2",
-    "zustand": "^3.7.1",
-    "zustand-persist": "^0.4.0"
+    "zustand": "^3.7.1"
   }
 }

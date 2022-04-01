@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld("app", {
 
 contextBridge.exposeInMainWorld("video", {
   getMetadata: (filePath: string) => ipcRenderer.invoke("video:getMetadata", filePath),
+  exists: (filePath: string) => ipcRenderer.invoke("video:exists", filePath),
 });

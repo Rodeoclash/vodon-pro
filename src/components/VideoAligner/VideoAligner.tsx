@@ -123,7 +123,8 @@ export default function VideoAligner({ video }: Props) {
           position={"absolute"}
           top={"0"}
           left={"0"}
-          p={"2"}
+          px={"8"}
+          py={"4"}
           zIndex={1}
           bgColor={"blackAlpha.600"}
           cursor={"pointer"}
@@ -140,7 +141,8 @@ export default function VideoAligner({ video }: Props) {
           position={"absolute"}
           top={"0"}
           right={"0"}
-          p={"2"}
+          px={"4"}
+          py={"4"}
           zIndex={1}
           bgColor={"blackAlpha.800"}
           cursor={"pointer"}
@@ -158,11 +160,11 @@ export default function VideoAligner({ video }: Props) {
       <Modal isOpen={isOpen} onClose={handleClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Edit player</ModalHeader>
+          <ModalHeader>Edit video details</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl>
-              <FormLabel>First name</FormLabel>
+              <FormLabel>Name</FormLabel>
               <Input value={video.name} onChange={handleChangeVideoName} autoFocus />
             </FormControl>
           </ModalBody>

@@ -39,6 +39,22 @@ export default function VideoThumbnail({ video }: Props) {
     setActiveVideoId(null);
   }
 
+  useEffect(() => {
+    const handleLoadedMetaData = () => {
+      if (containerRef.current === null) {
+        return;
+      }
+
+      window.dispatchEvent(new Event("resize"));
+    };
+
+    video.el.addEventListener("loadedmetadata", handleLoadedMetaData);
+
+    return () => {
+      video.el.removeEventListener("loadedmetadata", handleLoadedMetaData);
+    };
+  }, []);
+
   // when this video becomes inactive, replace it in the list
   useEffect(() => {
     if (videoRef.current === null) {

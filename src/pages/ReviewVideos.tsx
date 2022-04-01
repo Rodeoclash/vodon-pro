@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useLayoutEffect } from "react";
+import { useRef, useEffect, useState, useLayoutEffect, useCallback } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { css } from "@emotion/react";
 
@@ -17,6 +17,7 @@ import {
   Switch,
   FormControl,
   FormLabel,
+  Heading,
 } from "@chakra-ui/react";
 
 import {
@@ -177,14 +178,21 @@ export default function ReviewVideos() {
     };
   }, [activeVideo]);
 
+  // Trigger resize event on load of element, needs timeout to wait for video element to be fully present
+  useLayoutEffect(() => {
+    setTimeout(() => {
+      window.dispatchEvent(new Event("resize"));
+    });
+  }, []);
+
   function handleSliderChange(newTime: number) {
     stopPlaying();
     setCurrentTime(newTime);
   }
 
-  function handleClickStep(distance: number) {
-    setCurrentTime(currentTime + distance);
-  }
+  const handleClickStep = (distance: number) => {
+    setCurrentTime(useStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
+  };
 
   function handleToggleDrawingChange() {
     setDrawing(!drawing);
@@ -239,24 +247,36 @@ export default function ReviewVideos() {
 
     return (
       <>
-        <Flex
-          flexGrow={"0"}
-          align="center"
-          justifyContent={"center"}
-          p={"4"}
-          boxSizing={"border-box"}
-          borderBottom={"1px"}
-          borderColor={"whiteAlpha.300"}
-        >
-          <Box>
-            <FormControl display="flex" alignItems="center">
-              <FormLabel htmlFor="toggle-drawing" mb="0">
-                Enable drawing
-              </FormLabel>
-              <Switch id="toggle-drawing" onChange={handleToggleDrawingChange} isChecked={drawing} disabled={playing} />
-            </FormControl>
+        {videoDimensions && (
+          <Box borderBottom={"1px"} borderColor={"whiteAlpha.300"}>
+            <Flex
+              mx={"auto"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+              height={"4rem"}
+              width={`${videoDimensions[0]}px`}
+              px={8}
+              boxSizing={"border-box"}
+            >
+              <Box>
+                <Heading fontSize={"2xl"}>{activeVideo.name}</Heading>
+              </Box>
+              <Box>
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel htmlFor="toggle-drawing" mb="0">
+                    Enable drawing
+                  </FormLabel>
+                  <Switch
+                    id="toggle-drawing"
+                    onChange={handleToggleDrawingChange}
+                    isChecked={drawing}
+                    disabled={playing}
+                  />
+                </FormControl>
+              </Box>
+            </Flex>
           </Box>
-        </Flex>
+        )}
         <Flex
           align={"center"}
           flexGrow={"1"}
