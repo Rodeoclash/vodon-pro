@@ -44,8 +44,18 @@ const createWindow = (): void => {
       submenu: [
         {
           label: "Load project",
-          click() {
-            console.log("heard load");
+          async click() {
+            const result = await dialog.showOpenDialog(mainWindow, {
+              properties: ["openFile"],
+              filters: [{ name: "JSON", extensions: ["json"] }],
+            });
+
+            if (result.canceled === false) {
+              console.log("=== HERE");
+              const contents = await fs.readFile(result.filePaths[0]);
+              console.log(contents);
+              mainWindow.webContents.send("onLoadProjectRequest", contents.toString());
+            }
           },
         },
         {

@@ -52,7 +52,7 @@ const serialize = (state: any) => {
 const deserialize = async (str: string) => {
   const parsedStr = JSON.parse(str);
 
-  const updatedState = produce(parsedStr.state, async (state: State) => {
+  const updatedState = await produce(parsedStr.state, async (state: State) => {
     let videos = [];
 
     for (const video of state.videos) {
@@ -215,4 +215,13 @@ window.app.onSaveProjectRequest((event: any, filePath: string) => {
   });
 
   window.app.saveProject(filePath, serializedState);
+});
+
+/**
+ * Handle the save request from the main thread. Calculate the current state
+ * then pass it back to the main thread along with the filepath to persist.
+ */
+window.app.onLoadProjectRequest(async (event: any, project: string) => {
+  const unserializedState = await deserialize(project);
+  useStore.setState(unserializedState.state);
 });

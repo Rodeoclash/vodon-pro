@@ -7,6 +7,7 @@ interface Window {
   app: {
     getVersion: () => Promise<string>;
     onSaveProjectRequest: (cb: (event: any, filePath: string) => void) => void;
+    onLoadProjectRequest: (cb: (event: any, project: string) => void) => void;
     saveProject: (filePath: string, project: string) => Promise<string>;
   };
 
