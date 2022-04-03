@@ -6,6 +6,8 @@ import { findMinOffset, findMaxNormalisedDuration } from "./models/Video";
 
 import type { Video } from "./models/Video";
 
+const PERSIST_VERSION = 0;
+
 interface State {
   addVideo: (video: Video) => void;
   clearVideos: () => void;
@@ -30,6 +32,53 @@ interface State {
   slowCPUMode: boolean;
   videos: Video[];
 }
+
+// remove video elements
+const serialize = (state: any) => {
+  const updatedState = produce(state.state, (state: State) => {
+    state.videos = state.videos.map((video) => {
+      return {
+        ...video,
+        el: null,
+      };
+    });
+  });
+
+  return JSON.stringify({ ...state, state: updatedState });
+};
+
+// When restoring state, we need to handle videos that might have been moved
+// TODO: This should register an error or similar that the video was removed
+const deserialize = async (str: string) => {
+  const parsedStr = JSON.parse(str);
+
+  const updatedState = produce(parsedStr.state, async (state: State) => {
+    let videos = [];
+
+    for (const video of state.videos) {
+      const exists = await window.video.exists(video.filePath);
+
+      if (exists === false) {
+        continue;
+      }
+
+      const el = document.createElement("video");
+      el.src = video.filePath;
+
+      videos.push({
+        ...video,
+        el,
+      });
+    }
+
+    state.videos = videos;
+  });
+
+  return {
+    ...parsedStr,
+    state: updatedState,
+  };
+};
 
 const useStore = createStore<State>(
   persist(
@@ -146,53 +195,24 @@ const useStore = createStore<State>(
     }),
     {
       name: "vodon-store-v1",
-      serialize: (state) => {
-        // remove video elements
-        const updatedState = produce(state.state, (state: State) => {
-          state.videos = state.videos.map((video) => {
-            return {
-              ...video,
-              el: null,
-            };
-          });
-        });
-
-        return JSON.stringify({ ...state, state: updatedState });
-      },
-      deserialize: async (str) => {
-        const parsedStr = JSON.parse(str);
-
-        // When restoring state, we need to handle videos that might have been moved
-        // TODO: This should register an error or similar that the video was removed
-        const updatedState = produce(parsedStr.state, async (state: State) => {
-          let videos = [];
-
-          for (const video of state.videos) {
-            const exists = await window.video.exists(video.filePath);
-
-            if (exists === false) {
-              continue;
-            }
-
-            const el = document.createElement("video");
-            el.src = video.filePath;
-
-            videos.push({
-              ...video,
-              el,
-            });
-          }
-
-          state.videos = videos;
-        });
-
-        return {
-          ...parsedStr,
-          state: updatedState,
-        };
-      },
+      version: PERSIST_VERSION,
+      serialize,
+      deserialize,
     }
   )
 );
 
 export default useStore;
+
+/**
+ * Handle the save request from the main thread. Calculate the current state
+ * then pass it back to the main thread along with the filepath to persist.
+ */
+window.app.onSaveProjectRequest((event: any, filePath: string) => {
+  const serializedState = serialize({
+    version: PERSIST_VERSION,
+    state: useStore.getState(),
+  });
+
+  window.app.saveProject(filePath, serializedState);
+});

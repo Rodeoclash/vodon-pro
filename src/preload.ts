@@ -1,9 +1,10 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
-import type { VideoMetadata } from "./services/models/Video";
-
 contextBridge.exposeInMainWorld("app", {
   getVersion: () => ipcRenderer.invoke("app:getVersion"),
+  saveProject: (filePath: string, project: string) => ipcRenderer.invoke("app:saveProject", filePath, project),
+  onSaveProjectRequest: (callback: (event: any, value: string) => void) =>
+    ipcRenderer.on("onSaveProjectRequest", callback),
 });
 
 contextBridge.exposeInMainWorld("video", {

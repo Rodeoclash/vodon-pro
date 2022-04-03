@@ -6,6 +6,8 @@ declare module "fluent-ffmpeg";
 interface Window {
   app: {
     getVersion: () => Promise<string>;
+    onSaveProjectRequest: (cb: (event: any, filePath: string) => void) => void;
+    saveProject: (filePath: string, project: string) => Promise<string>;
   };
 
   video: {
