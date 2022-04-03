@@ -1,3 +1,7 @@
+### 1.5.2
+
+- Load and save projects
+
 ### 1.5.1
 
 - Added volume control per video.
