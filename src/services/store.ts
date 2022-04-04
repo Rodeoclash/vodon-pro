@@ -98,6 +98,7 @@ const useStore = createStore<State>(
             state.videos = state.videos.filter((innerVideo) => {
               return video.id !== innerVideo.id;
             });
+            state.activeVideoId = state.videos.length === 1 ? state.videos[0].id : state.activeVideoId;
           })
         ),
 
