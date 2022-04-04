@@ -12,16 +12,33 @@ Add viewpoints from each of the players in a match, tell Vodon how to synchronis
 
 ## Features
 
-- Supports an unlimited number of videos, restricted only by your systems performance.
+- Supports an *unlimite*d number of videos (restricted by your systems performance)
 - Includes a "Slow CPU" mode to reduce load when many videos are loaded in at once.
-- Drawing tools powered by [TLDraw](https://github.com/tldraw/tldraw)
-- Frame advance and rewind controls
-- Supports MP4 and WebM video formats
-- Supports any framerate or aspect ratio of videos.
+- Draw on individual frames in each video (Powered by [TLDraw](https://github.com/tldraw/tldraw))
+- Frame advance and rewind controls.
+- Load and save your projects.
+- Autosaves your projects and settings as you work.
+- Supports MP4 and WebM video formats.
+- Supports up to 60fps videos.
+- Supports 16:9, 16:10 and 4:3 aspect ratios.
 
 ## Getting started
 
 Want to give Vodon Pro a try? Head over to the [releases page](https://github.com/Rodeoclash/vodon-pro/releases) and download.
+
+## Screenshots
+
+### Reviewing videos
+
+![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/review.png)
+
+### Drawing on frames
+
+![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/drawing.png)
+
+### Synchronising videos
+
+![Setup videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/setup.png)
 
 ## Frequently asked questions
 
@@ -38,23 +55,3 @@ Finally, if you're studying a game by a competing team, you may only have access
 ### How can I get in touch?
 
 You can [email me](mailto:sam@vodon.gg) or join me and the other users on [our Discord](https://discord.gg/EaJdhHtZEk)
-
-## Screenshots
-
-### Reviewing videos
-
-![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/review.png)
-
-### Drawing on frames
-
-![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/drawing.png)
-
-### Synchronising videos
-
-![Setup videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/setup.png)
-
-## What's next?
-
-Vodon Pro is under active development. Future features include:
-
-- **Loading and saving projects**: Synchronise your videos ahead of time and save your project. When you're ready to review, simply load the project again and get started!
