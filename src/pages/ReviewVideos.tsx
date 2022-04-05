@@ -1,24 +1,11 @@
-import { useRef, useEffect, useState, useLayoutEffect, useCallback } from "react";
+import { useRef, useEffect, useState, useLayoutEffect, useCallback, SyntheticEvent, MouseEventHandler } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { css } from "@emotion/react";
 
 import useStore from "../services/store";
 import { getRatioDimensions } from "../services/layout";
 
-import {
-  Flex,
-  Box,
-  Text,
-  IconButton,
-  SliderTrack,
-  Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  Switch,
-  FormControl,
-  FormLabel,
-  Heading,
-} from "@chakra-ui/react";
+import { Flex, Box, Text, IconButton, Switch, FormControl, FormLabel, Heading } from "@chakra-ui/react";
 
 import {
   PlayerPlay as PlayerPlayIcon,
@@ -27,6 +14,7 @@ import {
 } from "tabler-icons-react";
 import { Link } from "react-router-dom";
 
+import CurrentTimeSliderControl from "../components/CurrentTimeSliderControl/CurrentTimeSliderControl";
 import Drawing from "../components/Drawing/Drawing";
 import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
@@ -133,7 +121,7 @@ export default function ReviewVideos() {
     }
 
     function updateCurrentTime() {
-      setCurrentTime(currentTime + (Date.now() - startedPlayingAt) / 1000);
+      setCurrentTime(currentTime + (Date.now() - startedPlayingAt) / 1000 - 0.06); // HACK HACK - We should use something where we have control over the clock driving the video.
     }
 
     const timer = setInterval(updateCurrentTime, 500);
@@ -186,11 +174,6 @@ export default function ReviewVideos() {
       window.dispatchEvent(new Event("resize"));
     });
   }, []);
-
-  function handleSliderChange(newTime: number) {
-    stopPlaying();
-    setCurrentTime(newTime);
-  }
 
   const handleClickStep = (distance: number) => {
     setCurrentTime(useStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
@@ -314,21 +297,7 @@ export default function ReviewVideos() {
           </Text>
 
           <Box flexGrow={"1"} mx={"2"}>
-            <Slider
-              key="playing"
-              aria-label="Global time control"
-              value={currentTime}
-              min={0}
-              max={maxDuration}
-              onChange={handleSliderChange}
-              step={1 / activeVideo.frameRate}
-              focusThumbOnChange={false}
-            >
-              <SliderTrack>
-                <SliderFilledTrack />
-              </SliderTrack>
-              <SliderThumb />
-            </Slider>
+            <CurrentTimeSliderControl video={activeVideo} />
           </Box>
 
           <Box mx={"2"}>

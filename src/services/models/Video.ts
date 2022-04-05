@@ -34,6 +34,12 @@ export type Video = {
 
   /** Aspect ratio of the video */
   displayAspectRatio: string;
+
+  /** How complete is generating the thumbnails for this video? */
+  thumbnailGenerationProgress: number | null;
+
+  /** Where are the thumbnails located on the file system? */
+  thumbnailGenerationLocation: string | null;
 };
 
 type VideoConstructorAttrs = {
@@ -117,6 +123,8 @@ export async function createFromFile(filePath: string): Promise<Video> {
     name: basename(filePath),
     offset: 0,
     offsetNormalised: 0,
+    thumbnailGenerationProgress: null,
+    thumbnailGenerationLocation: null,
     volume: 0.8,
   };
 }

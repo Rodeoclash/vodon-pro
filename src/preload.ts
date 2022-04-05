@@ -7,9 +7,12 @@ contextBridge.exposeInMainWorld("app", {
     ipcRenderer.on("onSaveProjectRequest", callback),
   onLoadProjectRequest: (callback: (event: any, project: string) => void) =>
     ipcRenderer.on("onLoadProjectRequest", callback),
+  onVideoThumbnailGenerationProgress: (callback: (event: any, progress: VideoThumbnailGenerationProgress) => void) =>
+    ipcRenderer.on("onVideoThumbnailGenerationProgress", callback),
 });
 
 contextBridge.exposeInMainWorld("video", {
-  getMetadata: (filePath: string) => ipcRenderer.invoke("video:getMetadata", filePath),
   exists: (filePath: string) => ipcRenderer.invoke("video:exists", filePath),
+  getMetadata: (filePath: string) => ipcRenderer.invoke("video:getMetadata", filePath),
+  generateThumbnails: (filePath: string) => ipcRenderer.invoke("video:generateThumbnails", filePath),
 });
