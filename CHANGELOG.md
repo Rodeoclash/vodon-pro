@@ -1,3 +1,12 @@
+### 1.5.5
+
+- Added `a` and `d` as navigation keys.
+
+### 1.5.4
+
+- Added instant thumbnail previews when mousing over the global timeline.
+- Fix some layout bugs related to videos going out of range.
+
 ### 1.5.3
 
 - Handle removing active video when only two videos present.

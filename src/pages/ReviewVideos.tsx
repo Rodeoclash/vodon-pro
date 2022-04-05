@@ -1,24 +1,11 @@
-import { useRef, useEffect, useState, useLayoutEffect, useCallback } from "react";
+import { useRef, useEffect, useState, useLayoutEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { css } from "@emotion/react";
 
 import useStore from "../services/store";
 import { getRatioDimensions } from "../services/layout";
 
-import {
-  Flex,
-  Box,
-  Text,
-  IconButton,
-  SliderTrack,
-  Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  Switch,
-  FormControl,
-  FormLabel,
-  Heading,
-} from "@chakra-ui/react";
+import { Flex, Box, Text, IconButton, Switch, FormControl, FormLabel, Heading } from "@chakra-ui/react";
 
 import {
   PlayerPlay as PlayerPlayIcon,
@@ -27,11 +14,13 @@ import {
 } from "tabler-icons-react";
 import { Link } from "react-router-dom";
 
+import CurrentTimeSliderControl from "../components/CurrentTimeSliderControl/CurrentTimeSliderControl";
 import Drawing from "../components/Drawing/Drawing";
 import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
 import VideoVolume from "../components/VideoVolume/VideoVolume";
 import WithSidebar from "../layouts/WithSidebar";
+import Hotkeys from "./ReviewVideos/Hotkeys";
 
 export default function ReviewVideos() {
   const overlayRef = useRef(null);
@@ -57,52 +46,21 @@ export default function ReviewVideos() {
     return activeVideoId === video.id;
   });
 
-  // spacebar starts / stop play
-  useHotkeys(
-    "space",
-    () => {
-      if (playing === true) {
-        stopPlaying();
-      } else {
-        startPlaying();
-      }
-    },
-    {},
-    [playing]
-  );
+  function handleEscapePressed() {
+    setFullscreen(false);
+  }
 
-  useHotkeys(
-    "left",
-    () => {
-      if (playing === true) {
-        return;
-      }
-      setCurrentTime(currentTime - 1 / 60);
-    },
-    {},
-    [playing, currentTime]
-  );
+  function handleClickStep(distance: number) {
+    setCurrentTime(useStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
+  }
 
-  useHotkeys(
-    "right",
-    () => {
-      if (playing === true) {
-        return;
-      }
-      setCurrentTime(currentTime + 1 / 60);
-    },
-    {},
-    [playing, currentTime]
-  );
+  function handleToggleDrawingChange() {
+    setDrawing(!drawing);
+  }
 
-  useHotkeys(
-    "escape",
-    () => {
-      setFullscreen(false);
-    },
-    {},
-    []
-  );
+  async function handleClickFullscreen() {
+    setFullscreen(!fullscreen);
+  }
 
   // mount the active video into the main player when it changes
   useEffect(() => {
@@ -133,7 +91,7 @@ export default function ReviewVideos() {
     }
 
     function updateCurrentTime() {
-      setCurrentTime(currentTime + (Date.now() - startedPlayingAt) / 1000);
+      setCurrentTime(currentTime + (Date.now() - startedPlayingAt) / 1000 - 0.06); // HACK HACK - We should use something where we have control over the clock driving the video.
     }
 
     const timer = setInterval(updateCurrentTime, 500);
@@ -157,6 +115,10 @@ export default function ReviewVideos() {
       })();
     } else if (document.fullscreenElement) {
       document.exitFullscreen();
+
+      setTimeout(() => {
+        window.dispatchEvent(new Event("resize"));
+      }, 100);
     }
   }, [fullscreen]);
 
@@ -186,23 +148,6 @@ export default function ReviewVideos() {
       window.dispatchEvent(new Event("resize"));
     });
   }, []);
-
-  function handleSliderChange(newTime: number) {
-    stopPlaying();
-    setCurrentTime(newTime);
-  }
-
-  const handleClickStep = (distance: number) => {
-    setCurrentTime(useStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
-  };
-
-  function handleToggleDrawingChange() {
-    setDrawing(!drawing);
-  }
-
-  async function handleClickFullscreen() {
-    setFullscreen(!fullscreen);
-  }
 
   const overlayStyle = css`
     width: ${videoDimensions ? videoDimensions[0] : ""}px;
@@ -314,21 +259,7 @@ export default function ReviewVideos() {
           </Text>
 
           <Box flexGrow={"1"} mx={"2"}>
-            <Slider
-              key="playing"
-              aria-label="Global time control"
-              value={currentTime}
-              min={0}
-              max={maxDuration}
-              onChange={handleSliderChange}
-              step={1 / activeVideo.frameRate}
-              focusThumbOnChange={false}
-            >
-              <SliderTrack>
-                <SliderFilledTrack />
-              </SliderTrack>
-              <SliderThumb />
-            </Slider>
+            <CurrentTimeSliderControl video={activeVideo} />
           </Box>
 
           <Box mx={"2"}>
@@ -348,10 +279,13 @@ export default function ReviewVideos() {
   })();
 
   return (
-    <WithSidebar sidebar={renderedSidebar} disableSidebar={videos.length < 2}>
-      <Flex direction="column" width="100%" height={"calc(100vh - 5rem)"} ref={contentRef}>
-        {renderedContent}
-      </Flex>
-    </WithSidebar>
+    <>
+      <Hotkeys onEscape={handleEscapePressed} video={activeVideo} />
+      <WithSidebar sidebar={renderedSidebar} disableSidebar={videos.length < 2}>
+        <Flex direction="column" width="100%" height={"calc(100vh - 5rem)"} ref={contentRef}>
+          {renderedContent}
+        </Flex>
+      </WithSidebar>
+    </>
   );
 }

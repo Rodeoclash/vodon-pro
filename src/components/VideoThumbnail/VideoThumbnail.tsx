@@ -29,16 +29,17 @@ export default function VideoThumbnail({ video }: Props) {
   const isAfterRange = currentTime > video.durationNormalised;
   const currentActive = activeVideoId === video.id;
 
+  /**
+   * Clicking the video makes it active.
+   */
   function handleClickVideo(event: React.SyntheticEvent<EventTarget>) {
-    event.stopPropagation();
     setActiveVideoId(video.id);
   }
 
-  function handleClickReset(event: React.SyntheticEvent<EventTarget>) {
-    event.stopPropagation();
-    setActiveVideoId(null);
-  }
-
+  /**
+   * After the video has loaded, we need to trigger a resize event now that the
+   * canvas is populated.
+   */
   useEffect(() => {
     const handleLoadedMetaData = () => {
       if (containerRef.current === null) {
@@ -74,7 +75,7 @@ export default function VideoThumbnail({ video }: Props) {
     }
 
     video.el.volume = video.volume;
-  }, [currentActive, video.volume]);
+  }, [currentActive, video]);
 
   // watch playing state and play / pause as needed
   useEffect(() => {
@@ -91,6 +92,14 @@ export default function VideoThumbnail({ video }: Props) {
       video.el.currentTime = currentTime + video.offsetNormalised;
     }
   }, [playing, currentTime, currentActive]);
+
+  /**
+   * As the video moves in and out of being active, we need to trigger resize
+   * events to ensure it has space on the screen.
+   */
+  useLayoutEffect(() => {
+    window.dispatchEvent(new Event("resize"));
+  }, [isAfterRange]);
 
   useLayoutEffect(() => {
     const handleFrame = (time: number, metadata: VideoFrameMetadata) => {
@@ -142,35 +151,38 @@ export default function VideoThumbnail({ video }: Props) {
   `;
 
   const afterRangeStyles = css`
+    aspect-ratio: 16/9;
     display: ${currentActive === false && isAfterRange === true ? "flex" : "none"};
   `;
 
   return (
-    <Flex
-      overflow={"hidden"}
-      ref={containerRef}
-      height="100%"
-      css={containerStyles}
-      align={"center"}
-      justifyContent={"center"}
-    >
-      <Box position={"relative"} cursor={"pointer"} css={innerStyles}>
-        <Heading
-          position={"absolute"}
-          top={"0"}
-          left={"0"}
-          bgColor={"blackAlpha.800"}
-          padding={"2"}
-          fontSize={"md"}
-          fontWeight={"normal"}
-        >
-          {video.name}
-        </Heading>
-        <Box onClick={handleClickVideo} ref={videoRef} />
-        <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
-          <Text fontSize={"sm"}>Finished {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago</Text>
-        </Flex>
-      </Box>
-    </Flex>
+    <>
+      <Flex
+        overflow={"hidden"}
+        ref={containerRef}
+        height="100%"
+        css={containerStyles}
+        align={"center"}
+        justifyContent={"center"}
+      >
+        <Box position={"relative"} cursor={"pointer"} css={innerStyles}>
+          <Heading
+            position={"absolute"}
+            top={"0"}
+            left={"0"}
+            bgColor={"blackAlpha.800"}
+            padding={"2"}
+            fontSize={"md"}
+            fontWeight={"normal"}
+          >
+            {video.name}
+          </Heading>
+          <Box onClick={handleClickVideo} ref={videoRef} />
+        </Box>
+      </Flex>
+      <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
+        <Text fontSize={"sm"}>Finished {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago</Text>
+      </Flex>
+    </>
   );
 }

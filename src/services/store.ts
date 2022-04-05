@@ -89,6 +89,7 @@ const useStore = createStore<State>(
       addVideo: (video: Video) =>
         set((state) => ({
           activeVideoId: state.activeVideoId === null || state.videos.length === 0 ? video.id : state.activeVideoId,
+          currentTime: 0,
           videos: state.videos.concat([video]),
         })),
 
@@ -226,3 +227,22 @@ window.app.onLoadProjectRequest(async (event: any, project: string) => {
   const unserializedState = await deserialize(project);
   useStore.setState(unserializedState.state);
 });
+
+/**
+ * Handle the save request from the main thread. Calculate the current state
+ * then pass it back to the main thread along with the filepath to persist.
+ */
+window.app.onVideoThumbnailGenerationProgress(
+  async (event: any, { id, thumbnailsDir, percent }: VideoThumbnailGenerationProgress) => {
+    useStore.setState(
+      produce(useStore.getState(), (state: State) => {
+        const index = state.videos.findIndex((innerVideo) => {
+          return innerVideo.id === id;
+        });
+
+        state.videos[index].thumbnailGenerationProgress = percent;
+        state.videos[index].thumbnailGenerationLocation = thumbnailsDir;
+      })
+    );
+  }
+);

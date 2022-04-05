@@ -16,7 +16,12 @@ export default function VideoAdd() {
     async (files: File[]) => {
       for (const file of files) {
         const video = await createFromFile(file.path);
+
+        // add the video to the store
         addVideo(video);
+
+        // trigger an analysis of the video
+        window.video.generateThumbnails({ id: video.id, filePath: file.path });
       }
     },
     [videos]
