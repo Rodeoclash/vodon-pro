@@ -154,30 +154,23 @@ ipcMain.handle("video:generateThumbnails", async (event, { id, filePath }: Video
 
   await fs.mkdir(thumbnailsDir, { recursive: true });
 
-  const thumbnailList = await fs.readdir(thumbnailsDir);
-
-  // If thumbnails already exist, don't regenerate, instead just notify it was completed
-  if (thumbnailList.length === 0) {
-    ffmpeg(filePath)
-      .complexFilter("fps=1")
-      .outputOptions(["-qscale:v 10"])
-      .on("error", function (err: any, stdout: any, stderr: any) {
-        console.error("Cannot process video: " + err.message);
-      })
-      .on("progress", function (progress: any) {
-        mainWindow.webContents.send("onVideoThumbnailGenerationProgress", {
-          id,
-          percent: Math.round(progress.percent),
-          thumbnailsDir,
-        });
-      })
-      .on("end", function (stdout: any, stderr: any) {
-        mainWindow.webContents.send("onVideoThumbnailGenerationProgress", { id, percent: 100, thumbnailsDir });
-      })
-      .save(path.join(thumbnailsDir, `%04d.jpg`));
-  } else {
-    mainWindow.webContents.send("onVideoThumbnailGenerationProgress", { id, percent: 100, thumbnailsDir });
-  }
+  ffmpeg(filePath)
+    .complexFilter("fps=1")
+    .outputOptions(["-qscale:v 10"])
+    .on("error", function (err: any, stdout: any, stderr: any) {
+      console.error("Cannot process video: " + err.message);
+    })
+    .on("progress", function (progress: any) {
+      mainWindow.webContents.send("onVideoThumbnailGenerationProgress", {
+        id,
+        percent: Math.round(progress.percent),
+        thumbnailsDir,
+      });
+    })
+    .on("end", function (stdout: any, stderr: any) {
+      mainWindow.webContents.send("onVideoThumbnailGenerationProgress", { id, percent: 100, thumbnailsDir });
+    })
+    .save(path.join(thumbnailsDir, `%04d.jpg`));
 });
 
 // allow local videos
