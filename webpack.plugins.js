@@ -12,7 +12,7 @@ module.exports = [
         to: path.resolve(__dirname, ".webpack", "main"),
       },
       {
-        from: path.resolve(__dirname, "node_modules", "ffmpeg-static", "ffmpeg.exe"),
+        from: path.resolve(__dirname, "node_modules", "ffmpeg-ffprobe-static", "ffmpeg.exe"),
         to: path.resolve(__dirname, ".webpack", "main"),
       },
     ],
