@@ -1,6 +1,7 @@
 ### 1.5.4
 
 - Added instant thumbnail previews when mousing over the global timeline.
+- Fix some layout bugs related to videos going out of range.
 
 ### 1.5.3
 
