@@ -145,6 +145,10 @@ export default function ReviewVideos() {
       })();
     } else if (document.fullscreenElement) {
       document.exitFullscreen();
+
+      setTimeout(() => {
+        window.dispatchEvent(new Event("resize"));
+      }, 100);
     }
   }, [fullscreen]);
 
