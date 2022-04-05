@@ -2,6 +2,7 @@ declare module "*.module.css";
 declare module "*.otf";
 declare module "@ffprobe-installer/ffprobe";
 declare module "fluent-ffmpeg";
+declare module "ffmpeg-static";
 
 // Passed to the main thread to generate thumbnails
 type VideoGenerateThumbnailOptions = {

@@ -1,7 +1,8 @@
 import { app, BrowserWindow, session, protocol, ipcMain, Menu, dialog } from "electron";
 
 import ffprobeInstaller from "@ffprobe-installer/ffprobe";
-import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+import pathToFfmpeg from "ffmpeg-static";
+
 import ffmpeg from "fluent-ffmpeg";
 
 import { promises as fs } from "fs";
@@ -14,7 +15,7 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: any;
 
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
-ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+ffmpeg.setFfmpegPath(pathToFfmpeg);
 
 let mainWindow: BrowserWindow;
 
