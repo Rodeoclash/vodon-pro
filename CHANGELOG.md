@@ -1,3 +1,7 @@
+### 1.5.5
+
+- Added `a` and `d` as navigation keys.
+
 ### 1.5.4
 
 - Added instant thumbnail previews when mousing over the global timeline.
