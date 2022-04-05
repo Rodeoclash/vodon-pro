@@ -45,6 +45,12 @@ export default function CurrentTimeSliderControl({ video }: Props) {
     setSecond(String(Math.round(maxDuration * percentage)).padStart(4, "0"));
   }
 
+  /**
+   * As the preview second changes, attempt to load the thumbnails of the
+   * images. Only do so if we have a location and the image can actually
+   * be found (users might have loaded a pre-thumbnails project or
+   * thumbnails are still generating)
+   */
   useEffect(() => {
     if (second === null || video.thumbnailGenerationLocation === null) {
       return;
@@ -64,6 +70,9 @@ export default function CurrentTimeSliderControl({ video }: Props) {
     };
   }, [second]);
 
+  /**
+   * Place the preview box tethered to the mouse and the track
+   */
   useLayoutEffect(() => {
     if (mouseOver === false) {
       return;
