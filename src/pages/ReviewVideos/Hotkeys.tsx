@@ -9,7 +9,10 @@ type Props = {
   video: Video;
 };
 
-export default function HotKeys({ onEscape, video }: Props): React.ReactElement {
+export default function HotKeys({
+  onEscape,
+  video,
+}: Props): React.ReactElement {
   const startPlaying = useStore((state) => state.startPlaying);
   const stopPlaying = useStore((state) => state.stopPlaying);
   const setCurrentTime = useStore((state) => state.setCurrentTime);

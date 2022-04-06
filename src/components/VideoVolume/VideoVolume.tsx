@@ -1,6 +1,12 @@
 import useStore from "../../services/store";
 
-import { Flex, SliderTrack, Slider, SliderFilledTrack, SliderThumb } from "@chakra-ui/react";
+import {
+  Flex,
+  SliderTrack,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+} from "@chakra-ui/react";
 
 import { Volume as VolumeIcon } from "tabler-icons-react";
 

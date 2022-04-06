@@ -1,1 +1,2 @@
-export const basename = (name: string): string => /([^\/\\]*|\.[^\/\\]*)\..*$/gm.exec(name)[1];
+export const basename = (name: string): string =>
+  /([^\/\\]*|\.[^\/\\]*)\..*$/gm.exec(name)[1];

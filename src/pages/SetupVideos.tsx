@@ -45,17 +45,26 @@ const addVideoCellStyles = css`
 `;
 
 export default function SetupVideos() {
-  const showSetupInstructions = useStore((state) => state.showSetupInstructions);
+  const showSetupInstructions = useStore(
+    (state) => state.showSetupInstructions
+  );
   const videos = useStore((state) => state.videos);
 
-  const setShowSetupInstructions = useStore((state) => state.setShowSetupInstructions);
+  const setShowSetupInstructions = useStore(
+    (state) => state.setShowSetupInstructions
+  );
   const clearVideos = useStore((state) => state.clearVideos);
 
   const [rowCount, setRowCount] = useState("2");
 
   const renderedVideos = videos.map((video) => {
     return (
-      <GridItem key={video.id} display={"flex"} alignItems={"center"} justifyContent={"center"}>
+      <GridItem
+        key={video.id}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"center"}
+      >
         <VideoAligner video={video} />
       </GridItem>
     );
@@ -88,10 +97,18 @@ export default function SetupVideos() {
           justifyContent={"flex-start"}
         >
           <ButtonGroup size={"sm"}>
-            <Button colorScheme={"cyan"} leftIcon={<HelpIcon />} onClick={handleShowInstructions}>
+            <Button
+              colorScheme={"cyan"}
+              leftIcon={<HelpIcon />}
+              onClick={handleShowInstructions}
+            >
               Instructions
             </Button>
-            <Button colorScheme={"red"} leftIcon={<XIcon />} onClick={handleClearVideos}>
+            <Button
+              colorScheme={"red"}
+              leftIcon={<XIcon />}
+              onClick={handleClearVideos}
+            >
               Remove all videos
             </Button>
           </ButtonGroup>
@@ -99,7 +116,11 @@ export default function SetupVideos() {
         <Grid templateColumns={`repeat(${rowCount}, 1fr)`} gap={0}>
           {renderedVideos}
           <GridItem>
-            <Flex css={addVideoCellStyles} bgColor={"whiteAlpha.100"} position={"relative"}>
+            <Flex
+              css={addVideoCellStyles}
+              bgColor={"whiteAlpha.100"}
+              position={"relative"}
+            >
               <VideoAdd />
             </Flex>
           </GridItem>
@@ -115,15 +136,22 @@ export default function SetupVideos() {
               Getting started
             </Heading>
             <OrderedList my={"4"}>
-              <ListItem mb={"4"}>Either click to add videos or drag and drop them from your desktop.</ListItem>
               <ListItem mb={"4"}>
-                Pick a point in time that is easy to identify in all the videos (countdowns before a round start works
-                well here)
+                Either click to add videos or drag and drop them from your
+                desktop.
               </ListItem>
               <ListItem mb={"4"}>
-                Align all the videos to the same point in time using the controls on each video.
+                Pick a point in time that is easy to identify in all the videos
+                (countdowns before a round start works well here)
               </ListItem>
-              <ListItem mb={"4"}>When all videos are aligned, go to the "Review" tab to start the VOD review</ListItem>
+              <ListItem mb={"4"}>
+                Align all the videos to the same point in time using the
+                controls on each video.
+              </ListItem>
+              <ListItem mb={"4"}>
+                When all videos are aligned, go to the "Review" tab to start the
+                VOD review
+              </ListItem>
             </OrderedList>
           </ModalBody>
 

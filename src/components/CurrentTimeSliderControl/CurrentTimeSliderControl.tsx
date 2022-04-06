@@ -3,7 +3,13 @@ import { createPopper, VirtualElement } from "@popperjs/core";
 
 import useStore from "../../services/store";
 
-import { Box, SliderTrack, Slider, SliderFilledTrack, SliderThumb } from "@chakra-ui/react";
+import {
+  Box,
+  SliderTrack,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+} from "@chakra-ui/react";
 
 import type { Video } from "../../services/models/Video";
 
@@ -41,7 +47,8 @@ export default function CurrentTimeSliderControl({ video }: Props) {
 
   function handleMouseMoveSliderTrack(event: React.MouseEvent<HTMLDivElement>) {
     const trackBounding = trackRef.current.getBoundingClientRect();
-    const percentage = (event.clientX - trackBounding.left) / trackBounding.width;
+    const percentage =
+      (event.clientX - trackBounding.left) / trackBounding.width;
     setSecond(String(Math.round(maxDuration * percentage)).padStart(4, "0"));
   }
 
@@ -107,7 +114,10 @@ export default function CurrentTimeSliderControl({ video }: Props) {
     });
 
     function handleMouseMove(event: MouseEvent) {
-      virtualElement.getBoundingClientRect = generateGetBoundingClientRect(event.clientX, event.clientY);
+      virtualElement.getBoundingClientRect = generateGetBoundingClientRect(
+        event.clientX,
+        event.clientY
+      );
       instance.update();
     }
 
@@ -121,7 +131,11 @@ export default function CurrentTimeSliderControl({ video }: Props) {
 
   return (
     <>
-      <Box ref={popupRef} position="absolute" display={mouseOver === true ? "block" : "none"}>
+      <Box
+        ref={popupRef}
+        position="absolute"
+        display={mouseOver === true ? "block" : "none"}
+      >
         <img width="400px" ref={imageRef} src={imageSrc} />
       </Box>
       <Slider

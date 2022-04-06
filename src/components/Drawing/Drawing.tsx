@@ -1,4 +1,10 @@
-import { useCallback, useRef, useLayoutEffect, useState, useEffect } from "react";
+import {
+  useCallback,
+  useRef,
+  useLayoutEffect,
+  useState,
+  useEffect,
+} from "react";
 import { Tldraw } from "@tldraw/tldraw";
 
 import { Box } from "@chakra-ui/react";
@@ -45,7 +51,14 @@ export default function Drawing({ fullscreen }: Props) {
   }, [originalWidth]);
 
   return (
-    <Box position="absolute" top={"0"} left={"0"} right={"0"} bottom={"0"} ref={outerRef}>
+    <Box
+      position="absolute"
+      top={"0"}
+      left={"0"}
+      right={"0"}
+      bottom={"0"}
+      ref={outerRef}
+    >
       <Tldraw
         onMount={handleMount}
         showMenu={false}

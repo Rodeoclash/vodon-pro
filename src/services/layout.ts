@@ -1,4 +1,7 @@
-export function getRatioDimensions(displayAspectRatio: string, element: HTMLElement): [number, number] {
+export function getRatioDimensions(
+  displayAspectRatio: string,
+  element: HTMLElement
+): [number, number] {
   const [widthSplit, heightSplit] = displayAspectRatio.split(":");
   const width = parseInt(widthSplit, 10);
   const height = parseInt(heightSplit, 10);

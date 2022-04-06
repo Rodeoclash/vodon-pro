@@ -100,9 +100,11 @@ export async function createFromFile(filePath: string): Promise<Video> {
   const metadata = await window.video.getMetadata(filePath);
 
   // extract video stream
-  const videoStream = metadata.streams.find((stream: VideoStreamMetadata | AudioStreamMetadata) => {
-    return stream.codec_type === "video";
-  });
+  const videoStream = metadata.streams.find(
+    (stream: VideoStreamMetadata | AudioStreamMetadata) => {
+      return stream.codec_type === "video";
+    }
+  );
 
   // determine framerate
   const [ratio_1, ratio_2] = videoStream.avg_frame_rate.split("/");

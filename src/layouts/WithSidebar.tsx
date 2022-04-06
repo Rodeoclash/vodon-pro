@@ -8,7 +8,11 @@ interface Props {
   sidebar: React.ReactNode;
 }
 
-export default function WithSidebar({ children, sidebar, disableSidebar = false }: Props) {
+export default function WithSidebar({
+  children,
+  sidebar,
+  disableSidebar = false,
+}: Props) {
   const mainStyleWidth =
     disableSidebar === true
       ? "100vw"

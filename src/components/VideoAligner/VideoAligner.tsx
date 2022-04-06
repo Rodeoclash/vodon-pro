@@ -57,7 +57,10 @@ export default function VideoAligner({ video }: Props) {
     videoRef.current.addEventListener("seeked", handleSeeked);
 
     return () => {
-      videoRef.current.removeEventListener("loadedmetadata", handleLoadedMetaData);
+      videoRef.current.removeEventListener(
+        "loadedmetadata",
+        handleLoadedMetaData
+      );
       videoRef.current.removeEventListener("seeked", handleSeeked);
     };
   }, []);
@@ -88,10 +91,28 @@ export default function VideoAligner({ video }: Props) {
 
   const renderedControls =
     video.duration === null ? null : (
-      <Flex p={2} bgColor={"blackAlpha.800"} position={"absolute"} bottom={"0"} left={"0"} right={"0"} align={"center"}>
-        <VideoStepControl direction="backwards" frameRate={video.frameRate} onClick={handleClickStep} />
+      <Flex
+        p={2}
+        bgColor={"blackAlpha.800"}
+        position={"absolute"}
+        bottom={"0"}
+        left={"0"}
+        right={"0"}
+        align={"center"}
+      >
+        <VideoStepControl
+          direction="backwards"
+          frameRate={video.frameRate}
+          onClick={handleClickStep}
+        />
 
-        <Text whiteSpace={"nowrap"} fontSize={"sm"} mx={"2"} align={"center"} width={"32"}>
+        <Text
+          whiteSpace={"nowrap"}
+          fontSize={"sm"}
+          mx={"2"}
+          align={"center"}
+          width={"32"}
+        >
           {video.offset.toFixed(2)} / {Math.round(video.duration)}
         </Text>
 
@@ -110,7 +131,11 @@ export default function VideoAligner({ video }: Props) {
           <SliderThumb />
         </Slider>
 
-        <VideoStepControl direction="forwards" frameRate={video.frameRate} onClick={handleClickStep} />
+        <VideoStepControl
+          direction="forwards"
+          frameRate={video.frameRate}
+          onClick={handleClickStep}
+        />
       </Flex>
     );
 
@@ -130,7 +155,12 @@ export default function VideoAligner({ video }: Props) {
           cursor={"pointer"}
         >
           <SettingsIcon />
-          <Heading fontSize={"md"} ml={"2"} fontWeight={"normal"} textDecoration={"underline"}>
+          <Heading
+            fontSize={"md"}
+            ml={"2"}
+            fontWeight={"normal"}
+            textDecoration={"underline"}
+          >
             {video.name}
           </Heading>
         </Flex>
@@ -165,7 +195,11 @@ export default function VideoAligner({ video }: Props) {
           <ModalBody>
             <FormControl>
               <FormLabel>Name</FormLabel>
-              <Input value={video.name} onChange={handleChangeVideoName} autoFocus />
+              <Input
+                value={video.name}
+                onChange={handleChangeVideoName}
+                autoFocus
+              />
             </FormControl>
           </ModalBody>
 
