@@ -12,15 +12,20 @@ Add viewpoints from each of the players in a match, tell Vodon how to synchronis
 
 ## Features
 
-- Supports an *unlimite*d number of videos (restricted by your systems performance)
+- Supports an _unlimited_ number of videos (restricted by your systems performance)
 - Includes a "Slow CPU" mode to reduce load when many videos are loaded in at once.
 - Draw on individual frames in each video (Powered by [TLDraw](https://github.com/tldraw/tldraw))
 - Frame advance and rewind controls.
 - Load and save your projects.
 - Autosaves your projects and settings as you work.
-- Supports MP4 and WebM video formats.
-- Supports up to 60fps videos.
-- Supports 16:9, 16:10 and 4:3 aspect ratios.
+
+## Supports
+
+Vodon Pro has been officially tested with the following kinds of videos:
+
+- MP4 and WebM video formats.
+- 60fps / 30fps videos.
+- 16:9 and 4:3 aspect ratios.
 
 ## Getting started
 
