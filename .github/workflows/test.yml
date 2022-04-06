@@ -1,0 +1,24 @@
+name: Test
+
+on:
+  push:
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 17.5.0
+
+      - name: Test release can be built
+        run: npm install && npm run make
