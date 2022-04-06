@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 17.5.0
+          node-version: 16.14.0
 
       - name: Lint all
         run: npm install && npm run format-check
@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 17.5.0
+          node-version: 16.14.0
 
       - name: Test release can be built
         run: npm install && npm run make

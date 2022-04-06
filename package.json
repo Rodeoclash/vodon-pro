@@ -2,7 +2,10 @@
   "name": "vodon-pro",
   "productName": "vodon-pro",
   "version": "1.5.5",
-  "description": "My Electron application description",
+  "description": "The synchronised VOD review tool",
+  "engines": {
+    "node": "16.14.0"
+  },
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
