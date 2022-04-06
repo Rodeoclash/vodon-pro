@@ -10,7 +10,8 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "prepare": "husky install",
-    "format": "prettier --write --ignore-unknown **/*"
+    "format": "prettier --write --ignore-unknown **/*",
+    "format-check": "prettier --check --ignore-unknown **/*"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
