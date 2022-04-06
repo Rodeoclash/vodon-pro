@@ -19,7 +19,7 @@ jobs:
           node-version: 17.5.0
 
       - name: Lint all
-        run: npx prettier --check --ignore-unknown **/*"
+        run: npx prettier --check --ignore-unknown **/*
 
   test-release:
     runs-on: ${{ matrix.os }}
