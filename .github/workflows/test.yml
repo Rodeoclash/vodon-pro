@@ -19,7 +19,7 @@ jobs:
           node-version: 17.5.0
 
       - name: Lint all
-        run: npm run format-check
+        run: npm install && npm run format-check
 
   test-release:
     runs-on: ${{ matrix.os }}
