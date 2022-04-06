@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  release:
+  lint:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -12,11 +12,26 @@ jobs:
         os: [windows-latest]
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 17.5.0
+
+      - name: Lint all
+        run: npx prettier --check --ignore-unknown **/*"
+
+  test-release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
         with:
           node-version: 17.5.0
 
