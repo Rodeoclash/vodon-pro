@@ -45,7 +45,7 @@ _Everything starts in Vodon by telling it how to synchronise your videos. Align 
 
 ![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/review.png)
 
-_With the videos aligned, the global time control can be used to navigate all videos. Click the videos in the sidebar to instantly jump to that point in time._
+_With the videos aligned, the global time control can be used to navigate all videos. Click the videos in the sidebar to instantly jump to that players point of view._
 
 ### Drawing on frames
 
