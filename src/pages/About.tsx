@@ -23,7 +23,11 @@ export default function About() {
         </Text>
         <Text my={"2"}>
           Prefer Discord? Come join us at{" "}
-          <Link href="https://discord.gg/EaJdhHtZEk" isExternal textDecoration={"underline"}>
+          <Link
+            href="https://discord.gg/EaJdhHtZEk"
+            isExternal
+            textDecoration={"underline"}
+          >
             https://discord.gg/EaJdhHtZEk
           </Link>
         </Text>

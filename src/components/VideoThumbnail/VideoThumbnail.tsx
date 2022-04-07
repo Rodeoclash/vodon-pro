@@ -88,7 +88,10 @@ export default function VideoThumbnail({ video }: Props) {
 
   // watch current time and update as needed
   useEffect(() => {
-    if (playing === false || (playing === true && currentActive === false && slowCPUMode === true)) {
+    if (
+      playing === false ||
+      (playing === true && currentActive === false && slowCPUMode === true)
+    ) {
       video.el.currentTime = currentTime + video.offsetNormalised;
     }
   }, [playing, currentTime, currentActive]);
@@ -122,7 +125,10 @@ export default function VideoThumbnail({ video }: Props) {
         return;
       }
 
-      const dimensions = getRatioDimensions(video.displayAspectRatio, containerRef.current);
+      const dimensions = getRatioDimensions(
+        video.displayAspectRatio,
+        containerRef.current
+      );
 
       setVideoDimensions(dimensions);
     };
@@ -147,12 +153,16 @@ export default function VideoThumbnail({ video }: Props) {
   `;
 
   const containerStyles = css`
-    display: ${currentActive === true || isAfterRange === true ? "none" : "flex"};
+    display: ${currentActive === true || isAfterRange === true
+      ? "none"
+      : "flex"};
   `;
 
   const afterRangeStyles = css`
     aspect-ratio: 16/9;
-    display: ${currentActive === false && isAfterRange === true ? "flex" : "none"};
+    display: ${currentActive === false && isAfterRange === true
+      ? "flex"
+      : "none"};
   `;
 
   return (
@@ -180,8 +190,16 @@ export default function VideoThumbnail({ video }: Props) {
           <Box onClick={handleClickVideo} ref={videoRef} />
         </Box>
       </Flex>
-      <Flex css={afterRangeStyles} align={"center"} justify={"center"} bgColor={"gray.700"}>
-        <Text fontSize={"sm"}>Finished {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago</Text>
+      <Flex
+        css={afterRangeStyles}
+        align={"center"}
+        justify={"center"}
+        bgColor={"gray.700"}
+      >
+        <Text fontSize={"sm"}>
+          Finished{" "}
+          {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago
+        </Text>
       </Flex>
     </>
   );

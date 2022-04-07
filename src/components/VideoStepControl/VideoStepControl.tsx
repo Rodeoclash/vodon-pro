@@ -1,7 +1,10 @@
 import { useState, useLayoutEffect } from "react";
 import { IconButton } from "@chakra-ui/react";
 
-import { PlayerTrackPrev as PlayerTrackPrevIcon, PlayerTrackNext as PlayerTrackNextIcon } from "tabler-icons-react";
+import {
+  PlayerTrackPrev as PlayerTrackPrevIcon,
+  PlayerTrackNext as PlayerTrackNextIcon,
+} from "tabler-icons-react";
 
 interface Props {
   direction: "forwards" | "backwards";
@@ -9,9 +12,16 @@ interface Props {
   onClick: (value: number) => void;
 }
 
-export default function VideoStepControl({ onClick, frameRate, direction }: Props) {
+export default function VideoStepControl({
+  onClick,
+  frameRate,
+  direction,
+}: Props) {
   const [mouseDown, setMouseDown] = useState(false);
-  const [value, Icon] = direction === "forwards" ? [1, <PlayerTrackNextIcon />] : [-1, <PlayerTrackPrevIcon />];
+  const [value, Icon] =
+    direction === "forwards"
+      ? [1, <PlayerTrackNextIcon />]
+      : [-1, <PlayerTrackPrevIcon />];
   const frameLength = 1 / frameRate;
 
   useLayoutEffect(() => {
@@ -38,5 +48,12 @@ export default function VideoStepControl({ onClick, frameRate, direction }: Prop
     setMouseDown(false);
   }
 
-  return <IconButton icon={Icon} aria-label="Step backwards" onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} />;
+  return (
+    <IconButton
+      icon={Icon}
+      aria-label="Step backwards"
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+    />
+  );
 }

@@ -5,7 +5,16 @@ import { css } from "@emotion/react";
 import useStore from "../services/store";
 import { getRatioDimensions } from "../services/layout";
 
-import { Flex, Box, Text, IconButton, Switch, FormControl, FormLabel, Heading } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Text,
+  IconButton,
+  Switch,
+  FormControl,
+  FormLabel,
+  Heading,
+} from "@chakra-ui/react";
 
 import {
   PlayerPlay as PlayerPlayIcon,
@@ -91,7 +100,9 @@ export default function ReviewVideos() {
     }
 
     function updateCurrentTime() {
-      setCurrentTime(currentTime + (Date.now() - startedPlayingAt) / 1000 - 0.06); // HACK HACK - We should use something where we have control over the clock driving the video.
+      setCurrentTime(
+        currentTime + (Date.now() - startedPlayingAt) / 1000 - 0.06
+      ); // HACK HACK - We should use something where we have control over the clock driving the video.
     }
 
     const timer = setInterval(updateCurrentTime, 500);
@@ -129,7 +140,10 @@ export default function ReviewVideos() {
         return;
       }
 
-      const dimensions = getRatioDimensions(activeVideo.displayAspectRatio, overlayRef.current);
+      const dimensions = getRatioDimensions(
+        activeVideo.displayAspectRatio,
+        overlayRef.current
+      );
       setVideoDimensions(dimensions);
     };
 
@@ -166,7 +180,11 @@ export default function ReviewVideos() {
   });
 
   const renderedSidebar = (
-    <Flex direction={"column"} height={"calc(100vh - 5rem)"} justifyContent={"space-evenly"}>
+    <Flex
+      direction={"column"}
+      height={"calc(100vh - 5rem)"}
+      justifyContent={"space-evenly"}
+    >
       {renderedSidebarVideos}
     </Flex>
   );
@@ -174,7 +192,13 @@ export default function ReviewVideos() {
   const renderedContent = (() => {
     if (videos.length === 0) {
       return (
-        <Flex flexGrow={"1"} align={"center"} justifyContent={"center"} fontSize={"3xl"} color={"whiteAlpha.400"}>
+        <Flex
+          flexGrow={"1"}
+          align={"center"}
+          justifyContent={"center"}
+          fontSize={"3xl"}
+          color={"whiteAlpha.400"}
+        >
           <Link to="/">
             <Text>Please setup some videos first</Text>
           </Link>
@@ -184,7 +208,13 @@ export default function ReviewVideos() {
 
     if (activeVideo === undefined) {
       return (
-        <Flex flexGrow={"1"} align={"center"} justifyContent={"center"} fontSize={"3xl"} color={"whiteAlpha.400"}>
+        <Flex
+          flexGrow={"1"}
+          align={"center"}
+          justifyContent={"center"}
+          fontSize={"3xl"}
+          color={"whiteAlpha.400"}
+        >
           <Link to="/">
             <Text>Please choose a video</Text>
           </Link>
@@ -233,7 +263,9 @@ export default function ReviewVideos() {
           overflow={"hidden"}
         >
           <Box position={"relative"} css={overlayStyle}>
-            {activeVideoId !== null && drawing === true && <Drawing fullscreen={fullscreen} />}
+            {activeVideoId !== null && drawing === true && (
+              <Drawing fullscreen={fullscreen} />
+            )}
             <Box css={videoStyle} ref={videoRef} />
           </Box>
         </Flex>
@@ -246,15 +278,36 @@ export default function ReviewVideos() {
           borderColor={"whiteAlpha.300"}
         >
           <Box mr={"2"}>
-            {!playing && <IconButton onClick={startPlaying} icon={<PlayerPlayIcon />} aria-label="Play" />}
-            {playing && <IconButton onClick={stopPlaying} icon={<PlayerPauseIcon />} aria-label="Pause" />}
+            {!playing && (
+              <IconButton
+                onClick={startPlaying}
+                icon={<PlayerPlayIcon />}
+                aria-label="Play"
+              />
+            )}
+            {playing && (
+              <IconButton
+                onClick={stopPlaying}
+                icon={<PlayerPauseIcon />}
+                aria-label="Pause"
+              />
+            )}
           </Box>
 
           <Box mx={"2"}>
-            <VideoStepControl direction="backwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
+            <VideoStepControl
+              direction="backwards"
+              frameRate={activeVideo.frameRate}
+              onClick={handleClickStep}
+            />
           </Box>
 
-          <Text whiteSpace={"nowrap"} fontSize={"sm"} align={"center"} width={"32"}>
+          <Text
+            whiteSpace={"nowrap"}
+            fontSize={"sm"}
+            align={"center"}
+            width={"32"}
+          >
             {currentTime.toFixed(2)} / {maxDuration.toFixed(2)}
           </Text>
 
@@ -267,11 +320,19 @@ export default function ReviewVideos() {
           </Box>
 
           <Box mx={"2"}>
-            <VideoStepControl direction="forwards" frameRate={activeVideo.frameRate} onClick={handleClickStep} />
+            <VideoStepControl
+              direction="forwards"
+              frameRate={activeVideo.frameRate}
+              onClick={handleClickStep}
+            />
           </Box>
 
           <Box ml={"2"}>
-            <IconButton onClick={handleClickFullscreen} icon={<MaximizeIcon />} aria-label="Fullscreen video" />
+            <IconButton
+              onClick={handleClickFullscreen}
+              icon={<MaximizeIcon />}
+              aria-label="Fullscreen video"
+            />
           </Box>
         </Flex>
       </>
@@ -282,7 +343,12 @@ export default function ReviewVideos() {
     <>
       <Hotkeys onEscape={handleEscapePressed} video={activeVideo} />
       <WithSidebar sidebar={renderedSidebar} disableSidebar={videos.length < 2}>
-        <Flex direction="column" width="100%" height={"calc(100vh - 5rem)"} ref={contentRef}>
+        <Flex
+          direction="column"
+          width="100%"
+          height={"calc(100vh - 5rem)"}
+          ref={contentRef}
+        >
           {renderedContent}
         </Flex>
       </WithSidebar>

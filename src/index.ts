@@ -1,4 +1,12 @@
-import { app, BrowserWindow, session, protocol, ipcMain, Menu, dialog } from "electron";
+import {
+  app,
+  BrowserWindow,
+  session,
+  protocol,
+  ipcMain,
+  Menu,
+  dialog,
+} from "electron";
 
 import ffmpegBins from "ffmpeg-ffprobe-static";
 import ffmpeg from "fluent-ffmpeg";
@@ -19,7 +27,6 @@ let mainWindow: BrowserWindow;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
-  // eslint-disable-line global-require
   app.quit();
 }
 
@@ -57,7 +64,10 @@ const createWindow = (): void => {
 
             if (result.canceled === false) {
               const contents = await fs.readFile(result.filePaths[0]);
-              mainWindow.webContents.send("onLoadProjectRequest", contents.toString());
+              mainWindow.webContents.send(
+                "onLoadProjectRequest",
+                contents.toString()
+              );
             }
           },
         },
@@ -70,7 +80,10 @@ const createWindow = (): void => {
             });
 
             if (result.canceled === false) {
-              mainWindow.webContents.send("onSaveProjectRequest", result.filePaths[0]);
+              mainWindow.webContents.send(
+                "onSaveProjectRequest",
+                result.filePaths[0]
+              );
             }
           },
         },
@@ -114,9 +127,12 @@ ipcMain.handle("app:getVersion", async (event) => {
 /**
  * Saves the given project (string'd json) to the supplied filePath
  */
-ipcMain.handle("app:saveProject", async (event, filePath: string, project: string) => {
-  return await fs.writeFile(filePath, project);
-});
+ipcMain.handle(
+  "app:saveProject",
+  async (event, filePath: string, project: string) => {
+    return await fs.writeFile(filePath, project);
+  }
+);
 
 /**
  * Use ffprobe to find information about the given video
@@ -146,31 +162,38 @@ ipcMain.handle("video:exists", async (event, filePath: string) => {
 /**
  * Generates thumbnails on the given video (using id + filePath)
  */
-ipcMain.handle("video:generateThumbnails", async (event, { id, filePath }: VideoGenerateThumbnailOptions) => {
-  const basename = path.basename(filePath, path.extname(filePath));
-  const assetsDir = path.join(path.dirname(filePath), `${basename}_vodon`);
-  const thumbnailsDir = path.join(assetsDir, "thumbnails");
+ipcMain.handle(
+  "video:generateThumbnails",
+  async (event, { id, filePath }: VideoGenerateThumbnailOptions) => {
+    const basename = path.basename(filePath, path.extname(filePath));
+    const assetsDir = path.join(path.dirname(filePath), `${basename}_vodon`);
+    const thumbnailsDir = path.join(assetsDir, "thumbnails");
 
-  await fs.mkdir(thumbnailsDir, { recursive: true });
+    await fs.mkdir(thumbnailsDir, { recursive: true });
 
-  ffmpeg(filePath)
-    .complexFilter("fps=1")
-    .outputOptions(["-qscale:v 10"])
-    .on("error", function (err: any, stdout: any, stderr: any) {
-      console.error("Cannot process video: " + err.message);
-    })
-    .on("progress", function (progress: any) {
-      mainWindow.webContents.send("onVideoThumbnailGenerationProgress", {
-        id,
-        percent: Math.round(progress.percent),
-        thumbnailsDir,
-      });
-    })
-    .on("end", function (stdout: any, stderr: any) {
-      mainWindow.webContents.send("onVideoThumbnailGenerationProgress", { id, percent: 100, thumbnailsDir });
-    })
-    .save(path.join(thumbnailsDir, `%04d.jpg`));
-});
+    ffmpeg(filePath)
+      .complexFilter("fps=1")
+      .outputOptions(["-qscale:v 10"])
+      .on("error", function (err: any, stdout: any, stderr: any) {
+        console.error("Cannot process video: " + err.message);
+      })
+      .on("progress", function (progress: any) {
+        mainWindow.webContents.send("onVideoThumbnailGenerationProgress", {
+          id,
+          percent: Math.round(progress.percent),
+          thumbnailsDir,
+        });
+      })
+      .on("end", function (stdout: any, stderr: any) {
+        mainWindow.webContents.send("onVideoThumbnailGenerationProgress", {
+          id,
+          percent: 100,
+          thumbnailsDir,
+        });
+      })
+      .save(path.join(thumbnailsDir, `%04d.jpg`));
+  }
+);
 
 // allow local videos
 protocol.registerSchemesAsPrivileged([

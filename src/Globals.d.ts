@@ -22,14 +22,18 @@ interface Window {
     getVersion: () => Promise<string>;
     onLoadProjectRequest: (cb: (event: any, project: string) => void) => void;
     onSaveProjectRequest: (cb: (event: any, filePath: string) => void) => void;
-    onVideoThumbnailGenerationProgress: (cb: (event: any, progress: VideoThumbnailGenerationProgress) => void) => void;
+    onVideoThumbnailGenerationProgress: (
+      cb: (event: any, progress: VideoThumbnailGenerationProgress) => void
+    ) => void;
     saveProject: (filePath: string, project: string) => Promise<string>;
   };
 
   video: {
     exists: (filepath: string) => Promise<boolean>;
     getMetadata: (filepath: string) => Promise<VideoMetadata>;
-    generateThumbnails: (options: VideoGenerateThumbnailOptions) => Promise<VideoMetadata>;
+    generateThumbnails: (
+      options: VideoGenerateThumbnailOptions
+    ) => Promise<VideoMetadata>;
   };
 }
 

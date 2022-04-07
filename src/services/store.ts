@@ -88,7 +88,10 @@ const useStore = createStore<State>(
        */
       addVideo: (video: Video) =>
         set((state) => ({
-          activeVideoId: state.activeVideoId === null || state.videos.length === 0 ? video.id : state.activeVideoId,
+          activeVideoId:
+            state.activeVideoId === null || state.videos.length === 0
+              ? video.id
+              : state.activeVideoId,
           currentTime: 0,
           videos: state.videos.concat([video]),
         })),
@@ -99,7 +102,10 @@ const useStore = createStore<State>(
             state.videos = state.videos.filter((innerVideo) => {
               return video.id !== innerVideo.id;
             });
-            state.activeVideoId = state.videos.length === 1 ? state.videos[0].id : state.activeVideoId;
+            state.activeVideoId =
+              state.videos.length === 1
+                ? state.videos[0].id
+                : state.activeVideoId;
           })
         ),
 
@@ -161,7 +167,8 @@ const useStore = createStore<State>(
 
             state.videos.forEach((video) => {
               video.offsetNormalised = video.offset - minimumOffset;
-              video.durationNormalised = video.duration + video.offsetNormalised;
+              video.durationNormalised =
+                video.duration + video.offsetNormalised;
             });
 
             // Set the max duration of all the videos. This is used to construct the global slider
@@ -169,7 +176,8 @@ const useStore = createStore<State>(
           })
         ),
 
-      setActiveVideoId: (id: string | null) => set((state) => ({ activeVideoId: id })),
+      setActiveVideoId: (id: string | null) =>
+        set((state) => ({ activeVideoId: id })),
 
       /**
        * Play control
@@ -184,8 +192,10 @@ const useStore = createStore<State>(
       stopPlaying: () => set((state) => ({ playing: false })),
       togglePlaying: () => set((state) => ({ playing: !state.playing })),
 
-      toggleSlowCPUMode: () => set((state) => ({ slowCPUMode: !state.slowCPUMode })),
-      setShowSetupInstructions: (value) => set((state) => ({ showSetupInstructions: value })),
+      toggleSlowCPUMode: () =>
+        set((state) => ({ slowCPUMode: !state.slowCPUMode })),
+      setShowSetupInstructions: (value) =>
+        set((state) => ({ showSetupInstructions: value })),
 
       activeVideoId: null,
       currentTime: 0,
@@ -233,7 +243,10 @@ window.app.onLoadProjectRequest(async (event: any, project: string) => {
  * then pass it back to the main thread along with the filepath to persist.
  */
 window.app.onVideoThumbnailGenerationProgress(
-  async (event: any, { id, thumbnailsDir, percent }: VideoThumbnailGenerationProgress) => {
+  async (
+    event: any,
+    { id, thumbnailsDir, percent }: VideoThumbnailGenerationProgress
+  ) => {
     useStore.setState(
       produce(useStore.getState(), (state: State) => {
         const index = state.videos.findIndex((innerVideo) => {

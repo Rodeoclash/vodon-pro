@@ -1,6 +1,13 @@
 import useStore from "../services/store";
 
-import { Heading, Box, FormControl, FormLabel, Switch, Text } from "@chakra-ui/react";
+import {
+  Heading,
+  Box,
+  FormControl,
+  FormLabel,
+  Switch,
+  Text,
+} from "@chakra-ui/react";
 
 import NoSidebar from "../layouts/NoSidebar";
 
@@ -19,11 +26,15 @@ export default function Settings() {
             <FormLabel htmlFor="slow-cpu-setting" mb="0">
               Slow CPU mode
             </FormLabel>
-            <Switch id="slow-cpu-setting" isChecked={slowCPUMode} onChange={toggleSlowCPUMode} />
+            <Switch
+              id="slow-cpu-setting"
+              isChecked={slowCPUMode}
+              onChange={toggleSlowCPUMode}
+            />
           </FormControl>
           <Text fontSize={"sm"} width={"container.sm"}>
-            If you are experiencing choppy playback, enabling this option to reduce CPU load by disabling smooth
-            playback of thumbnail videos.
+            If you are experiencing choppy playback, enabling this option to
+            reduce CPU load by disabling smooth playback of thumbnail videos.
           </Text>
         </Box>
       </Box>
