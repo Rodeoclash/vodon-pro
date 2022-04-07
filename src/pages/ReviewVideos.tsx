@@ -341,7 +341,9 @@ export default function ReviewVideos() {
 
   return (
     <>
-      <Hotkeys onEscape={handleEscapePressed} video={activeVideo} />
+      {activeVideo !== undefined && (
+        <Hotkeys onEscape={handleEscapePressed} video={activeVideo} />
+      )}
       <WithSidebar sidebar={renderedSidebar} disableSidebar={videos.length < 2}>
         <Flex
           direction="column"

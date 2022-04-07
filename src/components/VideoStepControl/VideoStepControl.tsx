@@ -1,4 +1,7 @@
 import { useState, useLayoutEffect } from "react";
+
+import { STEP_ADVANCE_INTERVAL } from "../../services/ui";
+
 import { IconButton } from "@chakra-ui/react";
 
 import {
@@ -33,7 +36,7 @@ export default function VideoStepControl({
       if (mouseDown === true) {
         onClick(frameLength * value);
       }
-    }, 100);
+    }, STEP_ADVANCE_INTERVAL);
 
     return () => {
       clearInterval(interval);

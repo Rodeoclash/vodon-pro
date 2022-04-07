@@ -1,3 +1,7 @@
+### 1.5.6
+
+- Navigation keys (`left arrow, a, right arrow, d`) can now be held down to navigate through frames quickly,
+
 ### 1.5.5
 
 - Added `a` and `d` as navigation keys.
