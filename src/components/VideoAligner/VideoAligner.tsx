@@ -1,5 +1,6 @@
 import React, { useRef, useLayoutEffect, useState } from "react";
 
+import { secondsToHms } from "../../services/time";
 import useStore from "../../services/store";
 
 import {
@@ -100,26 +101,25 @@ export default function VideoAligner({ video }: Props) {
         right={"0"}
         align={"center"}
       >
-        <VideoStepControl
-          direction="backwards"
-          frameRate={video.frameRate}
-          onClick={handleClickStep}
-        />
+        <Box mr={2}>
+          <VideoStepControl
+            direction="backwards"
+            frameRate={video.frameRate}
+            onClick={handleClickStep}
+          />
+        </Box>
 
-        <Text
-          whiteSpace={"nowrap"}
-          fontSize={"sm"}
-          mx={"2"}
-          align={"center"}
-          width={"32"}
-        >
-          {video.offset.toFixed(2)} / {Math.round(video.duration)}
-        </Text>
+        <Box mx={2}>
+          <Text whiteSpace={"nowrap"} fontSize={"sm"} mx={"2"} align={"center"}>
+            {secondsToHms(Math.round(video.offset))} /{" "}
+            {secondsToHms(Math.round(video.duration))}
+          </Text>
+        </Box>
 
         <Slider
           aria-label="Align video scrubbing slider"
           defaultValue={video.offset ?? 0}
-          mx={4}
+          mx={2}
           min={0}
           max={video.duration}
           onChange={handleSliderChange}
@@ -131,11 +131,13 @@ export default function VideoAligner({ video }: Props) {
           <SliderThumb />
         </Slider>
 
-        <VideoStepControl
-          direction="forwards"
-          frameRate={video.frameRate}
-          onClick={handleClickStep}
-        />
+        <Box ml={2}>
+          <VideoStepControl
+            direction="forwards"
+            frameRate={video.frameRate}
+            onClick={handleClickStep}
+          />
+        </Box>
       </Flex>
     );
 

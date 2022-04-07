@@ -17,7 +17,7 @@ type Props = {
   video: Video;
 };
 
-export default function CurrentTimeSliderControl({ video }: Props) {
+export default function GlobalTimeControl({ video }: Props) {
   const trackRef = useRef(null);
   const popupRef = useRef(null);
   const imageRef = useRef(null);

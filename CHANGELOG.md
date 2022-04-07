@@ -1,6 +1,10 @@
+### 1.5.7
+
+- Time display fixed to display hh:mm:ss instead of seconds.
+
 ### 1.5.6
 
-- Navigation keys (`left arrow, a, right arrow, d`) can now be held down to navigate through frames quickly,
+- Navigation keys (`left arrow, a, right arrow, d`) can now be held down to navigate through frames quickly.
 
 ### 1.5.5
 

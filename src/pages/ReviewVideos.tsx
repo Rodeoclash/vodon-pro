@@ -23,13 +23,14 @@ import {
 } from "tabler-icons-react";
 import { Link } from "react-router-dom";
 
-import CurrentTimeSliderControl from "../components/CurrentTimeSliderControl/CurrentTimeSliderControl";
 import Drawing from "../components/Drawing/Drawing";
+import GlobalTimeControl from "../components/GlobalTimeControl/GlobalTimeControl";
+import GlobalTimeDisplay from "../components/GlobalTimeDisplay/GlobalTimeDisplay";
+import Hotkeys from "./ReviewVideos/Hotkeys";
 import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
 import VideoVolume from "../components/VideoVolume/VideoVolume";
 import WithSidebar from "../layouts/WithSidebar";
-import Hotkeys from "./ReviewVideos/Hotkeys";
 
 export default function ReviewVideos() {
   const overlayRef = useRef(null);
@@ -302,17 +303,12 @@ export default function ReviewVideos() {
             />
           </Box>
 
-          <Text
-            whiteSpace={"nowrap"}
-            fontSize={"sm"}
-            align={"center"}
-            width={"32"}
-          >
-            {currentTime.toFixed(2)} / {maxDuration.toFixed(2)}
-          </Text>
+          <Box mx={"2"}>
+            <GlobalTimeDisplay />
+          </Box>
 
           <Box flexGrow={"1"} mx={"2"}>
-            <CurrentTimeSliderControl video={activeVideo} />
+            <GlobalTimeControl video={activeVideo} />
           </Box>
 
           <Box mx={"2"}>
