@@ -12,12 +12,12 @@ Add viewpoints from each of the players in a match, tell Vodon how to synchronis
 
 ## Features
 
-- Supports an _unlimited_ number of videos (restricted by your systems performance)
-- Includes a "Slow CPU" mode to reduce load when many videos are loaded in at once.
-- Draw on individual frames in each video (Powered by [TLDraw](https://github.com/tldraw/tldraw))
-- Frame advance and rewind controls.
-- Load and save your projects.
-- Autosaves your projects and settings as you work.
+- 🎥 Supports an _unlimited_ number of videos (restricted by your systems performance)
+- 🖥 Includes a "Slow CPU" mode to reduce load when many videos are loaded in at once.
+- 🖊 Draw on individual frames in each video (Powered by [TLDraw](https://github.com/tldraw/tldraw))
+- ▶ Frame advance and rewind controls.
+- 💾 Load and save your projects (includes autosave as you work)
+- 👀 o advertising or tracking.
 
 ## Supports
 
