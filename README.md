@@ -17,7 +17,7 @@ Add viewpoints from each of the players in a match, tell Vodon how to synchronis
 - 🖊 Draw on individual frames in each video (Powered by [TLDraw](https://github.com/tldraw/tldraw))
 - ▶ Frame advance and rewind controls.
 - 💾 Load and save your projects (includes autosave as you work)
-- 👀 o advertising or tracking.
+- 👀 No advertising or tracking.
 
 ## Supports
 
