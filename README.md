@@ -35,17 +35,23 @@ Want to give Vodon Pro a try? Head over to the [releases page](https://github.co
 
 ## Screenshots
 
+### Synchronising videos
+
+_Everything starts in Vodon by telling it how to synchronise your videos. Align each video to the same point in time in the match_
+
+![Setup videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/setup.png)
+
 ### Reviewing videos
+
+_With the videos aligned, the global time control can be used to navigate all videos. Click the videos in the sidebar to instantly jump to that point in time_
 
 ![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/review.png)
 
 ### Drawing on frames
 
+_Vodon Pro even has drawing tools. Use these to annotate the frame that you're talking about it in the review_
+
 ![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/drawing.png)
-
-### Synchronising videos
-
-![Setup videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/setup.png)
 
 ## Frequently asked questions
 
