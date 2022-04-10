@@ -69,7 +69,7 @@ export default function App() {
             <Spacer />
             <Text fontSize={"sm"}>Version {version}</Text>
           </Flex>
-          <Flex as={"main"} height={"calc(100vh - 5rem)"}>
+          <Flex as={"main"} height={"calc(100vh - 5rem)"} overflow="hidden">
             <Outlet />
           </Flex>
         </Flex>

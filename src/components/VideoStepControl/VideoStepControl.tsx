@@ -2,7 +2,7 @@ import { useState, useLayoutEffect } from "react";
 
 import { STEP_ADVANCE_INTERVAL } from "../../services/ui";
 
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, Tooltip } from "@chakra-ui/react";
 
 import {
   PlayerTrackPrev as PlayerTrackPrevIcon,
@@ -51,12 +51,16 @@ export default function VideoStepControl({
     setMouseDown(false);
   }
 
+  const label = `Frame ${direction} (hold for multiple steps)`;
+
   return (
-    <IconButton
-      icon={Icon}
-      aria-label="Step backwards"
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-    />
+    <Tooltip label={label}>
+      <IconButton
+        icon={Icon}
+        aria-label={label}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+      />
+    </Tooltip>
   );
 }

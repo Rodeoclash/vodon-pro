@@ -5,11 +5,14 @@ import useStore from "../../services/store";
 
 import {
   Box,
-  SliderTrack,
+  Flex,
   Slider,
   SliderFilledTrack,
   SliderThumb,
+  SliderTrack,
 } from "@chakra-ui/react";
+
+import VideoBookmark from "../VideoBookmark/VideoBookmark";
 
 import type { Video } from "../../services/models/Video";
 
@@ -17,7 +20,7 @@ type Props = {
   video: Video;
 };
 
-export default function CurrentTimeSliderControl({ video }: Props) {
+export default function GlobalTimeControl({ video }: Props) {
   const trackRef = useRef(null);
   const popupRef = useRef(null);
   const imageRef = useRef(null);
@@ -28,9 +31,10 @@ export default function CurrentTimeSliderControl({ video }: Props) {
   const currentTime = useStore((state) => state.currentTime);
   const maxDuration = useStore((state) => state.maxDuration);
 
-  const [second, setSecond] = useState(null);
-  const [imageSrc, setImageSrc] = useState(null);
-  const [mouseOver, setMouseOver] = useState(false);
+  const [second, setSecond] = useState(null); // the currently moused over "second" position
+  const [imageSrc, setImageSrc] = useState(null); // current "preview" image, based on mouseover second
+  const [mouseOver, setMouseOver] = useState(false); // track the mouse being over the track
+  const [trackDimensions, setTrackDimensions] = useState(null); // tracks the dimensions of the track as it's resized
 
   function handleSliderChange(newTime: number) {
     stopPlaying();
@@ -51,6 +55,22 @@ export default function CurrentTimeSliderControl({ video }: Props) {
       (event.clientX - trackBounding.left) / trackBounding.width;
     setSecond(String(Math.round(maxDuration * percentage)).padStart(4, "0"));
   }
+
+  useLayoutEffect(() => {
+    function handleResize() {
+      if (trackRef.current === null) {
+        return;
+      }
+
+      setTrackDimensions(trackRef.current.getBoundingClientRect());
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   /**
    * As the preview second changes, attempt to load the thumbnails of the
@@ -118,6 +138,7 @@ export default function CurrentTimeSliderControl({ video }: Props) {
         event.clientX,
         event.clientY
       );
+
       instance.update();
     }
 
@@ -129,33 +150,61 @@ export default function CurrentTimeSliderControl({ video }: Props) {
     };
   }, [mouseOver]);
 
+  const renderedBookmarks =
+    trackDimensions === null
+      ? []
+      : video.bookmarks.map((bookmark) => {
+          const percentage = bookmark.time / maxDuration;
+          const left = trackDimensions.width * percentage;
+
+          return (
+            <Flex
+              key={bookmark.id}
+              bgColor={"gray.800"}
+              position={"absolute"}
+              width={"2rem"}
+              height={"2rem"}
+              align={"center"}
+              justify={"center"}
+              top={"-7px"}
+              left={`calc(${left}px - 1rem)`}
+              rounded={"full"}
+              zIndex={"1"}
+            >
+              <VideoBookmark video={video} bookmark={bookmark} />
+            </Flex>
+          );
+        });
+
   return (
-    <>
+    <Box position="relative">
+      {renderedBookmarks}
       <Box
         ref={popupRef}
         position="absolute"
         display={mouseOver === true ? "block" : "none"}
+        zIndex={"2"}
       >
         <img width="400px" ref={imageRef} src={imageSrc} />
       </Box>
       <Slider
-        onMouseMove={handleMouseMoveSliderTrack}
+        aria-label="Global time control"
+        focusThumbOnChange={false}
+        key="playing"
+        max={maxDuration}
+        min={0}
+        onChange={handleSliderChange}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        key="playing"
-        aria-label="Global time control"
-        value={currentTime}
-        min={0}
-        max={maxDuration}
-        onChange={handleSliderChange}
+        onMouseMove={handleMouseMoveSliderTrack}
         step={1 / video.frameRate}
-        focusThumbOnChange={false}
+        value={currentTime}
       >
         <SliderTrack ref={trackRef}>
           <SliderFilledTrack />
         </SliderTrack>
         <SliderThumb />
       </Slider>
-    </>
+    </Box>
   );
 }

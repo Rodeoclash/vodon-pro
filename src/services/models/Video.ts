@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { basename } from "../file";
 
+import type { VideoBookmark } from "./VideoBookmark";
+
 export type Video = {
   /** Average framerate of the video */
   frameRate: number;
@@ -40,6 +42,9 @@ export type Video = {
 
   /** Where are the thumbnails located on the file system? */
   thumbnailGenerationLocation: string | null;
+
+  /** List of bookmarks stored against this video */
+  bookmarks: VideoBookmark[];
 };
 
 type VideoConstructorAttrs = {
@@ -115,6 +120,7 @@ export async function createFromFile(filePath: string): Promise<Video> {
   el.src = filePath;
 
   return {
+    bookmarks: [],
     displayAspectRatio: videoStream.display_aspect_ratio,
     duration: null,
     durationNormalised: null,
@@ -125,8 +131,8 @@ export async function createFromFile(filePath: string): Promise<Video> {
     name: basename(filePath),
     offset: 0,
     offsetNormalised: 0,
-    thumbnailGenerationProgress: null,
     thumbnailGenerationLocation: null,
+    thumbnailGenerationProgress: null,
     volume: 0.8,
   };
 }

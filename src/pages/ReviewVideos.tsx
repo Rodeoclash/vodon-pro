@@ -6,14 +6,15 @@ import useStore from "../services/store";
 import { getRatioDimensions } from "../services/layout";
 
 import {
-  Flex,
   Box,
-  Text,
-  IconButton,
-  Switch,
+  Flex,
   FormControl,
   FormLabel,
   Heading,
+  IconButton,
+  Switch,
+  Text,
+  Tooltip,
 } from "@chakra-ui/react";
 
 import {
@@ -21,15 +22,18 @@ import {
   PlayerPause as PlayerPauseIcon,
   Maximize as MaximizeIcon,
 } from "tabler-icons-react";
+
 import { Link } from "react-router-dom";
 
-import CurrentTimeSliderControl from "../components/CurrentTimeSliderControl/CurrentTimeSliderControl";
 import Drawing from "../components/Drawing/Drawing";
+import GlobalTimeControl from "../components/GlobalTimeControl/GlobalTimeControl";
+import GlobalTimeDisplay from "../components/GlobalTimeDisplay/GlobalTimeDisplay";
+import Hotkeys from "./ReviewVideos/Hotkeys";
+import VideoBookmark from "../components/VideoBookmarkAdd/VideoBookmarkAdd";
 import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
 import VideoVolume from "../components/VideoVolume/VideoVolume";
 import WithSidebar from "../layouts/WithSidebar";
-import Hotkeys from "./ReviewVideos/Hotkeys";
 
 export default function ReviewVideos() {
   const overlayRef = useRef(null);
@@ -277,22 +281,24 @@ export default function ReviewVideos() {
           borderTop={"1px"}
           borderColor={"whiteAlpha.300"}
         >
-          <Box mr={"2"}>
-            {!playing && (
-              <IconButton
-                onClick={startPlaying}
-                icon={<PlayerPlayIcon />}
-                aria-label="Play"
-              />
-            )}
-            {playing && (
-              <IconButton
-                onClick={stopPlaying}
-                icon={<PlayerPauseIcon />}
-                aria-label="Pause"
-              />
-            )}
-          </Box>
+          <Tooltip label={playing ? "Pause" : "Play"}>
+            <Box mr={"2"}>
+              {!playing && (
+                <IconButton
+                  onClick={startPlaying}
+                  icon={<PlayerPlayIcon />}
+                  aria-label="Play"
+                />
+              )}
+              {playing && (
+                <IconButton
+                  onClick={stopPlaying}
+                  icon={<PlayerPauseIcon />}
+                  aria-label="Pause"
+                />
+              )}
+            </Box>
+          </Tooltip>
 
           <Box mx={"2"}>
             <VideoStepControl
@@ -302,17 +308,12 @@ export default function ReviewVideos() {
             />
           </Box>
 
-          <Text
-            whiteSpace={"nowrap"}
-            fontSize={"sm"}
-            align={"center"}
-            width={"32"}
-          >
-            {currentTime.toFixed(2)} / {maxDuration.toFixed(2)}
-          </Text>
+          <Box mx={"2"}>
+            <GlobalTimeDisplay />
+          </Box>
 
           <Box flexGrow={"1"} mx={"2"}>
-            <CurrentTimeSliderControl video={activeVideo} />
+            <GlobalTimeControl video={activeVideo} />
           </Box>
 
           <Box mx={"2"}>
@@ -327,13 +328,19 @@ export default function ReviewVideos() {
             />
           </Box>
 
-          <Box ml={"2"}>
-            <IconButton
-              onClick={handleClickFullscreen}
-              icon={<MaximizeIcon />}
-              aria-label="Fullscreen video"
-            />
+          <Box mx={"2"}>
+            <VideoBookmark video={activeVideo} />
           </Box>
+
+          <Tooltip label="Go fullscreen">
+            <Box ml={"2"}>
+              <IconButton
+                onClick={handleClickFullscreen}
+                icon={<MaximizeIcon />}
+                aria-label="Fullscreen video"
+              />
+            </Box>
+          </Tooltip>
         </Flex>
       </>
     );
