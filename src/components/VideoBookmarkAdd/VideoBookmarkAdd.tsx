@@ -30,12 +30,14 @@ type Props = {
 
 export default function VideoBookmark({ video }: Props) {
   const createVideoBookmark = useStore((state) => state.createVideoBookmark);
+  const stopPlaying = useStore((state) => state.stopPlaying);
   const currentTime = useStore((state) => state.currentTime);
 
   const [isOpen, setIsOpen] = useState(false);
   const [description, setDescription] = useState("");
 
   function handleOpen() {
+    stopPlaying();
     setIsOpen(true);
   }
 
@@ -51,7 +53,12 @@ export default function VideoBookmark({ video }: Props) {
 
   return (
     <>
-      <Popover isOpen={isOpen} onClose={handleClose} placement="top">
+      <Popover
+        isOpen={isOpen}
+        onClose={handleClose}
+        placement="top"
+        returnFocusOnClose={false}
+      >
         <Tooltip label="Bookmark this moment">
           {/* tooltip hack */}
           <Box>
