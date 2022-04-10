@@ -3,14 +3,18 @@ import { persist } from "zustand/middleware";
 import { produce } from "immer";
 
 import { findMinOffset, findMaxNormalisedDuration } from "./models/Video";
+import { create as createVideoBookmark } from "./models/VideoBookmark";
 
 import type { Video } from "./models/Video";
+import type { VideoBookmark } from "./models/VideoBookmark";
 
 const PERSIST_VERSION = 0;
 
 interface State {
   addVideo: (video: Video) => void;
   clearVideos: () => void;
+  createVideoBookmark: (video: Video, content: string, time: number) => void;
+  deleteVideoBookmark: (video: Video, bookmark: VideoBookmark) => void;
   removeVideo: (video: Video) => void;
   setActiveVideoId: (id: string | null) => void;
   setCurrentTime: (currentTime: number) => void;
@@ -56,10 +60,16 @@ const deserialize = async (str: string) => {
     let videos = [];
 
     for (const video of state.videos) {
+      // handle missing videos
       const exists = await window.video.exists(video.filePath);
 
       if (exists === false) {
         continue;
+      }
+
+      // populate bookmarks onto videos if needed
+      if (!video.bookmarks) {
+        video.bookmarks = [];
       }
 
       const el = document.createElement("video");
@@ -173,6 +183,40 @@ const useStore = createStore<State>(
 
             // Set the max duration of all the videos. This is used to construct the global slider
             state.maxDuration = findMaxNormalisedDuration(state.videos);
+          })
+        ),
+
+      createVideoBookmark: (video: Video, content: string, time: number) =>
+        set(
+          produce((state: State) => {
+            const index = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
+
+            const bookmark = createVideoBookmark(content, time);
+
+            state.videos[index].bookmarks.push(bookmark);
+          })
+        ),
+
+      /**
+       * Removes a bookmark from a video
+       * @param video Video Video that contains the bookmark
+       * @param bookmark VideoBookmark The video bookmark to be removed
+       * @returns void
+       */
+      deleteVideoBookmark: (video: Video, bookmark: VideoBookmark) =>
+        set(
+          produce((state: State) => {
+            const videoIndex = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
+
+            state.videos[videoIndex].bookmarks = state.videos[
+              videoIndex
+            ].bookmarks.filter((innerBookmark) => {
+              return bookmark.id !== innerBookmark.id;
+            });
           })
         ),
 

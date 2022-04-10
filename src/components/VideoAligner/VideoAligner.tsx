@@ -5,24 +5,25 @@ import useStore from "../../services/store";
 
 import {
   Box,
-  Flex,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-  Text,
-  Heading,
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
+  Flex,
   FormControl,
   FormLabel,
+  Heading,
   Input,
+  Modal,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+  Text,
+  Tooltip,
 } from "@chakra-ui/react";
 import { Settings as SettingsIcon, X as XIcon } from "tabler-icons-react";
 
@@ -144,44 +145,48 @@ export default function VideoAligner({ video }: Props) {
   return (
     <>
       <Box position={"relative"}>
-        <Flex
-          onClick={handleClickName}
-          align={"center"}
-          position={"absolute"}
-          top={"0"}
-          left={"0"}
-          px={"8"}
-          py={"4"}
-          zIndex={1}
-          bgColor={"blackAlpha.600"}
-          cursor={"pointer"}
-        >
-          <SettingsIcon />
-          <Heading
-            fontSize={"md"}
-            ml={"2"}
-            fontWeight={"normal"}
-            textDecoration={"underline"}
+        <Tooltip label="Edit player name">
+          <Flex
+            onClick={handleClickName}
+            align={"center"}
+            position={"absolute"}
+            top={"0"}
+            left={"0"}
+            px={"8"}
+            py={"4"}
+            zIndex={1}
+            bgColor={"blackAlpha.600"}
+            cursor={"pointer"}
           >
-            {video.name}
-          </Heading>
-        </Flex>
+            <SettingsIcon />
+            <Heading
+              fontSize={"md"}
+              ml={"2"}
+              fontWeight={"normal"}
+              textDecoration={"underline"}
+            >
+              {video.name}
+            </Heading>
+          </Flex>
+        </Tooltip>
 
-        <Flex
-          onClick={handleRemove}
-          align={"center"}
-          position={"absolute"}
-          top={"0"}
-          right={"0"}
-          px={"4"}
-          py={"4"}
-          zIndex={1}
-          bgColor={"blackAlpha.800"}
-          cursor={"pointer"}
-          color={"red.500"}
-        >
-          <XIcon />
-        </Flex>
+        <Tooltip label="Remove this video">
+          <Flex
+            onClick={handleRemove}
+            align={"center"}
+            position={"absolute"}
+            top={"0"}
+            right={"0"}
+            px={"4"}
+            py={"4"}
+            zIndex={1}
+            bgColor={"blackAlpha.800"}
+            cursor={"pointer"}
+            color={"red.500"}
+          >
+            <XIcon />
+          </Flex>
+        </Tooltip>
 
         <Flex align={"center"} justifyContent={"center"}>
           <video src={video.filePath} ref={videoRef} />
