@@ -67,4 +67,8 @@ Finally, if you're studying a game by a competing team, you may only have access
 
 ### How can I get in touch?
 
-You can [email me](mailto:sam@vodon.gg) or join me and the other users on [our Discord](https://discord.gg/EaJdhHtZEk)
+You can or join me and the other users on
+
+- [Email me](mailto:sam@vodon.gg)
+- [Join our Discord](https://discord.gg/EaJdhHtZEk)
+- [Follow our Twitter](https://twitter.com/GgVodon)
