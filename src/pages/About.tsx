@@ -1,4 +1,11 @@
-import { Heading, Text, Box, Link } from "@chakra-ui/react";
+import {
+  Heading,
+  Text,
+  Box,
+  Link,
+  UnorderedList,
+  ListItem,
+} from "@chakra-ui/react";
 
 import NoSidebar from "../layouts/NoSidebar";
 
@@ -41,6 +48,26 @@ export default function About() {
             Twitter
           </Link>
         </Text>
+
+        <Heading as={"h1"} fontSize={"large"} mt={"8"}>
+          Thanks to
+        </Heading>
+        <Text my={"2"}>
+          Vodon Pro has been built with the support and help of a number of
+          great coaches. In no particular order:
+        </Text>
+        <UnorderedList my={2}>
+          <ListItem>
+            Etro from the{" "}
+            <Link
+              href="https://apexfundamentalists.com/"
+              isExternal
+              textDecoration={"underline"}
+            >
+              Apex Fundamentalists
+            </Link>
+          </ListItem>
+        </UnorderedList>
       </Box>
     </NoSidebar>
   );
