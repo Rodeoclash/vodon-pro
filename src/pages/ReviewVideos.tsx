@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState, useLayoutEffect } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
 import { css } from "@emotion/react";
 
 import useStore from "../services/store";
@@ -25,11 +24,12 @@ import {
 
 import { Link } from "react-router-dom";
 
+import VideoBookmark from "../components/VideoBookmark/VideoBookmark";
 import Drawing from "../components/Drawing/Drawing";
 import GlobalTimeControl from "../components/GlobalTimeControl/GlobalTimeControl";
 import GlobalTimeDisplay from "../components/GlobalTimeDisplay/GlobalTimeDisplay";
 import Hotkeys from "./ReviewVideos/Hotkeys";
-import VideoBookmark from "../components/VideoBookmarkAdd/VideoBookmarkAdd";
+import VideoBookmarkAdd from "../components/VideoBookmarkAdd/VideoBookmarkAdd";
 import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
 import VideoVolume from "../components/VideoVolume/VideoVolume";
@@ -51,13 +51,19 @@ export default function ReviewVideos() {
 
   const activeVideoId = useStore((state) => state.activeVideoId);
   const currentTime = useStore((state) => state.currentTime);
-  const maxDuration = useStore((state) => state.maxDuration);
+  const editingBookmark = useStore((state) => state.editingBookmark);
   const playing = useStore((state) => state.playing);
   const videos = useStore((state) => state.videos);
 
   const activeVideo = videos.find((video) => {
     return activeVideoId === video.id;
   });
+
+  const activeBookmark = !activeVideo
+    ? null
+    : activeVideo.bookmarks.find((bookmark) => {
+        return bookmark.time === currentTime;
+      });
 
   function handleEscapePressed() {
     setFullscreen(false);
@@ -148,6 +154,7 @@ export default function ReviewVideos() {
         activeVideo.displayAspectRatio,
         overlayRef.current
       );
+
       setVideoDimensions(dimensions);
     };
 
@@ -166,6 +173,11 @@ export default function ReviewVideos() {
       window.dispatchEvent(new Event("resize"));
     });
   }, []);
+
+  const scale =
+    !videoDimensions || !activeVideo
+      ? 1
+      : videoDimensions[0] / activeVideo.codedWidth;
 
   const overlayStyle = css`
     width: ${videoDimensions ? videoDimensions[0] : ""}px;
@@ -197,7 +209,7 @@ export default function ReviewVideos() {
     if (videos.length === 0) {
       return (
         <Flex
-          flexGrow={"1"}
+          flexGrow={1}
           align={"center"}
           justifyContent={"center"}
           fontSize={"3xl"}
@@ -213,7 +225,7 @@ export default function ReviewVideos() {
     if (activeVideo === undefined) {
       return (
         <Flex
-          flexGrow={"1"}
+          flexGrow={1}
           align={"center"}
           justifyContent={"center"}
           fontSize={"3xl"}
@@ -242,39 +254,55 @@ export default function ReviewVideos() {
               <Box>
                 <Heading fontSize={"2xl"}>{activeVideo.name}</Heading>
               </Box>
-              <Box>
-                <FormControl display="flex" alignItems="center">
-                  <FormLabel htmlFor="toggle-drawing" mb="0">
-                    Enable drawing
-                  </FormLabel>
-                  <Switch
-                    id="toggle-drawing"
-                    onChange={handleToggleDrawingChange}
-                    isChecked={drawing}
-                    disabled={playing}
-                  />
-                </FormControl>
-              </Box>
+              {!activeBookmark && (
+                <Box>
+                  <FormControl display="flex" alignItems="center">
+                    <FormLabel htmlFor="toggle-drawing" mb="0">
+                      Enable drawing
+                    </FormLabel>
+                    <Switch
+                      id="toggle-drawing"
+                      onChange={handleToggleDrawingChange}
+                      isChecked={drawing || editingBookmark}
+                      disabled={playing}
+                    />
+                  </FormControl>
+                </Box>
+              )}
             </Flex>
           </Box>
         )}
         <Flex
           align={"center"}
-          flexGrow={"1"}
-          flexShrink={"1"}
+          flexGrow={1}
+          flexShrink={1}
           justifyContent={"center"}
           ref={overlayRef}
           overflow={"hidden"}
         >
           <Box position={"relative"} css={overlayStyle}>
-            {activeVideoId !== null && drawing === true && (
-              <Drawing fullscreen={fullscreen} />
+            {activeVideoId !== null && (drawing || activeBookmark) && (
+              <Drawing
+                fullscreen={fullscreen}
+                key={activeBookmark ? activeBookmark.id : "adhoc"}
+                scale={scale}
+                showUI={editingBookmark || drawing}
+                video={activeVideo}
+                videoBookmark={activeBookmark}
+              />
+            )}
+            {activeVideoId !== null && (
+              <VideoBookmark
+                video={activeVideo}
+                bookmark={activeBookmark}
+                scale={scale}
+              />
             )}
             <Box css={videoStyle} ref={videoRef} />
           </Box>
         </Flex>
         <Flex
-          flexGrow={"0"}
+          flexGrow={0}
           align="center"
           p={"4"}
           boxSizing={"border-box"}
@@ -312,7 +340,7 @@ export default function ReviewVideos() {
             <GlobalTimeDisplay />
           </Box>
 
-          <Box flexGrow={"1"} mx={"2"}>
+          <Box flexGrow={1} mx={"2"}>
             <GlobalTimeControl video={activeVideo} />
           </Box>
 
@@ -329,7 +357,7 @@ export default function ReviewVideos() {
           </Box>
 
           <Box mx={"2"}>
-            <VideoBookmark video={activeVideo} />
+            <VideoBookmarkAdd video={activeVideo} scale={scale} />
           </Box>
 
           <Tooltip label="Go fullscreen">

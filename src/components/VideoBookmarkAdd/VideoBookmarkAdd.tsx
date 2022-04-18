@@ -1,100 +1,41 @@
 import { useState } from "react";
 import useStore from "../../services/store";
 
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  FormControl,
-  IconButton,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverFooter,
-  PopoverHeader,
-  PopoverTrigger,
-  Textarea,
-  Tooltip,
-  Text,
-} from "@chakra-ui/react";
+import { Box, IconButton, Tooltip } from "@chakra-ui/react";
 
 import { Bookmark as BookmarkIcon } from "tabler-icons-react";
 
 import type { Video } from "../../services/models/Video";
 
 type Props = {
+  scale: number;
   video: Video;
 };
 
-export default function VideoBookmark({ video }: Props) {
+export default function VideoBookmark({ video, scale }: Props) {
   const createVideoBookmark = useStore((state) => state.createVideoBookmark);
   const stopPlaying = useStore((state) => state.stopPlaying);
+  const startEditingBookmark = useStore((state) => state.startEditingBookmark);
+
   const currentTime = useStore((state) => state.currentTime);
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [description, setDescription] = useState("");
-
-  function handleOpen() {
-    stopPlaying();
-    setIsOpen(true);
-  }
-
-  function handleClose() {
-    setIsOpen(false);
-  }
+  const editingBookmark = useStore((state) => state.editingBookmark);
 
   function handleCreate() {
-    createVideoBookmark(video, description, currentTime);
-    setDescription("");
-    setIsOpen(false);
+    stopPlaying();
+    createVideoBookmark(video, "", currentTime, scale);
+    startEditingBookmark();
   }
 
   return (
-    <>
-      <Popover
-        isOpen={isOpen}
-        onClose={handleClose}
-        placement="top"
-        returnFocusOnClose={false}
-      >
-        <Tooltip label="Bookmark this moment">
-          {/* tooltip hack */}
-          <Box>
-            <PopoverTrigger>
-              <IconButton
-                onClick={handleOpen}
-                icon={<BookmarkIcon />}
-                aria-label="Bookmark this moment"
-              />
-            </PopoverTrigger>
-          </Box>
-        </Tooltip>
-
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <PopoverHeader>Create bookmark</PopoverHeader>
-          <PopoverBody>
-            <FormControl>
-              <Textarea
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                autoFocus
-              />
-            </FormControl>
-          </PopoverBody>
-          <PopoverFooter>
-            <ButtonGroup size="sm" display={"flex"} justifyContent={"right"}>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button colorScheme={"green"} onClick={handleCreate}>
-                Create
-              </Button>
-            </ButtonGroup>
-          </PopoverFooter>
-        </PopoverContent>
-      </Popover>
-    </>
+    <Tooltip label="Bookmark this moment">
+      <Box>
+        <IconButton
+          onClick={handleCreate}
+          icon={<BookmarkIcon />}
+          aria-label="Bookmark this moment"
+          disabled={editingBookmark}
+        />
+      </Box>
+    </Tooltip>
   );
 }
