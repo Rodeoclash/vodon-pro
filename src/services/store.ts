@@ -9,7 +9,7 @@ import type { Video } from "./models/Video";
 import type { VideoBookmark } from "./models/VideoBookmark";
 import type { VideoBookmarkCoordinates } from "./models/VideoBookmark";
 
-const PERSIST_VERSION = 1;
+const PERSIST_VERSION = 0;
 
 interface State {
   addVideo: (video: Video) => void;
@@ -380,7 +380,7 @@ const useStore = createStore<State>(
       videos: [],
     }),
     {
-      name: "vodon-store-v1",
+      name: "vodon-store-v2",
       version: PERSIST_VERSION,
       serialize,
       deserialize,
