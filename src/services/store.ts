@@ -7,14 +7,14 @@ import { create as createVideoBookmark } from "./models/VideoBookmark";
 
 import type { Video } from "./models/Video";
 import type { VideoBookmark } from "./models/VideoBookmark";
+import type { VideoBookmarkCoordinates } from "./models/VideoBookmark";
 
-const PERSIST_VERSION = 0;
+const PERSIST_VERSION = 1;
 
 interface State {
   addVideo: (video: Video) => void;
   clearVideos: () => void;
-  createVideoBookmark: (video: Video, content: string, time: number) => void;
-  deleteVideoBookmark: (video: Video, bookmark: VideoBookmark) => void;
+
   removeVideo: (video: Video) => void;
   setActiveVideoId: (id: string | null) => void;
   setCurrentTime: (currentTime: number) => void;
@@ -23,13 +23,43 @@ interface State {
   setVideoName: (video: Video, name: string) => void;
   setVideoOffset: (video: Video, offset: number) => void;
   setVideoVolume: (video: Video, volume: number) => void;
+  toggleSlowCPUMode: () => void;
+
+  // playing
   startPlaying: () => void;
   stopPlaying: () => void;
   togglePlaying: () => void;
-  toggleSlowCPUMode: () => void;
+
+  // bookmarks
+  createVideoBookmark: (
+    video: Video,
+    content: string,
+    time: number,
+    scale: number
+  ) => void;
+  deleteVideoBookmark: (video: Video, bookmark: VideoBookmark) => void;
+  startEditingBookmark: () => void;
+  stopEditingBookmark: () => void;
+  setVideoBookmarkCoords: (
+    video: Video,
+    bookmark: VideoBookmark,
+    coords: VideoBookmarkCoordinates,
+    scale: number
+  ) => void;
+  setVideoBookmarkContent: (
+    video: Video,
+    bookmark: VideoBookmark,
+    content: string
+  ) => void;
+  setVideoBookmarkDrawing: (
+    video: Video,
+    bookmark: VideoBookmark,
+    drawing: object
+  ) => void;
 
   activeVideoId: string | null;
   currentTime: number;
+  editingBookmark: boolean;
   maxDuration: number | null;
   playing: boolean;
   showSetupInstructions: boolean | undefined;
@@ -186,14 +216,19 @@ const useStore = createStore<State>(
           })
         ),
 
-      createVideoBookmark: (video: Video, content: string, time: number) =>
+      createVideoBookmark: (
+        video: Video,
+        content: string,
+        time: number,
+        scale: number
+      ) =>
         set(
           produce((state: State) => {
             const index = state.videos.findIndex((innerVideo) => {
               return innerVideo.id === video.id;
             });
 
-            const bookmark = createVideoBookmark(content, time);
+            const bookmark = createVideoBookmark(content, time, scale);
 
             state.videos[index].bookmarks.push(bookmark);
           })
@@ -220,6 +255,96 @@ const useStore = createStore<State>(
           })
         ),
 
+      /**
+       * Sets the coordinates of a bookmark, used to load the bookmark in the same place next time it's loaded.
+       * @param video Video Video that contains the bookmark
+       * @param bookmark VideoBookmark The video bookmark to be updated
+       * @param coords Coordinates to update to
+       * @returns void
+       */
+      setVideoBookmarkCoords: (
+        video: Video,
+        bookmark: VideoBookmark,
+        coords: VideoBookmarkCoordinates,
+        scale: number
+      ) =>
+        set(
+          produce((state: State) => {
+            const videoIndex = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
+
+            const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
+              (innerBookmark) => {
+                return innerBookmark.id === bookmark.id;
+              }
+            );
+
+            state.videos[videoIndex].bookmarks[bookmarkIndex].position = {
+              x: coords.x,
+              y: coords.y,
+            };
+
+            state.videos[videoIndex].bookmarks[bookmarkIndex].scale = scale;
+          })
+        ),
+
+      /**
+       * Sets the content of a bookmark
+       * @param video Video Video that contains the bookmark
+       * @param bookmark VideoBookmark The video bookmark to be updated
+       * @param coords Content to update to
+       * @returns void
+       */
+      setVideoBookmarkContent: (
+        video: Video,
+        bookmark: VideoBookmark,
+        content: string
+      ) =>
+        set(
+          produce((state: State) => {
+            const videoIndex = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
+
+            const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
+              (innerBookmark) => {
+                return innerBookmark.id === bookmark.id;
+              }
+            );
+
+            state.videos[videoIndex].bookmarks[bookmarkIndex].content = content;
+          })
+        ),
+
+      /**
+       * Sets the content of a bookmark
+       * @param video Video Video that contains the bookmark
+       * @param bookmark VideoBookmark The video bookmark to be updated
+       * @param coords Content to update to
+       * @returns void
+       */
+      setVideoBookmarkDrawing: (
+        video: Video,
+        bookmark: VideoBookmark,
+        drawing: object
+      ) =>
+        set(
+          produce((state: State) => {
+            const videoIndex = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
+
+            const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
+              (innerBookmark) => {
+                return innerBookmark.id === bookmark.id;
+              }
+            );
+
+            state.videos[videoIndex].bookmarks[bookmarkIndex].drawing = drawing;
+          })
+        ),
+
       setActiveVideoId: (id: string | null) =>
         set((state) => ({ activeVideoId: id })),
 
@@ -232,9 +357,13 @@ const useStore = createStore<State>(
             currentTime,
           };
         }),
+
       startPlaying: () => set((state) => ({ playing: true })),
       stopPlaying: () => set((state) => ({ playing: false })),
       togglePlaying: () => set((state) => ({ playing: !state.playing })),
+
+      startEditingBookmark: () => set((state) => ({ editingBookmark: true })),
+      stopEditingBookmark: () => set((state) => ({ editingBookmark: false })),
 
       toggleSlowCPUMode: () =>
         set((state) => ({ slowCPUMode: !state.slowCPUMode })),
@@ -243,6 +372,7 @@ const useStore = createStore<State>(
 
       activeVideoId: null,
       currentTime: 0,
+      editingBookmark: false,
       maxDuration: null,
       playing: false,
       showSetupInstructions: true,

@@ -45,6 +45,12 @@ export type Video = {
 
   /** List of bookmarks stored against this video */
   bookmarks: VideoBookmark[];
+
+  /** Width of the video in px, used to calculate scaling */
+  codedWidth: number;
+
+  /* Height of the video in px */
+  codedHeight: number;
 };
 
 type VideoConstructorAttrs = {
@@ -121,6 +127,8 @@ export async function createFromFile(filePath: string): Promise<Video> {
 
   return {
     bookmarks: [],
+    codedHeight: videoStream.coded_height,
+    codedWidth: videoStream.coded_width,
     displayAspectRatio: videoStream.display_aspect_ratio,
     duration: null,
     durationNormalised: null,

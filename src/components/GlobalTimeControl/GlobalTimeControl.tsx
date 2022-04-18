@@ -12,7 +12,7 @@ import {
   SliderTrack,
 } from "@chakra-ui/react";
 
-import VideoBookmark from "../VideoBookmark/VideoBookmark";
+import VideoBookmarkTimeline from "../VideoBookmarkTimeline/VideoBookmarkTimeline";
 
 import type { Video } from "../../services/models/Video";
 
@@ -171,7 +171,7 @@ export default function GlobalTimeControl({ video }: Props) {
               rounded={"full"}
               zIndex={"1"}
             >
-              <VideoBookmark video={video} bookmark={bookmark} />
+              <VideoBookmarkTimeline video={video} bookmark={bookmark} />
             </Flex>
           );
         });
