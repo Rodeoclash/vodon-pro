@@ -1,7 +1,7 @@
 {
   "name": "vodon-pro",
   "productName": "vodon-pro",
-  "version": "1.5.8",
+  "version": "1.6.0",
   "description": "The synchronised VOD review tool",
   "engines": {
     "node": "16.14.0"
