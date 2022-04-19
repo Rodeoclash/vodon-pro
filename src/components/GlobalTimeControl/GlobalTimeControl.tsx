@@ -27,6 +27,7 @@ export default function GlobalTimeControl({ video }: Props) {
 
   const stopPlaying = useStore((state) => state.stopPlaying);
   const setCurrentTime = useStore((state) => state.setCurrentTime);
+  const stopEditingBookmark = useStore((state) => state.stopEditingBookmark);
 
   const currentTime = useStore((state) => state.currentTime);
   const maxDuration = useStore((state) => state.maxDuration);
@@ -38,6 +39,7 @@ export default function GlobalTimeControl({ video }: Props) {
 
   function handleSliderChange(newTime: number) {
     stopPlaying();
+    stopEditingBookmark();
     setCurrentTime(newTime);
   }
 

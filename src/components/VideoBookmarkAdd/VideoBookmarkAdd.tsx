@@ -10,15 +10,15 @@ import type { Video } from "../../services/models/Video";
 type Props = {
   scale: number;
   video: Video;
+  disabled: boolean;
 };
 
-export default function VideoBookmark({ video, scale }: Props) {
+export default function VideoBookmark({ video, scale, disabled }: Props) {
   const createVideoBookmark = useStore((state) => state.createVideoBookmark);
   const stopPlaying = useStore((state) => state.stopPlaying);
   const startEditingBookmark = useStore((state) => state.startEditingBookmark);
 
   const currentTime = useStore((state) => state.currentTime);
-  const editingBookmark = useStore((state) => state.editingBookmark);
 
   function handleCreate() {
     stopPlaying();
@@ -33,7 +33,7 @@ export default function VideoBookmark({ video, scale }: Props) {
           onClick={handleCreate}
           icon={<BookmarkIcon />}
           aria-label="Bookmark this moment"
-          disabled={editingBookmark}
+          disabled={disabled}
         />
       </Box>
     </Tooltip>

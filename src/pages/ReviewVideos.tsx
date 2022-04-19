@@ -357,7 +357,11 @@ export default function ReviewVideos() {
           </Box>
 
           <Box mx={"2"}>
-            <VideoBookmarkAdd video={activeVideo} scale={scale} />
+            <VideoBookmarkAdd
+              video={activeVideo}
+              scale={scale}
+              disabled={!!activeBookmark || editingBookmark}
+            />
           </Box>
 
           <Tooltip label="Go fullscreen">
