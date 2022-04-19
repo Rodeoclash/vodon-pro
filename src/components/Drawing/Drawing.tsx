@@ -30,6 +30,8 @@ export default function Drawing({
     (state) => state.setVideoBookmarkDrawing
   );
 
+  console.log(scale);
+
   function handleMount(app: TldrawApp) {
     tlDrawRef.current = app;
 
@@ -39,8 +41,9 @@ export default function Drawing({
       );
 
       tlDrawRef.current.selectNone();
-      tlDrawRef.current.setCamera([0, 0], scale, "layout_mounted");
     }
+
+    tlDrawRef.current.setCamera([0, 0], scale, "layout_mounted");
   }
 
   function handlePersist(app: TldrawApp) {
