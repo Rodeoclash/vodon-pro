@@ -35,7 +35,8 @@ interface State {
     video: Video,
     content: string,
     time: number,
-    scale: number
+    scale: number,
+    drawing: object
   ) => void;
   deleteVideoBookmark: (video: Video, bookmark: VideoBookmark) => void;
   startEditingBookmark: () => void;
@@ -220,7 +221,8 @@ const useStore = createStore<State>(
         video: Video,
         content: string,
         time: number,
-        scale: number
+        scale: number,
+        drawing: object
       ) =>
         set(
           produce((state: State) => {
@@ -228,7 +230,7 @@ const useStore = createStore<State>(
               return innerVideo.id === video.id;
             });
 
-            const bookmark = createVideoBookmark(content, time, scale);
+            const bookmark = createVideoBookmark(content, time, scale, drawing);
 
             state.videos[index].bookmarks.push(bookmark);
           })

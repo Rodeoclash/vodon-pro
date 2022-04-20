@@ -28,11 +28,12 @@ export type VideoBookmark = {
 export function create(
   content: string,
   time: number,
-  scale: number
+  scale: number,
+  drawing: object
 ): VideoBookmark {
   return {
     content,
-    drawing: null,
+    drawing,
     id: uuidv4(),
     position: null,
     time,

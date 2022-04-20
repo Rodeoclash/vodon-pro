@@ -359,9 +359,10 @@ export default function ReviewVideos() {
 
           <Box mx={"2"}>
             <VideoBookmarkAdd
-              video={activeVideo}
-              scale={scale}
+              app={app}
               disabled={!!activeBookmark || editingBookmark}
+              scale={scale}
+              video={activeVideo}
             />
           </Box>
 
