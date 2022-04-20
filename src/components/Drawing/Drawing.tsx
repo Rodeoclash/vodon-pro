@@ -9,17 +9,15 @@ import type { Video } from "../../services/models/Video";
 import type { VideoBookmark } from "../../services/models/VideoBookmark";
 
 type Props = {
-  fullscreen: boolean;
+  onMount: (app: TldrawApp) => void;
   scale: number;
-  showUI: boolean;
   video: Video;
   videoBookmark: VideoBookmark | undefined;
 };
 
 export default function Drawing({
-  fullscreen,
+  onMount,
   scale,
-  showUI,
   video,
   videoBookmark,
 }: Props) {
@@ -30,12 +28,10 @@ export default function Drawing({
     (state) => state.setVideoBookmarkDrawing
   );
 
-  console.log(scale);
-
   function handleMount(app: TldrawApp) {
     tlDrawRef.current = app;
 
-    if (videoBookmark && videoBookmark.drawing) {
+    if (videoBookmark?.drawing) {
       tlDrawRef.current.loadDocument(
         JSON.parse(JSON.stringify(videoBookmark.drawing)) // we need to load a copy of the document
       );
@@ -44,6 +40,8 @@ export default function Drawing({
     }
 
     tlDrawRef.current.setCamera([0, 0], scale, "layout_mounted");
+
+    onMount(app);
   }
 
   function handlePersist(app: TldrawApp) {
@@ -69,25 +67,7 @@ export default function Drawing({
       bottom={"0"}
       ref={outerRef}
     >
-      {!showUI && (
-        <Box
-          position="absolute"
-          top={"0"}
-          left={"0"}
-          right={"0"}
-          bottom={"0"}
-          zIndex={2}
-        />
-      )}
-      <Tldraw
-        onMount={handleMount}
-        onPersist={handlePersist}
-        showMenu={false}
-        showPages={false}
-        showStyles={fullscreen === false}
-        showZoom={false}
-        showUI={showUI}
-      />
+      <Tldraw onMount={handleMount} onPersist={handlePersist} showUI={false} />
     </Box>
   );
 }
