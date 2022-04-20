@@ -7,11 +7,8 @@ import { getRatioDimensions } from "../services/layout";
 import {
   Box,
   Flex,
-  FormControl,
-  FormLabel,
   Heading,
   IconButton,
-  Switch,
   Text,
   Tooltip,
 } from "@chakra-ui/react";
@@ -22,13 +19,15 @@ import {
   Maximize as MaximizeIcon,
 } from "tabler-icons-react";
 
+import { TldrawApp } from "@tldraw/tldraw";
 import { Link } from "react-router-dom";
 
-import VideoBookmark from "../components/VideoBookmark/VideoBookmark";
 import Drawing from "../components/Drawing/Drawing";
+import DrawingControls from "../components/DrawingControls/DrawingControls";
 import GlobalTimeControl from "../components/GlobalTimeControl/GlobalTimeControl";
 import GlobalTimeDisplay from "../components/GlobalTimeDisplay/GlobalTimeDisplay";
 import Hotkeys from "./ReviewVideos/Hotkeys";
+import VideoBookmark from "../components/VideoBookmark/VideoBookmark";
 import VideoBookmarkAdd from "../components/VideoBookmarkAdd/VideoBookmarkAdd";
 import VideoStepControl from "../components/VideoStepControl/VideoStepControl";
 import VideoThumbnail from "../components/VideoThumbnail/VideoThumbnail";
@@ -43,7 +42,7 @@ export default function ReviewVideos() {
   const [startedPlayingAt, setStartedPlayingAt] = useState(null);
   const [videoDimensions, setVideoDimensions] = useState(null);
   const [fullscreen, setFullscreen] = useState(false);
-  const [drawing, setDrawing] = useState(false);
+  const [app, setApp] = useState<TldrawApp>();
 
   const startPlaying = useStore((state) => state.startPlaying);
   const stopPlaying = useStore((state) => state.stopPlaying);
@@ -73,15 +72,17 @@ export default function ReviewVideos() {
     setCurrentTime(useStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
   }
 
-  function handleToggleDrawingChange() {
-    setDrawing(!drawing);
-  }
-
   async function handleClickFullscreen() {
     setFullscreen(!fullscreen);
   }
 
-  // mount the active video into the main player when it changes
+  function handleTLDrawAppMount(app: TldrawApp) {
+    setApp(app);
+  }
+
+  /**
+   * Handles mounting the videos into the main playing area.
+   */
   useEffect(() => {
     if (activeVideo === undefined || videoRef.current === null) {
       return;
@@ -99,7 +100,6 @@ export default function ReviewVideos() {
       return setStartedPlayingAt(null);
     }
 
-    setDrawing(false);
     setStartedPlayingAt(Date.now());
   }, [playing]);
 
@@ -112,7 +112,7 @@ export default function ReviewVideos() {
     function updateCurrentTime() {
       setCurrentTime(
         currentTime + (Date.now() - startedPlayingAt) / 1000 - 0.06
-      ); // HACK HACK - We should use something where we have control over the clock driving the video.
+      ); // HACK HACK - We should use something where we have control over the clock driving the video (i.e. gstreamer)
     }
 
     const timer = setInterval(updateCurrentTime, 500);
@@ -167,13 +167,23 @@ export default function ReviewVideos() {
     };
   }, [activeVideo]);
 
-  // Trigger resize event on load of element, needs timeout to wait for video element to be fully present
+  /**
+   * Triggers a resize event on load of the element, required to be deferred
+   * using the `setTimeout` to ensure the video element has finished loading
+   * and has dimensions.
+   */
   useLayoutEffect(() => {
     setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
     });
   }, []);
 
+  /**
+   * The scale of how much the current video has been reduced in size. If no
+   * video has been loaded, we default to 1. If a video has been loaded,
+   * determine how much smaller it is compared to its native resolution. This
+   * only takes into account width scaling.
+   */
   const scale =
     !videoDimensions || !activeVideo
       ? 1
@@ -245,61 +255,52 @@ export default function ReviewVideos() {
             <Flex
               mx={"auto"}
               alignItems={"center"}
-              justifyContent={"space-between"}
+              justifyContent={"center"}
               height={"4rem"}
-              width={`${videoDimensions[0]}px`}
               px={8}
               boxSizing={"border-box"}
             >
               <Box>
                 <Heading fontSize={"2xl"}>{activeVideo.name}</Heading>
               </Box>
-              {!activeBookmark && (
-                <Box>
-                  <FormControl display="flex" alignItems="center">
-                    <FormLabel htmlFor="toggle-drawing" mb="0">
-                      Enable drawing
-                    </FormLabel>
-                    <Switch
-                      id="toggle-drawing"
-                      onChange={handleToggleDrawingChange}
-                      isChecked={drawing || editingBookmark}
-                      disabled={playing}
-                    />
-                  </FormControl>
-                </Box>
-              )}
             </Flex>
           </Box>
         )}
-        <Flex
-          align={"center"}
-          flexGrow={1}
-          flexShrink={1}
-          justifyContent={"center"}
-          ref={overlayRef}
-          overflow={"hidden"}
-        >
-          <Box position={"relative"} css={overlayStyle}>
-            {activeVideoId !== null && (drawing || activeBookmark) && (
+        <Flex flexGrow={1} flexShrink={1} overflow={"hidden"}>
+          <Box
+            borderRight={"1px"}
+            borderColor={"whiteAlpha.300"}
+            boxSizing={"border-box"}
+            padding={4}
+          >
+            {app && <DrawingControls app={app} />}
+          </Box>
+          <Flex
+            align={"center"}
+            flexGrow={1}
+            flexShrink={1}
+            justifyContent={"center"}
+            ref={overlayRef}
+            overflow={"hidden"}
+          >
+            <Box position={"relative"} css={overlayStyle}>
               <Drawing
-                fullscreen={fullscreen}
                 key={activeBookmark ? activeBookmark.id : "adhoc"}
+                onMount={handleTLDrawAppMount}
                 scale={scale}
-                showUI={editingBookmark || drawing}
                 video={activeVideo}
                 videoBookmark={activeBookmark}
               />
-            )}
-            {activeVideoId !== null && (
-              <VideoBookmark
-                video={activeVideo}
-                bookmark={activeBookmark}
-                scale={scale}
-              />
-            )}
-            <Box css={videoStyle} ref={videoRef} />
-          </Box>
+              {activeVideoId !== null && (
+                <VideoBookmark
+                  video={activeVideo}
+                  bookmark={activeBookmark}
+                  scale={scale}
+                />
+              )}
+              <Box css={videoStyle} ref={videoRef} />
+            </Box>
+          </Flex>
         </Flex>
         <Flex
           flexGrow={0}
