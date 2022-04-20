@@ -26,10 +26,13 @@ const sizes = {
 };
 
 export default function DrawingControlsSizeSelector({ app }: PropsType) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
   const currentStyle = app.useStore((s) => s.appState.currentStyle);
 
   const handleSizePick = React.useCallback((size: SizeStyle) => {
     app.style({ size });
+    setIsOpen(false);
   }, []);
 
   const sizesData = Object.entries(sizes);
@@ -59,7 +62,11 @@ export default function DrawingControlsSizeSelector({ app }: PropsType) {
   );
 
   return (
-    <Popover placement={"right"}>
+    <Popover
+      placement={"right"}
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+    >
       <PopoverTrigger>
         <Flex
           width={"2rem"}
@@ -70,6 +77,7 @@ export default function DrawingControlsSizeSelector({ app }: PropsType) {
           justifyContent={"center"}
           border={"1px"}
           borderColor={"whiteAlpha.600"}
+          onClick={() => setIsOpen(true)}
         >
           {sizes[currentStyle.size].slice(0, 1).toUpperCase()}
         </Flex>

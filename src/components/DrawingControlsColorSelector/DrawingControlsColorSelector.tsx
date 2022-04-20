@@ -34,10 +34,13 @@ const colors = {
 };
 
 export default function DrawingControlsColorSelector({ app }: PropsType) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
   const currentStyle = app.useStore((s) => s.appState.currentStyle);
 
   const handleColourPick = React.useCallback((color: ColorStyle) => {
     app.style({ color });
+    setIsOpen(false);
   }, []);
 
   const swatchesData = Object.entries(colors);
@@ -60,13 +63,18 @@ export default function DrawingControlsColorSelector({ app }: PropsType) {
   );
 
   return (
-    <Popover placement={"right"}>
+    <Popover
+      placement={"right"}
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+    >
       <PopoverTrigger>
         <Box
           width={"2rem"}
           height={"2rem"}
           bgColor={colors[currentStyle.color]}
           cursor={"pointer"}
+          onClick={() => setIsOpen(true)}
         />
       </PopoverTrigger>
       <PopoverContent width={`${swatchesData.length * 2}rem`}>
