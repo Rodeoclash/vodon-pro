@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 
 import DrawingControlsColorSelector from "../DrawingControlsColorSelector/DrawingControlsColorSelector";
+import DrawingControlsSizeSelector from "../DrawingControlsSizeSelector/DrawingControlsSizeSelector";
 
 import { Flex, Box, VStack, IconButton, Tooltip } from "@chakra-ui/react";
 import { TDShapeType, TldrawApp, ColorStyle } from "@tldraw/tldraw";
@@ -94,9 +95,16 @@ export default function DrawingControls({ app }: PropsType) {
         pt={4}
         borderTop={"1px"}
         borderColor={"whiteAlpha.300"}
-        justifyContent="center"
+        justify={"center"}
       >
-        <DrawingControlsColorSelector app={app} />
+        <Box>
+          <Box>
+            <DrawingControlsColorSelector app={app} />
+          </Box>
+          <Box mt={4}>
+            <DrawingControlsSizeSelector app={app} />
+          </Box>
+        </Box>
       </Flex>
     </>
   );
