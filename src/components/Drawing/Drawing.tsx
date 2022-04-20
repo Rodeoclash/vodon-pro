@@ -1,6 +1,6 @@
 import useStore from "../../services/store";
 
-import { useRef, useLayoutEffect, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { Tldraw, TldrawApp } from "@tldraw/tldraw";
 
 import { Box } from "@chakra-ui/react";
@@ -21,8 +21,10 @@ export default function Drawing({
   video,
   videoBookmark,
 }: Props) {
-  const tlDrawRef = useRef(null);
+  const tlDrawRef = useRef<TldrawApp>(null);
   const outerRef = useRef(null);
+
+  const currentTime = useStore((state) => state.currentTime);
 
   const setVideoBookmarkDrawing = useStore(
     (state) => state.setVideoBookmarkDrawing
@@ -57,6 +59,14 @@ export default function Drawing({
 
     tlDrawRef.current.setCamera([0, 0], scale, "layout_resized");
   }, [scale]);
+
+  useEffect(() => {
+    if (tlDrawRef.current === null) {
+      return;
+    }
+
+    tlDrawRef.current.reset();
+  }, [currentTime]);
 
   return (
     <Box
