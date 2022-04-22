@@ -294,7 +294,6 @@ export default function ReviewVideos() {
           >
             <Box position={"relative"} css={overlayStyle}>
               <Drawing
-                key={activeBookmark ? activeBookmark.id : "adhoc"}
                 onMount={handleTLDrawAppMount}
                 scale={scale}
                 video={activeVideo}

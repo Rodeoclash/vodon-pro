@@ -1,4 +1,8 @@
+import * as React from "react";
+
 import { css } from "@emotion/react";
+
+import useStore from "../../services/store";
 
 import DrawingControlsColorSelector from "../DrawingControlsColorSelector/DrawingControlsColorSelector";
 import DrawingControlsSizeSelector from "../DrawingControlsSizeSelector/DrawingControlsSizeSelector";
@@ -29,10 +33,17 @@ const unSlectedStyle = css`
 
 export default function DrawingControls({ app }: PropsType) {
   const activeTool = app.useStore((s) => s.appState.activeTool);
+  const playing = useStore((state) => state.playing);
 
   function selectTool(tool: TDToolType) {
     app.selectTool(tool);
   }
+
+  React.useEffect(() => {
+    if (playing === true) {
+      selectTool("select");
+    }
+  }, [playing]);
 
   return (
     <>
@@ -41,6 +52,7 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Select" aria-label="Select">
             <IconButton
               icon={<ClickIcon />}
+              disabled={playing}
               aria-label="Select"
               css={activeTool === "select" ? selectedStyle : unSlectedStyle}
               onClick={() => selectTool("select")}
@@ -49,6 +61,7 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Pencil" aria-label="Pencil">
             <IconButton
               icon={<PencilIcon />}
+              disabled={playing}
               aria-label="Pencil"
               css={
                 activeTool === TDShapeType.Draw ? selectedStyle : unSlectedStyle
@@ -59,6 +72,7 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Arrow" aria-label="Arrow">
             <IconButton
               icon={<ArrowUpRightIcon />}
+              disabled={playing}
               aria-label="Arrow"
               css={
                 activeTool === TDShapeType.Arrow
@@ -71,6 +85,7 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Rectangle" aria-label="Rectangle">
             <IconButton
               icon={<RectangleIcon />}
+              disabled={playing}
               aria-label="Rectangle"
               css={
                 activeTool === TDShapeType.Rectangle
@@ -83,6 +98,7 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Ellipse" aria-label="Ellipse">
             <IconButton
               icon={<CircleIcon />}
+              disabled={playing}
               aria-label="Ellipse"
               css={
                 activeTool === TDShapeType.Ellipse
