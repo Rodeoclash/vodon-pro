@@ -223,11 +223,8 @@ const useStore = createStore<State>(
                 }
 
                 video.offset = state.videos[0].syncTime - video.syncTime;
+                video.durationNormalised = video.offset + video.duration;
               });
-
-            state.videos.forEach((video) => {
-              video.durationNormalised = video.offset + video.duration;
-            });
 
             state.fullDuration = findMaxNormalisedDuration(state.videos);
           })
