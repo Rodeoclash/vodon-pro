@@ -1,3 +1,8 @@
+### 1.6.5
+
+- Fixed bugs with video alignment (now just uses the "overlapping" area).
+- Fixed bugs with trying to draw on moving video.
+
 ### 1.5.7
 
 - Time display fixed to display hh:mm:ss instead of seconds.
