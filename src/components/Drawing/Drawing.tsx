@@ -32,17 +32,7 @@ export default function Drawing({
 
   function handleMount(app: TldrawApp) {
     tlDrawRef.current = app;
-
-    if (videoBookmark?.drawing) {
-      tlDrawRef.current.loadDocument(
-        JSON.parse(JSON.stringify(videoBookmark.drawing)) // we need to load a copy of the document
-      );
-
-      tlDrawRef.current.selectNone();
-    }
-
     tlDrawRef.current.setCamera([0, 0], scale, "layout_mounted");
-
     onMount(app);
   }
 
@@ -60,13 +50,29 @@ export default function Drawing({
     tlDrawRef.current.setCamera([0, 0], scale, "layout_resized");
   }, [scale]);
 
+  /**
+   * On the current time / active bookmark changing, handle updating the
+   * drawing
+   */
   useEffect(() => {
     if (tlDrawRef.current === null) {
       return;
     }
 
-    tlDrawRef.current.reset();
-  }, [currentTime]);
+    if (videoBookmark?.drawing) {
+      tlDrawRef.current.loadDocument(
+        JSON.parse(JSON.stringify(videoBookmark.drawing)) // we need to load a copy of the document
+      );
+
+      tlDrawRef.current.selectNone();
+    } else {
+      const tool = tlDrawRef.current.useStore.getState().appState.activeTool;
+      tlDrawRef.current.deleteAll();
+      tlDrawRef.current.selectTool(tool);
+    }
+
+    tlDrawRef.current.setCamera([0, 0], scale, "layout_mounted");
+  }, [currentTime, videoBookmark]);
 
   return (
     <Box

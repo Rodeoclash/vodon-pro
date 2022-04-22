@@ -81,6 +81,15 @@ export default function ReviewVideos() {
   }
 
   /**
+   * Stop the video playing when leaving
+   */
+  useEffect(() => {
+    return () => {
+      stopPlaying();
+    };
+  }, []);
+
+  /**
    * Handles mounting the videos into the main playing area.
    */
   useEffect(() => {
@@ -285,7 +294,6 @@ export default function ReviewVideos() {
           >
             <Box position={"relative"} css={overlayStyle}>
               <Drawing
-                key={activeBookmark ? activeBookmark.id : "adhoc"}
                 onMount={handleTLDrawAppMount}
                 scale={scale}
                 video={activeVideo}

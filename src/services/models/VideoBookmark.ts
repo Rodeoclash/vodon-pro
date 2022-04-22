@@ -33,7 +33,7 @@ export function create(
 ): VideoBookmark {
   return {
     content,
-    drawing,
+    drawing: JSON.parse(JSON.stringify(drawing)),
     id: uuidv4(),
     position: null,
     time,

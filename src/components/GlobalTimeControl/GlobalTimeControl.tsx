@@ -29,7 +29,7 @@ export default function GlobalTimeControl({ video }: Props) {
   const setCurrentTime = useStore((state) => state.setCurrentTime);
 
   const currentTime = useStore((state) => state.currentTime);
-  const maxDuration = useStore((state) => state.maxDuration);
+  const fullDuration = useStore((state) => state.fullDuration);
 
   const [second, setSecond] = useState(null); // the currently moused over "second" position
   const [imageSrc, setImageSrc] = useState(null); // current "preview" image, based on mouseover second
@@ -53,7 +53,7 @@ export default function GlobalTimeControl({ video }: Props) {
     const trackBounding = trackRef.current.getBoundingClientRect();
     const percentage =
       (event.clientX - trackBounding.left) / trackBounding.width;
-    setSecond(String(Math.round(maxDuration * percentage)).padStart(4, "0"));
+    setSecond(String(Math.round(fullDuration * percentage)).padStart(4, "0"));
   }
 
   useLayoutEffect(() => {
@@ -154,7 +154,7 @@ export default function GlobalTimeControl({ video }: Props) {
     trackDimensions === null
       ? []
       : video.bookmarks.map((bookmark) => {
-          const percentage = bookmark.time / maxDuration;
+          const percentage = bookmark.time / fullDuration;
           const left = trackDimensions.width * percentage;
 
           return (
@@ -191,7 +191,7 @@ export default function GlobalTimeControl({ video }: Props) {
         aria-label="Global time control"
         focusThumbOnChange={false}
         key="playing"
-        max={maxDuration}
+        max={fullDuration}
         min={0}
         onChange={handleSliderChange}
         onMouseEnter={handleMouseEnter}

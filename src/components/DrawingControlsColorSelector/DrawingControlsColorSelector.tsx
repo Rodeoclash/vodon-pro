@@ -1,17 +1,15 @@
 import * as React from "react";
+
 import {
   Flex,
   Box,
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
-  PopoverFooter,
   PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
 } from "@chakra-ui/react";
+
 import { TldrawApp, ColorStyle } from "@tldraw/tldraw";
 
 type PropsType = {
@@ -42,6 +40,10 @@ export default function DrawingControlsColorSelector({ app }: PropsType) {
     app.style({ color });
     setIsOpen(false);
   }, []);
+
+  const handleOpen = () => {
+    setIsOpen(true);
+  };
 
   const swatchesData = Object.entries(colors);
 
@@ -74,7 +76,7 @@ export default function DrawingControlsColorSelector({ app }: PropsType) {
           height={"2rem"}
           bgColor={colors[currentStyle.color]}
           cursor={"pointer"}
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpen}
         />
       </PopoverTrigger>
       <PopoverContent width={`${swatchesData.length * 2}rem`}>

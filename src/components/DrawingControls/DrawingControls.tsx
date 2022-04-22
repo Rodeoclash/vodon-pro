@@ -1,10 +1,14 @@
+import * as React from "react";
+
 import { css } from "@emotion/react";
+
+import useStore from "../../services/store";
 
 import DrawingControlsColorSelector from "../DrawingControlsColorSelector/DrawingControlsColorSelector";
 import DrawingControlsSizeSelector from "../DrawingControlsSizeSelector/DrawingControlsSizeSelector";
 
 import { Flex, Box, VStack, IconButton, Tooltip } from "@chakra-ui/react";
-import { TDShapeType, TldrawApp, ColorStyle } from "@tldraw/tldraw";
+import { TDShapeType, TDToolType, TldrawApp } from "@tldraw/tldraw";
 
 import {
   Click as ClickIcon,
@@ -29,6 +33,17 @@ const unSlectedStyle = css`
 
 export default function DrawingControls({ app }: PropsType) {
   const activeTool = app.useStore((s) => s.appState.activeTool);
+  const playing = useStore((state) => state.playing);
+
+  function selectTool(tool: TDToolType) {
+    app.selectTool(tool);
+  }
+
+  React.useEffect(() => {
+    if (playing === true) {
+      selectTool("select");
+    }
+  }, [playing]);
 
   return (
     <>
@@ -37,55 +52,60 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Select" aria-label="Select">
             <IconButton
               icon={<ClickIcon />}
+              disabled={playing}
               aria-label="Select"
               css={activeTool === "select" ? selectedStyle : unSlectedStyle}
-              onClick={() => app.selectTool("select")}
+              onClick={() => selectTool("select")}
             />
           </Tooltip>
           <Tooltip label="Pencil" aria-label="Pencil">
             <IconButton
               icon={<PencilIcon />}
+              disabled={playing}
               aria-label="Pencil"
               css={
                 activeTool === TDShapeType.Draw ? selectedStyle : unSlectedStyle
               }
-              onClick={() => app.selectTool(TDShapeType.Draw)}
+              onClick={() => selectTool(TDShapeType.Draw)}
             />
           </Tooltip>
           <Tooltip label="Arrow" aria-label="Arrow">
             <IconButton
               icon={<ArrowUpRightIcon />}
+              disabled={playing}
               aria-label="Arrow"
               css={
                 activeTool === TDShapeType.Arrow
                   ? selectedStyle
                   : unSlectedStyle
               }
-              onClick={() => app.selectTool(TDShapeType.Arrow)}
+              onClick={() => selectTool(TDShapeType.Arrow)}
             />
           </Tooltip>
           <Tooltip label="Rectangle" aria-label="Rectangle">
             <IconButton
               icon={<RectangleIcon />}
+              disabled={playing}
               aria-label="Rectangle"
               css={
                 activeTool === TDShapeType.Rectangle
                   ? selectedStyle
                   : unSlectedStyle
               }
-              onClick={() => app.selectTool(TDShapeType.Rectangle)}
+              onClick={() => selectTool(TDShapeType.Rectangle)}
             />
           </Tooltip>
           <Tooltip label="Ellipse" aria-label="Ellipse">
             <IconButton
               icon={<CircleIcon />}
+              disabled={playing}
               aria-label="Ellipse"
               css={
                 activeTool === TDShapeType.Ellipse
                   ? selectedStyle
                   : unSlectedStyle
               }
-              onClick={() => app.selectTool(TDShapeType.Ellipse)}
+              onClick={() => selectTool(TDShapeType.Ellipse)}
             />
           </Tooltip>
         </VStack>
