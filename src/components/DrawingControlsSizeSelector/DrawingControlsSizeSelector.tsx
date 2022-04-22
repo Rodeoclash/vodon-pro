@@ -1,17 +1,14 @@
 import * as React from "react";
 
+import useStore from "../../services/store";
+
 import {
   Flex,
-  Box,
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
-  PopoverFooter,
   PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
 } from "@chakra-ui/react";
 import { TldrawApp, SizeStyle } from "@tldraw/tldraw";
 
@@ -34,6 +31,10 @@ export default function DrawingControlsSizeSelector({ app }: PropsType) {
     app.style({ size });
     setIsOpen(false);
   }, []);
+
+  const handleOpen = () => {
+    setIsOpen(true);
+  };
 
   const sizesData = Object.entries(sizes);
 
@@ -77,7 +78,7 @@ export default function DrawingControlsSizeSelector({ app }: PropsType) {
           justifyContent={"center"}
           border={"1px"}
           borderColor={"whiteAlpha.600"}
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpen}
         >
           {sizes[currentStyle.size].slice(0, 1).toUpperCase()}
         </Flex>

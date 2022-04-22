@@ -26,7 +26,8 @@ export default function VideoThumbnail({ video }: Props) {
 
   const [videoDimensions, setVideoDimensions] = useState(null);
 
-  const isAfterRange = currentTime > video.durationNormalised;
+  const isAfterRange = currentTime >= video.durationNormalised;
+
   const currentActive = activeVideoId === video.id;
 
   /**
@@ -92,7 +93,7 @@ export default function VideoThumbnail({ video }: Props) {
       playing === false ||
       (playing === true && currentActive === false && slowCPUMode === true)
     ) {
-      video.el.currentTime = currentTime + video.offsetNormalised;
+      video.el.currentTime = currentTime - video.offset;
     }
   }, [playing, currentTime, currentActive]);
 

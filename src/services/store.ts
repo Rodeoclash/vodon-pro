@@ -21,7 +21,8 @@ interface State {
   setShowSetupInstructions: (value: boolean) => void;
   setVideoDuration: (video: Video, duration: number) => void;
   setVideoName: (video: Video, name: string) => void;
-  setVideoOffset: (video: Video, offset: number) => void;
+  setVideoSyncTime: (video: Video, offset: number) => void;
+  recalculateOffsets: () => void;
   setVideoVolume: (video: Video, volume: number) => void;
   toggleSlowCPUMode: () => void;
 
@@ -61,7 +62,7 @@ interface State {
   activeVideoId: string | null;
   currentTime: number;
   editingBookmark: boolean;
-  maxDuration: number | null;
+  fullDuration: number | null;
   playing: boolean;
   showSetupInstructions: boolean | undefined;
   slowCPUMode: boolean;
@@ -193,27 +194,42 @@ const useStore = createStore<State>(
           })
         ),
 
-      setVideoOffset: (video: Video, offset: number) =>
+      setVideoSyncTime: (video: Video, syncTime: number) =>
         set(
           produce((state: State) => {
             const index = state.videos.findIndex((innerVideo) => {
               return innerVideo.id === video.id;
             });
 
-            // update the set state
-            state.videos[index].offset = offset;
+            state.videos[index].syncTime = syncTime;
+          })
+        ),
 
-            // recalculate the normalised offset and store against all the videos
-            const minimumOffset = findMinOffset(state.videos);
+      /**
+       * Other videos do exist so we need to calculate the offset of them
+       * relative to each other. The first video is used as our anchor
+       * so we may end up with negative and positive offsets.
+       */
+      recalculateOffsets: () =>
+        set(
+          produce((state: State) => {
+            state.videos
+              .sort((a, b) => a.duration - b.duration)
+              .forEach((video, idx) => {
+                if (idx === 0) {
+                  video.offset = 0;
+                  video.durationNormalised = video.duration;
+                  return;
+                }
+
+                video.offset = state.videos[0].syncTime - video.syncTime;
+              });
 
             state.videos.forEach((video) => {
-              video.offsetNormalised = video.offset - minimumOffset;
-              video.durationNormalised =
-                video.duration + video.offsetNormalised;
+              video.durationNormalised = video.offset + video.duration;
             });
 
-            // Set the max duration of all the videos. This is used to construct the global slider
-            state.maxDuration = findMaxNormalisedDuration(state.videos);
+            state.fullDuration = findMaxNormalisedDuration(state.videos);
           })
         ),
 
@@ -375,14 +391,14 @@ const useStore = createStore<State>(
       activeVideoId: null,
       currentTime: 0,
       editingBookmark: false,
-      maxDuration: null,
+      fullDuration: null,
       playing: false,
       showSetupInstructions: true,
       slowCPUMode: false,
       videos: [],
     }),
     {
-      name: "vodon-store-v2",
+      name: "vodon-store-v3",
       version: PERSIST_VERSION,
       serialize,
       deserialize,

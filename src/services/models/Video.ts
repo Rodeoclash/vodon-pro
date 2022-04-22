@@ -10,7 +10,7 @@ export type Video = {
   /** Base duration of the video */
   duration: number | null;
 
-  /** Normalised offset + duration */
+  /** Offset + duration */
   durationNormalised: number | null;
 
   /** Video element used for playback */
@@ -25,11 +25,11 @@ export type Video = {
   /** Name of this video (usually the player who was recorded) */
   name: string;
 
-  /** User selected offset to align the video against others in the set */
-  offset: number;
+  /** Calculated offset from the global start (relative to other videos) */
+  offset: number | null;
 
-  /** Offset less the smallest shared offset */
-  offsetNormalised: number;
+  /** What time in this video is the "shared moment" with the other videos */
+  syncTime: number;
 
   /** Stored volume */
   volume: number;
@@ -137,8 +137,8 @@ export async function createFromFile(filePath: string): Promise<Video> {
     frameRate,
     id: uuidv4(),
     name: basename(filePath),
-    offset: 0,
-    offsetNormalised: 0,
+    offset: null,
+    syncTime: 0,
     thumbnailGenerationLocation: null,
     thumbnailGenerationProgress: null,
     volume: 0.8,

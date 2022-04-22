@@ -25,6 +25,7 @@ export default function Drawing({
   const outerRef = useRef(null);
 
   const currentTime = useStore((state) => state.currentTime);
+  const playing = useStore((state) => state.playing);
 
   const setVideoBookmarkDrawing = useStore(
     (state) => state.setVideoBookmarkDrawing
@@ -67,6 +68,10 @@ export default function Drawing({
 
     tlDrawRef.current.reset();
   }, [currentTime]);
+
+  if (playing === true) {
+    return null;
+  }
 
   return (
     <Box

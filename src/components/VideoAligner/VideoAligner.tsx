@@ -37,7 +37,8 @@ interface Props {
 
 export default function VideoAligner({ video }: Props) {
   const setVideoDuration = useStore((state) => state.setVideoDuration);
-  const setVideoOffset = useStore((state) => state.setVideoOffset);
+  const setVideoSyncTime = useStore((state) => state.setVideoSyncTime);
+  const recalculateOffsets = useStore((state) => state.recalculateOffsets);
   const setVideoName = useStore((state) => state.setVideoName);
   const removeVideo = useStore((state) => state.removeVideo);
 
@@ -46,13 +47,14 @@ export default function VideoAligner({ video }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   useLayoutEffect(() => {
-    function handleLoadedMetaData(event: Event) {
-      setVideoDuration(video, videoRef.current.duration);
-      videoRef.current.currentTime = video.offset;
+    function handleSeeked(event: Event) {
+      setVideoSyncTime(video, videoRef.current.currentTime);
+      recalculateOffsets();
     }
 
-    function handleSeeked(event: Event) {
-      setVideoOffset(video, videoRef.current.currentTime);
+    function handleLoadedMetaData(event: Event) {
+      setVideoDuration(video, videoRef.current.duration);
+      videoRef.current.currentTime = video.syncTime;
     }
 
     videoRef.current.addEventListener("loadedmetadata", handleLoadedMetaData);
@@ -85,6 +87,7 @@ export default function VideoAligner({ video }: Props) {
 
   function handleRemove() {
     removeVideo(video);
+    recalculateOffsets();
   }
 
   function handleChangeVideoName(event: React.ChangeEvent<HTMLInputElement>) {
@@ -112,14 +115,14 @@ export default function VideoAligner({ video }: Props) {
 
         <Box mx={2}>
           <Text whiteSpace={"nowrap"} fontSize={"sm"} mx={"2"} align={"center"}>
-            {secondsToHms(Math.round(video.offset))} /{" "}
+            {secondsToHms(Math.round(video.syncTime))} /{" "}
             {secondsToHms(Math.round(video.duration))}
           </Text>
         </Box>
 
         <Slider
           aria-label="Align video scrubbing slider"
-          defaultValue={video.offset ?? 0}
+          defaultValue={video.syncTime}
           mx={2}
           min={0}
           max={video.duration}

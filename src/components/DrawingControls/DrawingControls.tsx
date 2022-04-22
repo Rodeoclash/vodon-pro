@@ -4,7 +4,7 @@ import DrawingControlsColorSelector from "../DrawingControlsColorSelector/Drawin
 import DrawingControlsSizeSelector from "../DrawingControlsSizeSelector/DrawingControlsSizeSelector";
 
 import { Flex, Box, VStack, IconButton, Tooltip } from "@chakra-ui/react";
-import { TDShapeType, TldrawApp, ColorStyle } from "@tldraw/tldraw";
+import { TDShapeType, TDToolType, TldrawApp } from "@tldraw/tldraw";
 
 import {
   Click as ClickIcon,
@@ -30,6 +30,10 @@ const unSlectedStyle = css`
 export default function DrawingControls({ app }: PropsType) {
   const activeTool = app.useStore((s) => s.appState.activeTool);
 
+  function selectTool(tool: TDToolType) {
+    app.selectTool(tool);
+  }
+
   return (
     <>
       <Box>
@@ -39,7 +43,7 @@ export default function DrawingControls({ app }: PropsType) {
               icon={<ClickIcon />}
               aria-label="Select"
               css={activeTool === "select" ? selectedStyle : unSlectedStyle}
-              onClick={() => app.selectTool("select")}
+              onClick={() => selectTool("select")}
             />
           </Tooltip>
           <Tooltip label="Pencil" aria-label="Pencil">
@@ -49,7 +53,7 @@ export default function DrawingControls({ app }: PropsType) {
               css={
                 activeTool === TDShapeType.Draw ? selectedStyle : unSlectedStyle
               }
-              onClick={() => app.selectTool(TDShapeType.Draw)}
+              onClick={() => selectTool(TDShapeType.Draw)}
             />
           </Tooltip>
           <Tooltip label="Arrow" aria-label="Arrow">
@@ -61,7 +65,7 @@ export default function DrawingControls({ app }: PropsType) {
                   ? selectedStyle
                   : unSlectedStyle
               }
-              onClick={() => app.selectTool(TDShapeType.Arrow)}
+              onClick={() => selectTool(TDShapeType.Arrow)}
             />
           </Tooltip>
           <Tooltip label="Rectangle" aria-label="Rectangle">
@@ -73,7 +77,7 @@ export default function DrawingControls({ app }: PropsType) {
                   ? selectedStyle
                   : unSlectedStyle
               }
-              onClick={() => app.selectTool(TDShapeType.Rectangle)}
+              onClick={() => selectTool(TDShapeType.Rectangle)}
             />
           </Tooltip>
           <Tooltip label="Ellipse" aria-label="Ellipse">
@@ -85,7 +89,7 @@ export default function DrawingControls({ app }: PropsType) {
                   ? selectedStyle
                   : unSlectedStyle
               }
-              onClick={() => app.selectTool(TDShapeType.Ellipse)}
+              onClick={() => selectTool(TDShapeType.Ellipse)}
             />
           </Tooltip>
         </VStack>
