@@ -1,6 +1,7 @@
 import createStore from "zustand";
 import { persist } from "zustand/middleware";
 import { produce } from "immer";
+import superjson from "superjson";
 
 import { findMaxNormalisedDuration } from "./models/Video";
 import { create as createVideoBookmark } from "./models/VideoBookmark";
@@ -11,7 +12,16 @@ import type { VideoBookmarkCoordinates } from "./models/VideoBookmark";
 
 const PERSIST_VERSION = 0;
 
-interface State {
+interface StateData {
+  activeVideoId: string | null;
+  currentTime: number;
+  editingBookmark: boolean;
+  fullDuration: number | null;
+  playing: boolean;
+  videos: Video[];
+}
+
+interface State extends StateData {
   addVideo: (video: Video) => void;
   clearVideos: () => void;
 
@@ -59,15 +69,18 @@ interface State {
     drawing: object
   ) => void;
 
-  activeVideoId: string | null;
-  currentTime: number;
-  editingBookmark: boolean;
-  fullDuration: number | null;
-  playing: boolean;
   showSetupInstructions: boolean | undefined;
   slowCPUMode: boolean;
-  videos: Video[];
 }
+
+const emptyState: StateData = {
+  activeVideoId: null,
+  currentTime: null,
+  editingBookmark: null,
+  fullDuration: null,
+  playing: false,
+  videos: [],
+};
 
 // remove video elements
 const serialize = (state: any) => {
@@ -80,13 +93,13 @@ const serialize = (state: any) => {
     });
   });
 
-  return JSON.stringify({ ...state, state: updatedState });
+  return superjson.stringify({ ...state, state: updatedState });
 };
 
 // When restoring state, we need to handle videos that might have been moved
 // TODO: This should register an error or similar that the video was removed
 const deserialize = async (str: string) => {
-  const parsedStr = JSON.parse(str);
+  const parsedStr: any = superjson.parse(str);
 
   const updatedState = await produce(parsedStr.state, async (state: State) => {
     let videos = [];
@@ -154,7 +167,15 @@ const useStore = createStore<State>(
       clearVideos: () =>
         set(
           produce((state: State) => {
-            state.videos = [];
+            state = {
+              ...state,
+              activeVideoId: null,
+              currentTime: null,
+              editingBookmark: null,
+              fullDuration: null,
+              playing: false,
+              videos: [],
+            };
           })
         ),
 
@@ -225,6 +246,10 @@ const useStore = createStore<State>(
                 video.offset = state.videos[0].syncTime - video.syncTime;
                 video.durationNormalised = video.offset + video.duration;
               });
+
+            state.videos.sort(
+              (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+            );
 
             state.fullDuration = findMaxNormalisedDuration(state.videos);
           })
@@ -382,6 +407,7 @@ const useStore = createStore<State>(
 
       toggleSlowCPUMode: () =>
         set((state) => ({ slowCPUMode: !state.slowCPUMode })),
+
       setShowSetupInstructions: (value) =>
         set((state) => ({ showSetupInstructions: value })),
 
@@ -395,7 +421,7 @@ const useStore = createStore<State>(
       videos: [],
     }),
     {
-      name: "vodon-store-v3",
+      name: "vodon-store-v4",
       version: PERSIST_VERSION,
       serialize,
       deserialize,
@@ -428,6 +454,23 @@ window.app.onLoadProjectRequest(async (event: any, project: string) => {
 });
 
 /**
+ * Handle the new project request from the main thread. Just reset everything
+ * back to new.
+ */
+window.app.onNewProjectRequest(async (event: any) => {
+  if (window.confirm("This will remove all videos and bookmarks, continue?")) {
+    useStore.setState({
+      activeVideoId: null,
+      currentTime: 0,
+      editingBookmark: false,
+      fullDuration: null,
+      playing: false,
+      videos: [],
+    });
+  }
+});
+
+/**
  * Handle the save request from the main thread. Calculate the current state
  * then pass it back to the main thread along with the filepath to persist.
  */
@@ -442,8 +485,10 @@ window.app.onVideoThumbnailGenerationProgress(
           return innerVideo.id === id;
         });
 
-        state.videos[index].thumbnailGenerationProgress = percent;
-        state.videos[index].thumbnailGenerationLocation = thumbnailsDir;
+        if (state.videos[index]) {
+          state.videos[index].thumbnailGenerationProgress = percent;
+          state.videos[index].thumbnailGenerationLocation = thumbnailsDir;
+        }
       })
     );
   }

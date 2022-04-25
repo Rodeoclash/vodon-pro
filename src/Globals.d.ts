@@ -20,6 +20,7 @@ type VideoThumbnailGenerationProgress = {
 interface Window {
   app: {
     getVersion: () => Promise<string>;
+    onNewProjectRequest: (cb: (event: any) => void) => void;
     onLoadProjectRequest: (cb: (event: any, project: string) => void) => void;
     onSaveProjectRequest: (cb: (event: any, filePath: string) => void) => void;
     onVideoThumbnailGenerationProgress: (

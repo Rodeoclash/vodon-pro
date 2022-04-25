@@ -1,12 +1,4 @@
-import {
-  app,
-  BrowserWindow,
-  session,
-  protocol,
-  ipcMain,
-  Menu,
-  dialog,
-} from "electron";
+import { app, BrowserWindow, protocol, ipcMain, Menu, dialog } from "electron";
 
 import ffmpegBins from "ffmpeg-ffprobe-static";
 import ffmpeg from "fluent-ffmpeg";
@@ -55,7 +47,13 @@ const createWindow = (): void => {
       role: "fileMenu",
       submenu: [
         {
-          label: "Load project",
+          label: "New project",
+          async click() {
+            mainWindow.webContents.send("onNewProjectRequest");
+          },
+        },
+        {
+          label: "Load project...",
           async click() {
             const result = await dialog.showOpenDialog(mainWindow, {
               properties: ["openFile"],

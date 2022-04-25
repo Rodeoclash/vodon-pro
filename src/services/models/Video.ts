@@ -51,6 +51,9 @@ export type Video = {
 
   /* Height of the video in px */
   codedHeight: number;
+
+  /** Date of created video */
+  createdAt: Date;
 };
 
 type VideoConstructorAttrs = {
@@ -114,6 +117,7 @@ export async function createFromFile(filePath: string): Promise<Video> {
     bookmarks: [],
     codedHeight: videoStream.coded_height,
     codedWidth: videoStream.coded_width,
+    createdAt: new Date(),
     displayAspectRatio: videoStream.display_aspect_ratio,
     duration: null,
     durationNormalised: null,
