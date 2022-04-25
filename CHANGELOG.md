@@ -1,3 +1,9 @@
+### 1.6.6
+
+- Added "New Project" in file dropdown which resets state.
+- Prompt user on loading if they want to restore the last project
+- Fixed ordering of videos to preserve the order they're added in (was being reordered by duration)
+
 ### 1.6.5
 
 - Fixed bugs with video alignment (now just uses the "overlapping" area).
