@@ -2,7 +2,7 @@ import createStore from "zustand";
 import { persist } from "zustand/middleware";
 import { produce } from "immer";
 
-import { findMinOffset, findMaxNormalisedDuration } from "./models/Video";
+import { findMaxNormalisedDuration } from "./models/Video";
 import { create as createVideoBookmark } from "./models/VideoBookmark";
 
 import type { Video } from "./models/Video";

@@ -75,21 +75,6 @@ export type VideoMetadata = {
   streams: Array<VideoStreamMetadata | AudioStreamMetadata>;
 };
 
-// Finds the minimum offset on the videos. This is used to set the normalised offset.
-export function findMinOffset(videos: Video[]): number | null {
-  if (videos.length === 0) {
-    return null;
-  }
-
-  return videos.reduce(function (acc: number | null, video: Video): number {
-    if (acc === null || video.offset < acc) {
-      return video.offset;
-    }
-
-    return acc;
-  }, null);
-}
-
 // Finds the max normalised duration of the videos
 export function findMaxNormalisedDuration(videos: Video[]): number | null {
   if (videos.length === 0) {
