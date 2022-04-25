@@ -127,7 +127,7 @@ const deserialize = async (str: string) => {
 
   const resetState =
     videos.length > 0 &&
-    window.confirm("Existing project found, do you want to continue with it?");
+    window.confirm("Existing project found, do you want to restore it?");
 
   if (resetState) {
     return {
