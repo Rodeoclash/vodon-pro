@@ -101,38 +101,51 @@ const serialize = (state: any) => {
 const deserialize = async (str: string) => {
   const parsedStr: any = superjson.parse(str);
 
-  const updatedState = await produce(parsedStr.state, async (state: State) => {
-    let videos = [];
+  let videos = [];
 
-    for (const video of state.videos) {
-      // handle missing videos
-      const exists = await window.video.exists(video.filePath);
+  for (const video of parsedStr.state.videos) {
+    // handle missing videos
+    const exists = await window.video.exists(video.filePath);
 
-      if (exists === false) {
-        continue;
-      }
-
-      // populate bookmarks onto videos if needed
-      if (!video.bookmarks) {
-        video.bookmarks = [];
-      }
-
-      const el = document.createElement("video");
-      el.src = video.filePath;
-
-      videos.push({
-        ...video,
-        el,
-      });
+    if (exists === false) {
+      continue;
     }
 
-    state.videos = videos;
-  });
+    // populate bookmarks onto videos if needed
+    if (!video.bookmarks) {
+      video.bookmarks = [];
+    }
 
-  return {
-    ...parsedStr,
-    state: updatedState,
-  };
+    const el = document.createElement("video");
+    el.src = video.filePath;
+
+    videos.push({
+      ...video,
+      el,
+    });
+  }
+
+  const resetState =
+    videos.length > 0 &&
+    window.confirm("Existing project found, do you want to continue with it?");
+
+  if (resetState) {
+    return {
+      version: parsedStr.version,
+      state: {
+        ...parsedStr.state,
+        videos,
+      },
+    };
+  } else {
+    return {
+      version: parsedStr.version,
+      state: {
+        ...parsedStr.state,
+        ...emptyState,
+      },
+    };
+  }
 };
 
 const useStore = createStore<State>(
@@ -169,12 +182,7 @@ const useStore = createStore<State>(
           produce((state: State) => {
             state = {
               ...state,
-              activeVideoId: null,
-              currentTime: null,
-              editingBookmark: null,
-              fullDuration: null,
-              playing: false,
-              videos: [],
+              ...emptyState,
             };
           })
         ),
@@ -460,12 +468,8 @@ window.app.onLoadProjectRequest(async (event: any, project: string) => {
 window.app.onNewProjectRequest(async (event: any) => {
   if (window.confirm("This will remove all videos and bookmarks, continue?")) {
     useStore.setState({
-      activeVideoId: null,
-      currentTime: 0,
-      editingBookmark: false,
-      fullDuration: null,
-      playing: false,
-      videos: [],
+      ...useStore.getState(),
+      ...emptyState,
     });
   }
 });
