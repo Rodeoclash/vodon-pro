@@ -7,10 +7,83 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'self' data: 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'unsafe-eval' http://localhost:3000"
     />
+    <style>
+      .lds-ripple {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+      }
+      .lds-ripple div {
+        position: absolute;
+        border: 4px solid #fff;
+        opacity: 1;
+        border-radius: 50%;
+        animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+      }
+      .lds-ripple div:nth-child(2) {
+        animation-delay: -0.5s;
+      }
+      @keyframes lds-ripple {
+        0% {
+          top: 36px;
+          left: 36px;
+          width: 0;
+          height: 0;
+          opacity: 0;
+        }
+        4.9% {
+          top: 36px;
+          left: 36px;
+          width: 0;
+          height: 0;
+          opacity: 0;
+        }
+        5% {
+          top: 36px;
+          left: 36px;
+          width: 0;
+          height: 0;
+          opacity: 1;
+        }
+        100% {
+          top: 0px;
+          left: 0px;
+          width: 72px;
+          height: 72px;
+          opacity: 0;
+        }
+      }
+    </style>
   </head>
-  <body>
-    <div id="app">
-      <p>Loading...</p>
+  <body style="margin: 0; padding: 0">
+    <div
+      id="app"
+      style="
+        width: 100vw;
+        height: 100vh;
+        background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div style="text-align: center">
+        <div class="lds-ripple">
+          <div></div>
+          <div></div>
+        </div>
+        <p
+          style="
+            font-family: sans-serif;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin: 1rem 0 0 0;
+          "
+        >
+          Loading
+        </p>
+      </div>
     </div>
   </body>
 </html>
