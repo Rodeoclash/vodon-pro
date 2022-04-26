@@ -1,3 +1,8 @@
+### 1.6.7
+
+- Added loading screen
+- Reworked bookmarks to show all at once
+
 ### 1.6.6
 
 - Added "New Project" in file dropdown which resets state.
