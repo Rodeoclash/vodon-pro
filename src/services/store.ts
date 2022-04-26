@@ -125,27 +125,13 @@ const deserialize = async (str: string) => {
     });
   }
 
-  const resetState =
-    videos.length > 0 &&
-    window.confirm("Existing project found, do you want to restore it?");
-
-  if (resetState) {
-    return {
-      version: parsedStr.version,
-      state: {
-        ...parsedStr.state,
-        videos,
-      },
-    };
-  } else {
-    return {
-      version: parsedStr.version,
-      state: {
-        ...parsedStr.state,
-        ...emptyState,
-      },
-    };
-  }
+  return {
+    version: parsedStr.version,
+    state: {
+      ...parsedStr.state,
+      videos,
+    },
+  };
 };
 
 const useStore = createStore<State>(
@@ -429,7 +415,7 @@ const useStore = createStore<State>(
       videos: [],
     }),
     {
-      name: "vodon-store-v4",
+      name: "vodon-store-v5",
       version: PERSIST_VERSION,
       serialize,
       deserialize,
