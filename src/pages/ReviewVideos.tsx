@@ -64,6 +64,9 @@ export default function ReviewVideos() {
         return bookmark.time === currentTime;
       });
 
+  const isAfterRange =
+    activeVideo && currentTime >= activeVideo.durationNormalised;
+
   function handleEscapePressed() {
     setFullscreen(false);
   }
@@ -306,6 +309,24 @@ export default function ReviewVideos() {
                   scale={scale}
                 />
               )}
+              {isAfterRange && (
+                <Flex
+                  position={"absolute"}
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  backgroundColor={"gray.800"}
+                  align={"center"}
+                  justifyContent={"center"}
+                >
+                  Finished{" "}
+                  {Math.round(
+                    Math.abs(activeVideo.durationNormalised - currentTime)
+                  )}
+                  s ago
+                </Flex>
+              )}
               <Box css={videoStyle} ref={videoRef} />
             </Box>
           </Flex>
@@ -325,6 +346,7 @@ export default function ReviewVideos() {
                   onClick={startPlaying}
                   icon={<PlayerPlayIcon />}
                   aria-label="Play"
+                  disabled={isAfterRange}
                 />
               )}
               {playing && (
@@ -368,7 +390,7 @@ export default function ReviewVideos() {
           <Box mx={"2"}>
             <VideoBookmarkAdd
               app={app}
-              disabled={!!activeBookmark || editingBookmark}
+              disabled={!!activeBookmark || editingBookmark || isAfterRange}
               scale={scale}
               video={activeVideo}
             />
@@ -380,6 +402,7 @@ export default function ReviewVideos() {
                 onClick={handleClickFullscreen}
                 icon={<MaximizeIcon />}
                 aria-label="Fullscreen video"
+                disabled={isAfterRange}
               />
             </Box>
           </Tooltip>
