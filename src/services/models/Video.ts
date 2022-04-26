@@ -56,13 +56,6 @@ export type Video = {
   createdAt: Date;
 };
 
-type VideoConstructorAttrs = {
-  displayAspectRatio: string;
-  filePath: string;
-  frameRate: number;
-  name: string;
-};
-
 type AudioStreamMetadata = {
   codec_type: "audio";
 };
