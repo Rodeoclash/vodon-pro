@@ -27,6 +27,7 @@ export default function GlobalTimeControl({ video }: Props) {
 
   const stopPlaying = useStore((state) => state.stopPlaying);
   const setCurrentTime = useStore((state) => state.setCurrentTime);
+  const videos = useStore((state) => state.videos);
 
   const currentTime = useStore((state) => state.currentTime);
   const fullDuration = useStore((state) => state.fullDuration);
@@ -150,7 +151,7 @@ export default function GlobalTimeControl({ video }: Props) {
     };
   }, [mouseOver]);
 
-  const renderedBookmarks =
+  const renderedCurrentBookmarks =
     trackDimensions === null
       ? []
       : video.bookmarks.map((bookmark) => {
@@ -171,14 +172,55 @@ export default function GlobalTimeControl({ video }: Props) {
               rounded={"full"}
               zIndex={"1"}
             >
-              <VideoBookmarkTimeline video={video} bookmark={bookmark} />
+              <VideoBookmarkTimeline
+                video={video}
+                bookmark={bookmark}
+                size="medium"
+              />
             </Flex>
           );
         });
 
+  const renderedOtherBookmarks =
+    trackDimensions === null
+      ? []
+      : videos
+          .filter((innerVideo) => {
+            return innerVideo.id !== video.id;
+          })
+          .flatMap((innerVideo) => {
+            return innerVideo.bookmarks.map((bookmark) => {
+              const percentage = bookmark.time / fullDuration;
+              const left = trackDimensions.width * percentage;
+
+              return (
+                <Flex
+                  key={bookmark.id}
+                  bgColor={"gray.900"}
+                  position={"absolute"}
+                  width={"1.5rem"}
+                  height={"1.5rem"}
+                  align={"center"}
+                  justify={"center"}
+                  top={"-2px"}
+                  left={`calc(${left}px - .75rem)`}
+                  rounded={"full"}
+                  zIndex={"1"}
+                >
+                  <VideoBookmarkTimeline
+                    video={innerVideo}
+                    bookmark={bookmark}
+                    size="small"
+                  />
+                </Flex>
+              );
+            });
+          });
+
   return (
     <Box position="relative">
-      {renderedBookmarks}
+      {renderedCurrentBookmarks}
+      {renderedOtherBookmarks}
       <Box
         ref={popupRef}
         position="absolute"
