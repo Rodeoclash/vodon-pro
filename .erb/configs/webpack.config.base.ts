@@ -47,6 +47,13 @@ const configuration: webpack.Configuration = {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
     }),
+
+    /**
+     * Prevents FFMpeg libconv error
+     */
+    new webpack.DefinePlugin({
+      'process.env.FLUENTFFMPEG_COV': false,
+    }),
   ],
 };
 

@@ -71,13 +71,6 @@ const configuration: webpack.Configuration = {
         },
       },
     }),
-
-    /**
-     * Prevents FFMpeg libconv error
-     */
-    new webpack.DefinePlugin({
-      'process.env.FLUENTFFMPEG_COV': false,
-    }),
   ],
 };
 
