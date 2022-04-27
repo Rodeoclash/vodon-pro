@@ -1,56 +1,34 @@
 name: Test
 
-on:
-  push:
+on: [push, pull_request]
 
 jobs:
-  lint:
+  release:
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out Git repository
+        uses: actions/checkout@v1
 
-      - uses: actions/setup-node@v3
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v2
         with:
-          node-version: 16.14.0
+          node-version: 16
+          cache: npm
 
-      - name: Lint all
-        run: npm install && npm run format-check
+      - name: npm install
+        run: |
+          npm install
 
-  test:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [windows-latest]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.0
-
-      - name: Test release can be built
-        run: npm install && npm run test
-
-  test-release-build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [windows-latest]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.0
-
-      - name: Test release can be built
-        run: npm install && npm run make
+      - name: npm test
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run package
+          npm run lint
+          npm exec tsc
+          npm test
