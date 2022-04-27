@@ -1,9 +1,12 @@
+import * as fs from 'fs/promises';
+
 import {
   app,
   Menu,
   shell,
   BrowserWindow,
   MenuItemConstructorOptions,
+  dialog,
 } from 'electron';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
@@ -198,14 +201,42 @@ export default class MenuBuilder {
         label: '&File',
         submenu: [
           {
-            label: '&Open',
-            accelerator: 'Ctrl+O',
+            label: 'New project',
+            click: () => {
+              this.mainWindow.webContents.send('onNewProjectRequest');
+            },
           },
           {
-            label: '&Close',
-            accelerator: 'Ctrl+W',
-            click: () => {
-              this.mainWindow.close();
+            label: 'Load project...',
+            click: async () => {
+              const result = await dialog.showOpenDialog(this.mainWindow, {
+                properties: ['openFile'],
+                filters: [{ name: 'JSON', extensions: ['json'] }],
+              });
+
+              if (result.canceled === false) {
+                const contents = await fs.readFile(result.filePaths[0]);
+                this.mainWindow.webContents.send(
+                  'onLoadProjectRequest',
+                  contents.toString()
+                );
+              }
+            },
+          },
+          {
+            label: 'Save project as...',
+            click: async () => {
+              const result = await dialog.showOpenDialog(this.mainWindow, {
+                properties: ['openFile', 'promptToCreate'],
+                filters: [{ name: 'JSON', extensions: ['json'] }],
+              });
+
+              if (result.canceled === false) {
+                this.mainWindow.webContents.send(
+                  'onSaveProjectRequest',
+                  result.filePaths[0]
+                );
+              }
             },
           },
         ],
