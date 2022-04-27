@@ -36,52 +36,49 @@ export default function DrawingControlsColorSelector({ app }: PropsType) {
 
   const currentStyle = app.useStore((s) => s.appState.currentStyle);
 
-  const handleColourPick = React.useCallback((color: ColorStyle) => {
-    app.style({ color });
-    setIsOpen(false);
-  }, []);
+  const handleColourPick = React.useCallback(
+    (color: ColorStyle) => {
+      app.style({ color });
+      setIsOpen(false);
+    },
+    [app]
+  );
 
   const handleOpen = () => {
     setIsOpen(true);
   };
 
-  const swatchesData = Object.entries(colors);
+  const swatchesData = Object.entries(colors) as Array<[ColorStyle, string]>;
 
-  const renderedSwatches = swatchesData.map(
-    ([key, value]: [ColorStyle, string]) => {
-      return (
-        <Box
-          mx={1}
-          my={1}
-          key={key}
-          width="1.5rem"
-          height="1.5rem"
-          backgroundColor={value}
-          cursor={'pointer'}
-          onClick={() => handleColourPick(key)}
-        />
-      );
-    }
-  );
+  const renderedSwatches = swatchesData.map(([key, value]) => {
+    return (
+      <Box
+        mx={1}
+        my={1}
+        key={key}
+        width="1.5rem"
+        height="1.5rem"
+        backgroundColor={value}
+        cursor="pointer"
+        onClick={() => handleColourPick(key)}
+      />
+    );
+  });
 
   return (
-    <Popover
-      placement={'right'}
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
-    >
+    <Popover placement="right" isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <PopoverTrigger>
         <Box
-          width={'2rem'}
-          height={'2rem'}
+          width="2rem"
+          height="2rem"
           bgColor={colors[currentStyle.color]}
-          cursor={'pointer'}
+          cursor="pointer"
           onClick={handleOpen}
         />
       </PopoverTrigger>
       <PopoverContent width={`${swatchesData.length * 2}rem`}>
         <PopoverArrow />
-        <PopoverBody backgroundColor={'black'}>
+        <PopoverBody backgroundColor="black">
           <Flex my={-1} mx={-1}>
             {renderedSwatches}
           </Flex>

@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import useStore from '../../services/store';
-
 import {
   Flex,
   Popover,
@@ -27,57 +25,54 @@ export default function DrawingControlsSizeSelector({ app }: PropsType) {
 
   const currentStyle = app.useStore((s) => s.appState.currentStyle);
 
-  const handleSizePick = React.useCallback((size: SizeStyle) => {
-    app.style({ size });
-    setIsOpen(false);
-  }, []);
+  const handleSizePick = React.useCallback(
+    (size: SizeStyle) => {
+      app.style({ size });
+      setIsOpen(false);
+    },
+    [app]
+  );
 
   const handleOpen = () => {
     setIsOpen(true);
   };
 
-  const sizesData = Object.entries(sizes);
+  const sizesData = Object.entries(sizes) as Array<[SizeStyle, string]>;
 
-  const renderedSwatches = sizesData.map(
-    ([key, value]: [SizeStyle, string]) => {
-      return (
-        <Flex
-          mx={1}
-          my={1}
-          key={key}
-          width="1.5rem"
-          height="1.5rem"
-          cursor={'pointer'}
-          onClick={() => handleSizePick(key)}
-          align={'center'}
-          justify={'center'}
-          border={'1px'}
-          borderColor={'whiteAlpha.600'}
-          background={'whiteAlpha.200'}
-          padding={'1rem'}
-        >
-          {value.slice(0, 1).toUpperCase()}
-        </Flex>
-      );
-    }
-  );
+  const renderedSwatches = sizesData.map(([key, value]) => {
+    return (
+      <Flex
+        mx={1}
+        my={1}
+        key={key}
+        width="1.5rem"
+        height="1.5rem"
+        cursor="pointer"
+        onClick={() => handleSizePick(key)}
+        align="center"
+        justify="center"
+        border="1px"
+        borderColor="whiteAlpha.600"
+        background="whiteAlpha.200"
+        padding="1rem"
+      >
+        {value.slice(0, 1).toUpperCase()}
+      </Flex>
+    );
+  });
 
   return (
-    <Popover
-      placement={'right'}
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
-    >
+    <Popover placement="right" isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <PopoverTrigger>
         <Flex
-          width={'2rem'}
-          height={'2rem'}
-          cursor={'pointer'}
-          background={'black'}
+          width="2rem"
+          height="2rem"
+          cursor="pointer"
+          background="black"
           align="center"
-          justifyContent={'center'}
-          border={'1px'}
-          borderColor={'whiteAlpha.600'}
+          justifyContent="center"
+          border="1px"
+          borderColor="whiteAlpha.600"
           onClick={handleOpen}
         >
           {sizes[currentStyle.size].slice(0, 1).toUpperCase()}
@@ -85,7 +80,7 @@ export default function DrawingControlsSizeSelector({ app }: PropsType) {
       </PopoverTrigger>
       <PopoverContent width={`${sizesData.length * 3}rem`}>
         <PopoverArrow />
-        <PopoverBody backgroundColor={'black'}>
+        <PopoverBody backgroundColor="black">
           <Flex my={-1} mx={-1}>
             {renderedSwatches}
           </Flex>

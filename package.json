@@ -32,8 +32,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "VodonPro",
+    "appId": "org.vodon.VodonPro",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
