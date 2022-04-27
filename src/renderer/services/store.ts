@@ -102,16 +102,17 @@ const serialize = (state: any) => {
 // TODO: This should register an error or similar that the video was removed
 const deserialize = async (str: string) => {
   const parsedStr: any = superjson.parse(str);
-  return parsedStr;
 
-  // const videos = [];
+  const videos = [];
 
-  /*
+  // eslint-disable-next-line no-restricted-syntax
   for (const video of parsedStr.state.videos) {
     // handle missing videos
+    // eslint-disable-next-line no-await-in-loop
     const exists = await window.video.exists(video.filePath);
 
     if (exists === false) {
+      // eslint-disable-next-line no-continue
       continue;
     }
 
@@ -136,7 +137,6 @@ const deserialize = async (str: string) => {
       videos,
     },
   };
-  */
 };
 
 const useStore = createStore<State>(

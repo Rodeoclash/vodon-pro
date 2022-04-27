@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useLayoutEffect, useState } from 'react';
 import { css } from '@emotion/react';
 
-import useStore from '../../services/store';
-import { getRatioDimensions } from '../../services/layout';
-
 import { Box, Heading, Flex, Button, Text } from '@chakra-ui/react';
 import { Refresh as RefreshIcon } from 'tabler-icons-react';
+import useStore from '../../services/store';
+import { getRatioDimensions } from '../../services/layout';
 
 import type { Video } from '../../services/models/Video';
 
@@ -49,6 +48,8 @@ export default function VideoThumbnail({ video }: Props) {
 
       window.dispatchEvent(new Event('resize'));
     };
+
+    console.log('video', video);
 
     video.el.addEventListener('loadedmetadata', handleLoadedMetaData);
 
@@ -106,21 +107,6 @@ export default function VideoThumbnail({ video }: Props) {
   }, [isAfterRange]);
 
   useLayoutEffect(() => {
-    const handleFrame = (time: number, metadata: VideoFrameMetadata) => {
-      // TODO: Is this better for tracking time elapsed?
-      //console.log(time, metadata, metadata.mediaTime)
-      //handleFrameAdvanced(metadata.mediaTime, getFramesFromSeconds(videoData.fps, metadata.mediaTime));
-      video.el.requestVideoFrameCallback(handleFrame);
-    };
-
-    const id = video.el.requestVideoFrameCallback(handleFrame);
-
-    return () => {
-      video.el.cancelVideoFrameCallback(id);
-    };
-  }, [currentTime]);
-
-  useLayoutEffect(() => {
     const handleResize = () => {
       if (containerRef.current === null) {
         return;
@@ -169,22 +155,22 @@ export default function VideoThumbnail({ video }: Props) {
   return (
     <>
       <Flex
-        overflow={'hidden'}
+        overflow="hidden"
         ref={containerRef}
         height="100%"
         css={containerStyles}
-        align={'center'}
-        justifyContent={'center'}
+        align="center"
+        justifyContent="center"
       >
-        <Box position={'relative'} cursor={'pointer'} css={innerStyles}>
+        <Box position="relative" cursor="pointer" css={innerStyles}>
           <Heading
-            position={'absolute'}
-            top={'0'}
-            left={'0'}
-            bgColor={'blackAlpha.800'}
-            padding={'2'}
-            fontSize={'md'}
-            fontWeight={'normal'}
+            position="absolute"
+            top="0"
+            left="0"
+            bgColor="blackAlpha.800"
+            padding="2"
+            fontSize="md"
+            fontWeight="normal"
           >
             {video.name}
           </Heading>
@@ -193,11 +179,11 @@ export default function VideoThumbnail({ video }: Props) {
       </Flex>
       <Flex
         css={afterRangeStyles}
-        align={'center'}
-        justify={'center'}
-        bgColor={'gray.700'}
+        align="center"
+        justify="center"
+        bgColor="gray.700"
       >
-        <Text fontSize={'sm'}>
+        <Text fontSize="sm">
           Finished{' '}
           {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago
         </Text>

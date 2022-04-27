@@ -12,9 +12,11 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, protocol } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import * as fs from 'fs/promises';
+import * as fsPromise from 'fs/promises';
+import * as fs from 'fs';
 import ffmpegBins from 'ffmpeg-ffprobe-static';
 import ffmpeg from 'fluent-ffmpeg';
+import os from 'os';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -157,7 +159,7 @@ ipcMain.handle('app:getVersion', async () => {
 ipcMain.handle(
   'app:saveProject',
   async (_event, filePath: string, project: string) => {
-    return fs.writeFile(filePath, project);
+    return fsPromise.writeFile(filePath, project);
   }
 );
 
@@ -179,12 +181,37 @@ ipcMain.handle('video:getMetadata', async (_event, filePath: string) => {
  */
 ipcMain.handle('video:exists', async (_event, filePath: string) => {
   try {
-    await fs.access(filePath);
+    await fsPromise.access(filePath);
     return true;
   } catch {
     return false;
   }
 });
+
+/**
+ * Take a screenshot of the file at particular time and return it
+ */
+ipcMain.handle(
+  'video:screenshot',
+  async (_event, filePath: string, second: number) => {
+    const output = os.tmpdir();
+
+    ffmpeg(filePath)
+      // setup event handlers
+      .on('filenames', (filenames: [string]) => {
+        console.log(`screenshots are ${filenames.join(', ')}`);
+      })
+      .on('end', () => {
+        console.log('screenshots were saved');
+        // send file back
+      })
+      .on('error', (err: any) => {
+        console.log(`an error happened: ${err.message}`);
+      })
+      // take 2 screenshots at predefined timemarks and size
+      .takeScreenshots({ timemarks: [second], size: '150x100' }, output);
+  }
+);
 
 // allow local videos
 protocol.registerSchemesAsPrivileged([

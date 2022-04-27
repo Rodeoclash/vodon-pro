@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import type { VideoMetadata } from './services/models/Video';
 
 declare global {
@@ -15,6 +16,7 @@ declare global {
     video: {
       exists: (filepath: string) => Promise<boolean>;
       getMetadata: (filepath: string) => Promise<VideoMetadata>;
+      screenshot: (filepath: string, second: number) => Promise<fs.ReadStream>;
     };
   }
 }
