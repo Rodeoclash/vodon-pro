@@ -77,8 +77,9 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: 1920,
+    height: 1080,
+    title: 'Vodon Pro',
     icon: getAssetPath('icon.png'),
     webPreferences: {
       webSecurity: false,
@@ -146,7 +147,7 @@ app
 /**
  * Get the current app version
  */
-ipcMain.handle('app:getVersion', async (event) => {
+ipcMain.handle('app:getVersion', async () => {
   return app.getVersion();
 });
 
@@ -155,7 +156,7 @@ ipcMain.handle('app:getVersion', async (event) => {
  */
 ipcMain.handle(
   'app:saveProject',
-  async (event, filePath: string, project: string) => {
+  async (_event, filePath: string, project: string) => {
     return fs.writeFile(filePath, project);
   }
 );
@@ -163,9 +164,9 @@ ipcMain.handle(
 /**
  * Use ffprobe to find information about the given video
  */
-ipcMain.handle('video:getMetadata', async (event, filePath: string) => {
-  const result = await new Promise((resolve, reject) => {
-    ffmpeg.ffprobe(filePath, function (err: any, metadata: any) {
+ipcMain.handle('video:getMetadata', async (_event, filePath: string) => {
+  const result = await new Promise((resolve) => {
+    ffmpeg.ffprobe(filePath, (_err: unknown, metadata: object) => {
       resolve(metadata);
     });
   });
@@ -176,7 +177,7 @@ ipcMain.handle('video:getMetadata', async (event, filePath: string) => {
 /**
  * True if the video (filePath really) exists in the following location
  */
-ipcMain.handle('video:exists', async (event, filePath: string) => {
+ipcMain.handle('video:exists', async (_event, filePath: string) => {
   try {
     await fs.access(filePath);
     return true;
