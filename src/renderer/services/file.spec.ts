@@ -1,5 +1,11 @@
 import { basename } from './file';
 
-test('basename', () => {
-  expect(basename('movie.mp4')).toBe('movie');
+describe('basename', () => {
+  test('when exists', () => {
+    expect(basename('movie.mp4')).toBe('movie');
+  });
+
+  test('with no extension, just echos input', () => {
+    expect(basename('movie')).toBe('movie');
+  });
 });
