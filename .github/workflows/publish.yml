@@ -15,14 +15,14 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [windows-latest]
 
     steps:
       - name: Checkout git repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Install Node and NPM
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: npm
@@ -43,4 +43,4 @@ jobs:
         run: |
           npm run postinstall
           npm run build
-          npm exec electron-builder -- --publish always --win --mac --linux
+          npm exec electron-builder -- --publish always --win
