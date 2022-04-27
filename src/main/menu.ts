@@ -158,29 +158,25 @@ export default class MenuBuilder {
       label: 'Help',
       submenu: [
         {
-          label: 'Learn More',
+          label: 'About Vodon Pro',
           click() {
-            shell.openExternal('https://electronjs.org');
-          },
-        },
-        {
-          label: 'Documentation',
-          click() {
-            shell.openExternal(
-              'https://github.com/electron/electron/tree/main/docs#readme'
-            );
+            shell.openExternal('https://github.com/Rodeoclash/vodon-pro');
           },
         },
         {
           label: 'Community Discussions',
           click() {
-            shell.openExternal('https://www.electronjs.org/community');
+            shell.openExternal(
+              'https://github.com/Rodeoclash/vodon-pro/discussions'
+            );
           },
         },
         {
-          label: 'Search Issues',
+          label: 'Report Issues',
           click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
+            shell.openExternal(
+              'https://github.com/Rodeoclash/vodon-pro/issues'
+            );
           },
         },
       ],
