@@ -1,3 +1,7 @@
+### 1.6.8
+
+- Upgraded build system to use `electron-build` instead of `electron-forge`.
+
 ### 1.6.7
 
 - Added loading screen
