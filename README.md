@@ -4,7 +4,7 @@
 
 ![GitHub all releases](https://img.shields.io/github/downloads/Rodeoclash/vodon-pro/total?style=flat-square)
 
-Vodon Pro is a **synchronised**, desktop video player for esport "VOD" reviews.
+Vodon Pro is a **synchronised**, desktop video player for esport "VOD" reviews. It is designed for live reviews, either over screenshare or in person.
 
 Add viewpoints from each player in a match, tell Vodon how to synchronise the videos then use its synchronised playback with the ability to instantly jump to any of the viewpoints to review your game.
 
@@ -27,11 +27,24 @@ Add viewpoints from each player in a match, tell Vodon how to synchronise the vi
 - MP4 and WebM video formats.
 - 60fps / 30fps videos.
 - 16:9 and 4:3 aspect ratios.
-- Windows only (for now).
+- Windows only (want to use Vodon for Mac or Linux? Let me know).
 
-## Getting started
+## Comparisons
 
-Want to give Vodon Pro a try? Head over to the [releases page](https://github.com/Rodeoclash/vodon-pro/releases) and download.
+If anything is incorrect or disputed about this list, please contact us or raise a PR.
+
+| Feature                                     | Vodon Pro | Insights.gg | SquadOV |
+| :------------------------------------------ | :-------- | :---------- | :------ |
+| Free option available                       | ✔️        | ✔️          | ✔️      |
+| Annotate with drawings                      | ✔️        | ✔️          | ✔️      |
+| Bookmark moments, leave notes               | ✔️        | ✔️          | ✔️      |
+| Multiple videos played in sync              | ✔️        | ❌          | ✔️      |
+| Instant video switch                        | ✔️        | ❌          | ❌      |
+| Can be used without an account              | ✔️        | ❌          | ❌      |
+| Open source                                 | ✔️        | ❌          | ❌      |
+| Instant seek to any point in videos         | ✔️        | ❌          | ❌      |
+| Supports massive files with no quality loss | ✔️        | ❌          | ❌      |
+| Online access                               | ❌        | ✔️          | ✔️      |
 
 ## Screenshots
 
