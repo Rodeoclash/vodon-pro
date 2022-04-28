@@ -49,13 +49,13 @@ _With the videos aligned, the global time control can be used to navigate all vi
 
 ### Drawing on frames
 
-![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/drawing.png)
+![Drawing on frames](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/drawing.png)
 
 _Vodon Pro even has drawing tools. Use these to annotate the frame that you're talking about it in the review._
 
 ### Bookmarks
 
-![Reviewing videos](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/bookmarks.png)
+![Bookmarks](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/bookmarks.png)
 
 _Bookmark important moments before your review to bring up with the team_
 
