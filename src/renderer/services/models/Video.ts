@@ -83,7 +83,9 @@ export function findMaxNormalisedDuration(videos: Video[]): number | null {
 }
 
 export async function createFromFile(filePath: string): Promise<Video> {
+  console.log('createFromFile filepath', filePath)
   const metadata = await window.video.getMetadata(filePath);
+  console.log('metadata was', metadata)
 
   // extract video stream
   const videoStream = metadata.streams.find(

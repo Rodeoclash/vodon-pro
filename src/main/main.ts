@@ -20,8 +20,26 @@ import os from 'os';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
-ffmpeg.setFfprobePath(ffmpegBins.ffprobePath);
-ffmpeg.setFfmpegPath(ffmpegBins.ffmpegPath);
+if (!ffmpegBins.ffprobePath) {
+  throw new Error('Unable to find FFProbe path');
+}
+
+const ffprobePath = ffmpegBins.ffprobePath.replace(
+  'app.asar',
+  'app.asar.unpacked'
+);
+
+if (!ffmpegBins.ffmpegPath) {
+  throw new Error('Unable to find FFMpeg path');
+}
+
+const ffmpegPath = ffmpegBins.ffmpegPath.replace(
+  'app.asar',
+  'app.asar.unpacked'
+);
+
+ffmpeg.setFfprobePath(ffprobePath);
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 const tmpDir = os.tmpdir();
 
@@ -121,7 +139,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 };
 
 /**
@@ -170,7 +188,7 @@ ipcMain.handle(
  */
 ipcMain.handle('video:getMetadata', async (_event, filePath: string) => {
   const result = await new Promise((resolve) => {
-    ffmpeg.ffprobe(filePath, (_err: unknown, metadata: object) => {
+    ffmpeg.ffprobe(filePath, (err: unknown, metadata: object) => {
       resolve(metadata);
     });
   });

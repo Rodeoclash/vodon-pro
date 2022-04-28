@@ -1,18 +1,20 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "4.5.0",
-  "description": "A foundation for scalable desktop apps",
+  "name": "vodon-pro",
+  "version": "1.6.9",
+  "description": "The synchronised VOD review tool",
   "main": "./dist/main/main.js",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Samuel Richardson",
+    "email": "sam@richardson.co.nz",
+    "url": "https://www.richardson.co.nz"
   },
   "scripts": {
     "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts",
     "postinstall": "npm run electron-rebuild && npm run link-modules"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ffmpeg-ffprobe-static": "^4.4.0-rc.11"
+  },
   "license": "MIT"
 }

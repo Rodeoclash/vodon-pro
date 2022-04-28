@@ -1,6 +1,6 @@
 {
   "name": "vodon-pro",
-  "version": "1.6.7",
+  "version": "1.6.9",
   "description": "The synchronised VOD review tool",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
@@ -33,7 +33,10 @@
     "productName": "VodonPro",
     "appId": "org.vodon.VodonPro",
     "asar": true,
-    "asarUnpack": "**\\*.{node,dll}",
+    "asarUnpack": [
+      "**\\*.{node,dll}",
+      "node_modules/ffmpeg-ffprobe-static"
+    ],
     "files": [
       "dist",
       "node_modules",
