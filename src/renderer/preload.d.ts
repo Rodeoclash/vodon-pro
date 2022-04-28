@@ -16,7 +16,7 @@ declare global {
     video: {
       exists: (filepath: string) => Promise<boolean>;
       getMetadata: (filepath: string) => Promise<VideoMetadata>;
-      screenshot: (filepath: string, second: number) => Promise<fs.ReadStream>;
+      screenshot: (filepath: string, second: number) => Promise<string>;
     };
   }
 }

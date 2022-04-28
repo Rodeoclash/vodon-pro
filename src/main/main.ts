@@ -23,6 +23,8 @@ import { resolveHtmlPath } from './util';
 ffmpeg.setFfprobePath(ffmpegBins.ffprobePath);
 ffmpeg.setFfmpegPath(ffmpegBins.ffmpegPath);
 
+const tmpDir = os.tmpdir();
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -193,23 +195,21 @@ ipcMain.handle('video:exists', async (_event, filePath: string) => {
  */
 ipcMain.handle(
   'video:screenshot',
-  async (_event, filePath: string, second: number) => {
-    const output = os.tmpdir();
-
-    ffmpeg(filePath)
-      // setup event handlers
-      .on('filenames', (filenames: [string]) => {
-        console.log(`screenshots are ${filenames.join(', ')}`);
-      })
-      .on('end', () => {
-        console.log('screenshots were saved');
-        // send file back
-      })
-      .on('error', (err: any) => {
-        console.log(`an error happened: ${err.message}`);
-      })
-      // take 2 screenshots at predefined timemarks and size
-      .takeScreenshots({ timemarks: [second], size: '150x100' }, output);
+  (_event, filePath: string, second: number) => {
+    return new Promise((resolve, reject) => {
+      ffmpeg(filePath)
+        .on('end', () => {
+          resolve(path.join(tmpDir, `${second}.png`));
+        })
+        .on('error', (err: any) => {
+          reject(err);
+        })
+        // take 2 screenshots at predefined timemarks and size
+        .takeScreenshots(
+          { timemarks: [second], size: '854x480', filename: '%s.png' },
+          tmpDir
+        );
+    });
   }
 );
 

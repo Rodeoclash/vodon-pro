@@ -37,12 +37,6 @@ export type Video = {
   /** Aspect ratio of the video */
   displayAspectRatio: string;
 
-  /** How complete is generating the thumbnails for this video? */
-  thumbnailGenerationProgress: number | null;
-
-  /** Where are the thumbnails located on the file system? */
-  thumbnailGenerationLocation: string | null;
-
   /** List of bookmarks stored against this video */
   bookmarks: VideoBookmark[];
 
@@ -121,8 +115,6 @@ export async function createFromFile(filePath: string): Promise<Video> {
     name: basename(filePath),
     offset: null,
     syncTime: 0,
-    thumbnailGenerationLocation: null,
-    thumbnailGenerationProgress: null,
     volume: 0.8,
   };
 }

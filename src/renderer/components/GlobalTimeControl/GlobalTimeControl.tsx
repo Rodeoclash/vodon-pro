@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState, useLayoutEffect } from 'react';
-import { createPopper, VirtualElement } from '@popperjs/core';
-
-import useStore from '../../services/store';
+import { createPopper } from '@popperjs/core';
+import { debounce } from 'lodash';
 
 import {
   Box,
@@ -11,6 +10,7 @@ import {
   SliderThumb,
   SliderTrack,
 } from '@chakra-ui/react';
+import useStore from '../../services/store';
 
 import VideoBookmarkTimeline from '../VideoBookmarkTimeline/VideoBookmarkTimeline';
 
@@ -21,9 +21,9 @@ type Props = {
 };
 
 export default function GlobalTimeControl({ video }: Props) {
-  const trackRef = useRef(null);
-  const popupRef = useRef(null);
-  const imageRef = useRef(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const popupRef = useRef<HTMLDivElement | null>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
 
   const stopPlaying = useStore((state) => state.stopPlaying);
   const setCurrentTime = useStore((state) => state.setCurrentTime);
@@ -32,10 +32,10 @@ export default function GlobalTimeControl({ video }: Props) {
   const currentTime = useStore((state) => state.currentTime);
   const fullDuration = useStore((state) => state.fullDuration);
 
-  const [second, setSecond] = useState(null); // the currently moused over "second" position
-  const [imageSrc, setImageSrc] = useState(null); // current "preview" image, based on mouseover second
-  const [mouseOver, setMouseOver] = useState(false); // track the mouse being over the track
-  const [trackDimensions, setTrackDimensions] = useState(null); // tracks the dimensions of the track as it's resized
+  const [second, setSecond] = useState<number | null>(null); // the currently moused over "second" position
+  const [imageSrc, setImageSrc] = useState<string | null>(null); // current "preview" image, based on mouseover second
+  const [mouseOver, setMouseOver] = useState<boolean>(false); // track the mouse being over the track
+  const [trackDimensions, setTrackDimensions] = useState<any | null>(null); // tracks the dimensions of the track as it's resized
 
   function handleSliderChange(newTime: number) {
     stopPlaying();
@@ -51,11 +51,20 @@ export default function GlobalTimeControl({ video }: Props) {
   }
 
   function handleMouseMoveSliderTrack(event: React.MouseEvent<HTMLDivElement>) {
+    if (trackRef.current === null || fullDuration == null) {
+      return;
+    }
+
     const trackBounding = trackRef.current.getBoundingClientRect();
     const percentage =
       (event.clientX - trackBounding.left) / trackBounding.width;
-    setSecond(String(Math.round(fullDuration * percentage)).padStart(4, '0'));
+    setSecond(fullDuration * percentage);
   }
+
+  const handleMouseMoveSliderTrackDebounced = debounce(
+    handleMouseMoveSliderTrack,
+    500
+  );
 
   useLayoutEffect(() => {
     function handleResize() {
@@ -80,34 +89,34 @@ export default function GlobalTimeControl({ video }: Props) {
    * thumbnails are still generating)
    */
   useEffect(() => {
-    if (second === null || video.thumbnailGenerationLocation === null) {
+    if (second === null) {
       return;
     }
 
-    const src = `${video.thumbnailGenerationLocation}\\${second}.jpg`;
-    const img = new Image();
-
-    img.src = src;
-
-    img.onload = () => {
-      setImageSrc(src);
-    };
-
-    img.onerror = () => {
-      setImageSrc(null);
-    };
-  }, [second]);
+    window.video
+      .screenshot(video.filePath, second)
+      .then((src) => {
+        return setImageSrc(src);
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Unable to generate image from video', error);
+      });
+  }, [video, second]);
 
   /**
    * Place the preview box tethered to the mouse and the track
    */
   useLayoutEffect(() => {
-    if (mouseOver === false) {
-      return;
+    if (mouseOver === false || popupRef.current === null) {
+      return undefined;
     }
 
-    function generateGetBoundingClientRect(x = 0, y = 0) {
-      const trackBounding = trackRef.current.getBoundingClientRect();
+    function generateGetBoundingClientRect(x = 0) {
+      const trackBounding =
+        trackRef.current === null
+          ? { top: 0 }
+          : trackRef.current.getBoundingClientRect();
 
       return () => ({
         width: 0,
@@ -136,8 +145,7 @@ export default function GlobalTimeControl({ video }: Props) {
 
     function handleMouseMove(event: MouseEvent) {
       virtualElement.getBoundingClientRect = generateGetBoundingClientRect(
-        event.clientX,
-        event.clientY
+        event.clientX
       );
 
       instance.update();
@@ -151,6 +159,10 @@ export default function GlobalTimeControl({ video }: Props) {
     };
   }, [mouseOver]);
 
+  if (fullDuration === null) {
+    return null;
+  }
+
   const renderedCurrentBookmarks =
     trackDimensions === null
       ? []
@@ -161,16 +173,16 @@ export default function GlobalTimeControl({ video }: Props) {
           return (
             <Flex
               key={bookmark.id}
-              bgColor={'gray.800'}
-              position={'absolute'}
-              width={'2rem'}
-              height={'2rem'}
-              align={'center'}
-              justify={'center'}
-              top={'-7px'}
+              bgColor="gray.800"
+              position="absolute"
+              width="2rem"
+              height="2rem"
+              align="center"
+              justify="center"
+              top="-7px"
               left={`calc(${left}px - 1rem)`}
-              rounded={'full'}
-              zIndex={'1'}
+              rounded="full"
+              zIndex="1"
             >
               <VideoBookmarkTimeline
                 video={video}
@@ -196,16 +208,16 @@ export default function GlobalTimeControl({ video }: Props) {
               return (
                 <Flex
                   key={bookmark.id}
-                  bgColor={'gray.900'}
-                  position={'absolute'}
-                  width={'1.5rem'}
-                  height={'1.5rem'}
-                  align={'center'}
-                  justify={'center'}
-                  top={'-2px'}
+                  bgColor="gray.900"
+                  position="absolute"
+                  width="1.5rem"
+                  height="1.5rem"
+                  align="center"
+                  justify="center"
+                  top="-2px"
                   left={`calc(${left}px - .75rem)`}
-                  rounded={'full'}
-                  zIndex={'1'}
+                  rounded="full"
+                  zIndex="1"
                 >
                   <VideoBookmarkTimeline
                     video={innerVideo}
@@ -221,24 +233,31 @@ export default function GlobalTimeControl({ video }: Props) {
     <Box position="relative">
       {renderedCurrentBookmarks}
       {renderedOtherBookmarks}
+
       <Box
         ref={popupRef}
         position="absolute"
         display={mouseOver === true ? 'block' : 'none'}
-        zIndex={'2'}
+        zIndex="2"
       >
-        <img width="400px" ref={imageRef} src={imageSrc} />
+        <img
+          width="400px"
+          ref={imageRef}
+          src={imageSrc || ''}
+          alt="Frame preview"
+        />
       </Box>
+
       <Slider
         aria-label="Global time control"
         focusThumbOnChange={false}
         key="playing"
         max={fullDuration}
         min={0}
-        onChange={handleSliderChange}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseMove={handleMouseMoveSliderTrack}
+        onChange={(value) => handleSliderChange(value)}
+        onMouseEnter={() => handleMouseEnter()}
+        onMouseLeave={() => handleMouseLeave()}
+        onMouseMove={(event) => handleMouseMoveSliderTrackDebounced(event)}
         step={1 / video.frameRate}
         value={currentTime}
       >
