@@ -61,6 +61,7 @@ export default function VideoAligner({ video }: Props) {
     function handleLoadedMetaData(event: Event) {
       setVideoDuration(video, videoRef.current.duration);
       videoRef.current.currentTime = video.syncTime;
+      videoRef.current.volume = 0;
     }
 
     videoRef.current.addEventListener('loadedmetadata', handleLoadedMetaData);
