@@ -1,7 +1,4 @@
-import React, { useRef, useLayoutEffect, useState } from 'react';
-
-import { secondsToHms } from '../../services/time';
-import useStore from '../../services/store';
+import React, { useRef, useLayoutEffect, useState, useEffect } from 'react';
 
 import {
   Box,
@@ -22,10 +19,18 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
+  IconButton,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import { Settings as SettingsIcon, X as XIcon } from 'tabler-icons-react';
+import {
+  Settings as SettingsIcon,
+  X as XIcon,
+  PlayerPlay as PlayerPlayIcon,
+  PlayerPause as PlayerPauseIcon,
+} from 'tabler-icons-react';
+import { secondsToHms } from '../../services/time';
+import useStore from '../../services/store';
 
 import VideoStepControl from '../VideoStepControl/VideoStepControl';
 
@@ -42,8 +47,9 @@ export default function VideoAligner({ video }: Props) {
   const setVideoName = useStore((state) => state.setVideoName);
   const removeVideo = useStore((state) => state.removeVideo);
 
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
+  const [playing, setPlaying] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   useLayoutEffect(() => {
@@ -68,6 +74,21 @@ export default function VideoAligner({ video }: Props) {
       videoRef.current.removeEventListener('seeked', handleSeeked);
     };
   }, []);
+
+  useEffect(() => {
+    if (videoRef.current === null || playing === null) {
+      return;
+    }
+
+    if (playing === true) {
+      videoRef.current.play();
+    }
+
+    if (playing === false) {
+      videoRef.current.pause();
+      setVideoSyncTime(video, videoRef.current.currentTime);
+    }
+  }, [playing]);
 
   function handleSliderChange(newTime: number) {
     videoRef.current.currentTime = newTime;
@@ -98,25 +119,41 @@ export default function VideoAligner({ video }: Props) {
     video.duration === null ? null : (
       <Flex
         p={2}
-        bgColor={'blackAlpha.800'}
-        position={'absolute'}
-        bottom={'0'}
-        left={'0'}
-        right={'0'}
-        align={'center'}
+        bgColor="blackAlpha.800"
+        position="absolute"
+        bottom="0"
+        left="0"
+        right="0"
+        align="center"
       >
+        <Box mr="2">
+          {!playing && (
+            <IconButton
+              onClick={() => setPlaying(true)}
+              icon={<PlayerPlayIcon />}
+              aria-label="Play"
+            />
+          )}
+          {playing && (
+            <IconButton
+              onClick={() => setPlaying(false)}
+              icon={<PlayerPauseIcon />}
+              aria-label="Pause"
+            />
+          )}
+        </Box>
+
         <Box mr={2}>
           <VideoStepControl
             direction="backwards"
             frameRate={video.frameRate}
-            onClick={handleClickStep}
+            onClick={(distance) => handleClickStep(distance)}
           />
         </Box>
 
         <Box mx={2}>
-          <Text whiteSpace={'nowrap'} fontSize={'sm'} mx={'2'} align={'center'}>
-            {secondsToHms(Math.round(video.syncTime))} /{' '}
-            {secondsToHms(Math.round(video.duration))}
+          <Text whiteSpace="nowrap" fontSize="sm" mx="2" align="center">
+            Sync @ {secondsToHms(Math.round(video.syncTime))}
           </Text>
         </Box>
 
@@ -139,7 +176,7 @@ export default function VideoAligner({ video }: Props) {
           <VideoStepControl
             direction="forwards"
             frameRate={video.frameRate}
-            onClick={handleClickStep}
+            onClick={(distance) => handleClickStep(distance)}
           />
         </Box>
       </Flex>
@@ -147,26 +184,26 @@ export default function VideoAligner({ video }: Props) {
 
   return (
     <>
-      <Box position={'relative'}>
+      <Box position="relative">
         <Tooltip label="Edit player name">
           <Flex
             onClick={handleClickName}
-            align={'center'}
-            position={'absolute'}
-            top={'0'}
-            left={'0'}
-            px={'8'}
-            py={'4'}
+            align="center"
+            position="absolute"
+            top="0"
+            left="0"
+            px="8"
+            py="4"
             zIndex={1}
-            bgColor={'blackAlpha.600'}
-            cursor={'pointer'}
+            bgColor="blackAlpha.600"
+            cursor="pointer"
           >
             <SettingsIcon />
             <Heading
-              fontSize={'md'}
-              ml={'2'}
-              fontWeight={'normal'}
-              textDecoration={'underline'}
+              fontSize="md"
+              ml="2"
+              fontWeight="normal"
+              textDecoration="underline"
             >
               {video.name}
             </Heading>
@@ -176,22 +213,22 @@ export default function VideoAligner({ video }: Props) {
         <Tooltip label="Remove this video">
           <Flex
             onClick={handleRemove}
-            align={'center'}
-            position={'absolute'}
-            top={'0'}
-            right={'0'}
-            px={'4'}
-            py={'4'}
+            align="center"
+            position="absolute"
+            top="0"
+            right="0"
+            px="4"
+            py="4"
             zIndex={1}
-            bgColor={'blackAlpha.800'}
-            cursor={'pointer'}
-            color={'red.500'}
+            bgColor="blackAlpha.800"
+            cursor="pointer"
+            color="red.500"
           >
             <XIcon />
           </Flex>
         </Tooltip>
 
-        <Flex align={'center'} justifyContent={'center'}>
+        <Flex align="center" justifyContent="center">
           <video src={video.filePath} ref={videoRef} />
         </Flex>
 
