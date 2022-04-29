@@ -1,3 +1,13 @@
+### 1.6.10
+
+- Can play the alignement videos to help alignment.
+- Slight tweak to the way the time is displayed for the alignment videos (now shows: "Syncs @ 1:00")
+- Improved test coverage and typing.
+
+### 1.6.9
+
+- No release
+
 ### 1.6.8
 
 - Upgraded build system to use `electron-build` instead of `electron-forge`.
