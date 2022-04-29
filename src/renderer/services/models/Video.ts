@@ -4,12 +4,23 @@ import { basename } from '../file';
 import type { VideoBookmark } from './VideoBookmark';
 
 export type Video = {
-  /** Average framerate of the video */
-  frameRate: number;
+  /** List of bookmarks stored against this video */
+  bookmarks: VideoBookmark[];
+
+  /** Width of the video in px, used to calculate scaling */
+  codedWidth: number;
+
+  /* Height of the video in px */
+  codedHeight: number;
+
+  /** Date of created video */
+  createdAt: Date;
+
+  /** Aspect ratio of the video */
+  displayAspectRatio: string;
 
   /** Base duration of the video */
   duration: number | null;
-
   /** Offset + duration */
   durationNormalised: number | null;
 
@@ -18,6 +29,9 @@ export type Video = {
 
   /** Path to the file on disk */
   filePath: string;
+
+  /** Average framerate of the video */
+  frameRate: number;
 
   /** Unique id for this video */
   id: string;
@@ -33,21 +47,6 @@ export type Video = {
 
   /** Stored volume */
   volume: number;
-
-  /** Aspect ratio of the video */
-  displayAspectRatio: string;
-
-  /** List of bookmarks stored against this video */
-  bookmarks: VideoBookmark[];
-
-  /** Width of the video in px, used to calculate scaling */
-  codedWidth: number;
-
-  /* Height of the video in px */
-  codedHeight: number;
-
-  /** Date of created video */
-  createdAt: Date;
 };
 
 type AudioStreamMetadata = {
@@ -55,48 +54,56 @@ type AudioStreamMetadata = {
 };
 
 type VideoStreamMetadata = {
-  index: number;
-  codec_type: 'video';
   avg_frame_rate: string;
+  codec_type: 'video';
+  coded_height: number;
+  coded_width: number;
   display_aspect_ratio: string;
+  index: number;
 };
 
 export type VideoMetadata = {
   streams: Array<VideoStreamMetadata | AudioStreamMetadata>;
 };
 
-// Finds the max normalised duration of the videos
+/**
+ * Given a list of videos, finds the max normalised duration from them.
+ * Handles, empty video lists and null normalised duration values.
+ */
 export function findMaxNormalisedDuration(videos: Video[]): number | null {
   if (videos.length === 0) {
     return null;
   }
 
-  return videos.reduce(function (acc: number | null, video: Video): number {
-    const durationNormalised = video.durationNormalised;
+  return videos.reduce(
+    (acc: number | null, { durationNormalised }: Video): number | null => {
+      if (durationNormalised === null) {
+        return acc;
+      }
 
-    if (acc === null || durationNormalised > acc) {
-      return durationNormalised;
-    }
+      if (acc === null || durationNormalised > acc) {
+        return durationNormalised;
+      }
 
-    return acc;
-  }, null);
+      return acc;
+    },
+    null
+  );
 }
 
 export async function createFromFile(filePath: string): Promise<Video> {
-  console.log('createFromFile filepath', filePath)
   const metadata = await window.video.getMetadata(filePath);
-  console.log('metadata was', metadata)
 
   // extract video stream
   const videoStream = metadata.streams.find(
     (stream: VideoStreamMetadata | AudioStreamMetadata) => {
       return stream.codec_type === 'video';
     }
-  );
+  ) as VideoStreamMetadata;
 
   // determine framerate
-  const [ratio_1, ratio_2] = videoStream.avg_frame_rate.split('/');
-  const frameRate = Math.round(parseInt(ratio_1, 10) / parseInt(ratio_2));
+  const [ratio1, ratio2] = videoStream.avg_frame_rate.split('/');
+  const frameRate = Math.round(parseInt(ratio1, 10) / parseInt(ratio2, 10));
 
   // video element
   const el = document.createElement('video');
