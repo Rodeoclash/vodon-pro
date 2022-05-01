@@ -2,22 +2,20 @@ import * as React from 'react';
 
 import { css } from '@emotion/react';
 
-import useStore from '../../services/store';
-
-import DrawingControlsColorSelector from '../DrawingControlsColorSelector/DrawingControlsColorSelector';
-import DrawingControlsSizeSelector from '../DrawingControlsSizeSelector/DrawingControlsSizeSelector';
-
 import { Flex, Box, VStack, IconButton, Tooltip } from '@chakra-ui/react';
 import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
-
 import {
   Click as ClickIcon,
   Pencil as PencilIcon,
-  Eraser as EraserIcon,
   ArrowUpRight as ArrowUpRightIcon,
   Rectangle as RectangleIcon,
   Circle as CircleIcon,
 } from 'tabler-icons-react';
+import useStore from '../../services/store';
+
+import DrawingControlsColorSelector from '../DrawingControlsColorSelector/DrawingControlsColorSelector';
+import DrawingControlsSizeSelector from '../DrawingControlsSizeSelector/DrawingControlsSizeSelector';
+import DrawingControlsDashSelector from '../DrawingControlsDashSelector/DrawingControlsDashSelector';
 
 type PropsType = {
   app: TldrawApp;
@@ -35,15 +33,18 @@ export default function DrawingControls({ app }: PropsType) {
   const activeTool = app.useStore((s) => s.appState.activeTool);
   const playing = useStore((state) => state.playing);
 
-  function selectTool(tool: TDToolType) {
-    app.selectTool(tool);
-  }
+  const selectTool = React.useCallback(
+    (type: TDToolType) => {
+      app.selectTool(type);
+    },
+    [app]
+  );
 
   React.useEffect(() => {
     if (playing === true) {
       selectTool('select');
     }
-  }, [playing]);
+  }, [playing, selectTool]);
 
   return (
     <>
@@ -113,9 +114,9 @@ export default function DrawingControls({ app }: PropsType) {
       <Flex
         mt={4}
         pt={4}
-        borderTop={'1px'}
-        borderColor={'whiteAlpha.300'}
-        justify={'center'}
+        borderTop="1px"
+        borderColor="whiteAlpha.300"
+        justify="center"
       >
         <Box>
           <Box>
@@ -123,6 +124,9 @@ export default function DrawingControls({ app }: PropsType) {
           </Box>
           <Box mt={4}>
             <DrawingControlsSizeSelector app={app} />
+          </Box>
+          <Box mt={4}>
+            <DrawingControlsDashSelector app={app} />
           </Box>
         </Box>
       </Flex>

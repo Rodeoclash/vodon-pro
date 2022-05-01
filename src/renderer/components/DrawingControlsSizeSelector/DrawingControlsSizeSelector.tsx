@@ -15,9 +15,9 @@ type PropsType = {
 };
 
 const sizes = {
-  [SizeStyle.Small]: 'small',
-  [SizeStyle.Medium]: 'medium',
-  [SizeStyle.Large]: 'large',
+  [SizeStyle.Small]: 'S',
+  [SizeStyle.Medium]: 'M',
+  [SizeStyle.Large]: 'L',
 };
 
 export default function DrawingControlsSizeSelector({ app }: PropsType) {
@@ -52,11 +52,11 @@ export default function DrawingControlsSizeSelector({ app }: PropsType) {
         align="center"
         justify="center"
         border="1px"
-        borderColor="whiteAlpha.600"
+        borderColor="whiteAlpha.400"
         background="whiteAlpha.200"
         padding="1rem"
       >
-        {value.slice(0, 1).toUpperCase()}
+        {value}
       </Flex>
     );
   });
@@ -72,7 +72,7 @@ export default function DrawingControlsSizeSelector({ app }: PropsType) {
           align="center"
           justifyContent="center"
           border="1px"
-          borderColor="whiteAlpha.600"
+          borderColor="whiteAlpha.400"
           onClick={handleOpen}
         >
           {sizes[currentStyle.size].slice(0, 1).toUpperCase()}
