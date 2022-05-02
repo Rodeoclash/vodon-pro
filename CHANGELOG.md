@@ -1,3 +1,7 @@
+### 1.7.0
+
+- Added a control for playback speed.
+
 ### 1.6.11
 
 - Added "dash styles". You can now have dotted, dashed or solid lines for drawing.
