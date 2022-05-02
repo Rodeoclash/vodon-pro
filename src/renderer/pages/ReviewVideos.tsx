@@ -27,6 +27,7 @@ import DrawingControls from '../components/DrawingControls/DrawingControls';
 import GlobalTimeControl from '../components/GlobalTimeControl/GlobalTimeControl';
 import GlobalTimeDisplay from '../components/GlobalTimeDisplay/GlobalTimeDisplay';
 import Hotkeys from './ReviewVideos/Hotkeys';
+import PlaybackSpeed from '../components/PlaybackSpeed/PlaybackSpeed';
 import VideoBookmark from '../components/VideoBookmark/VideoBookmark';
 import VideoBookmarkAdd from '../components/VideoBookmarkAdd/VideoBookmarkAdd';
 import VideoStepControl from '../components/VideoStepControl/VideoStepControl';
@@ -51,6 +52,7 @@ export default function ReviewVideos() {
   const activeVideoId = useStore((state) => state.activeVideoId);
   const currentTime = useStore((state) => state.currentTime);
   const editingBookmark = useStore((state) => state.editingBookmark);
+  const playbackSpeed = useStore((state) => state.playbackSpeed);
   const playing = useStore((state) => state.playing);
   const videos = useStore((state) => state.videos);
 
@@ -123,7 +125,7 @@ export default function ReviewVideos() {
 
     function updateCurrentTime() {
       setCurrentTime(
-        currentTime + (Date.now() - startedPlayingAt) / 1000 - 0.06
+        currentTime + ((Date.now() - startedPlayingAt) / 1000 - 0.06) * playbackSpeed
       ); // HACK HACK - We should use something where we have control over the clock driving the video (i.e. gstreamer)
     }
 
@@ -358,6 +360,10 @@ export default function ReviewVideos() {
               )}
             </Box>
           </Tooltip>
+
+          <Box mx={2}>
+            <PlaybackSpeed disabled={playing} />
+          </Box>
 
           <Box mx={'2'}>
             <VideoStepControl

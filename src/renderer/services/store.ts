@@ -19,6 +19,7 @@ interface StateData {
   currentTime: number;
   editingBookmark: boolean;
   fullDuration: number | null;
+  playbackSpeed: number;
   playing: boolean;
   videos: Video[];
 }
@@ -42,6 +43,7 @@ interface State extends StateData {
   startPlaying: () => void;
   stopPlaying: () => void;
   togglePlaying: () => void;
+  setPlaybackSpeed: (playbackSpeed: number) => void;
 
   // bookmarks
   createVideoBookmark: (
@@ -79,6 +81,7 @@ const emptyState: StateData = {
   activeVideoId: null,
   currentTime: 0,
   editingBookmark: false,
+  playbackSpeed: 1,
   fullDuration: null,
   playing: false,
   videos: [],
@@ -396,6 +399,8 @@ const useStore = createStore<State>(
       startPlaying: () => set((state) => ({ playing: true })),
       stopPlaying: () => set((state) => ({ playing: false })),
       togglePlaying: () => set((state) => ({ playing: !state.playing })),
+      setPlaybackSpeed: (playbackSpeed: number) =>
+        set((state) => ({ playbackSpeed })),
 
       startEditingBookmark: () => set((state) => ({ editingBookmark: true })),
       stopEditingBookmark: () => set((state) => ({ editingBookmark: false })),
@@ -410,6 +415,7 @@ const useStore = createStore<State>(
       currentTime: 0,
       editingBookmark: false,
       fullDuration: null,
+      playbackSpeed: 1,
       playing: false,
       showSetupInstructions: true,
       slowCPUMode: false,

@@ -20,6 +20,7 @@ export default function VideoThumbnail({ video }: Props) {
 
   const activeVideoId = useStore((state) => state.activeVideoId);
   const currentTime = useStore((state) => state.currentTime);
+  const playbackSpeed = useStore((state) => state.playbackSpeed);
   const playing = useStore((state) => state.playing);
   const slowCPUMode = useStore((state) => state.slowCPUMode);
 
@@ -48,8 +49,6 @@ export default function VideoThumbnail({ video }: Props) {
 
       window.dispatchEvent(new Event('resize'));
     };
-
-    console.log('video', video);
 
     video.el.addEventListener('loadedmetadata', handleLoadedMetaData);
 
@@ -105,6 +104,18 @@ export default function VideoThumbnail({ video }: Props) {
   useLayoutEffect(() => {
     window.dispatchEvent(new Event('resize'));
   }, [isAfterRange]);
+
+  /**
+   * As the video moves in and out of being active, we need to trigger resize
+   * events to ensure it has space on the screen.
+   */
+  useLayoutEffect(() => {
+     if (video.el === null) {
+       return;
+    }
+
+    video.el.playbackRate = playbackSpeed;
+  }, [playbackSpeed, video.el]);
 
   useLayoutEffect(() => {
     const handleResize = () => {
