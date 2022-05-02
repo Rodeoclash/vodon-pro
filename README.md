@@ -82,7 +82,14 @@ When you download, you may see one or more warnings about the download being "un
 
 If you're performing VOD reviews on games with inbuilt replay tools then Vodon Pro will be a poor substitute for those tools... use them instead! That said, not all games support replay files or allow you to easily find and share them.
 
-Finally, if you're studying a game by a competing team, you may only have access to video replays or streams of their games (nothing stops you from using Vodon Pro on your competitors)
+### Why is this an app? I want to use it online!
+
+This comes down to a few reasons, they are:
+
+1. Video hosting costs a lot of money.
+2. When you store videos that users have uploaded, you compress them to save on space. This means that the videos lose visual quality.
+3. Streaming 5 1080p 60fps videos at once will crush almost anyones Internet connection (even if you compress the videos like in 2!)
+4. Seeks to new locations should be _instant_. I hate clicking to go somewhere in a video and seeing a buffering icon.
 
 ### How can I get in touch?
 
