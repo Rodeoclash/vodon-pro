@@ -18,8 +18,10 @@ Add viewpoints from each player in a match, tell Vodon how to synchronise the vi
 - 🖊 Draw on individual frames in each video (Powered by [TLDraw](https://github.com/tldraw/tldraw))
 - ▶ Frame advance and rewind controls.
 - 🔖 Bookmark system to remind you of critical moments you need to talk about with the team.
+- 💤 Slow motion mode, reduce speed to 10%, 25%, 50%, 75% of the original video.
 - 💾 Load and save your projects (includes autosave as you work)
 - 👀 No advertising or tracking.
+- ⚙️ Sensible defaults but can be customised to match your workflow.
 - 🖥 Includes a "Slow CPU" mode to reduce load when many videos are loaded in at once.
 
 ## Supports
