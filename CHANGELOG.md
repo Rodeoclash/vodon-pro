@@ -1,3 +1,9 @@
+### 1.7.1
+
+- Drawings persist even when the video is playing. Cleared when moving in and out of bookmarks.
+- Added function to use the arrow keys to move backwards and forwards by jumps in time instead of by frame. Selectable from the settings menu.
+- Added function to select how far the jump should be (in seconds)
+
 ### 1.7.0
 
 - Added a control for playback speed.
