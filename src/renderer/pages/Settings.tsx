@@ -121,12 +121,14 @@ export default function Settings() {
             Arrow key jump distance
           </FormLabel>
           <NumberInput
-            value={arrowKeyJumpDistance}
-            min={1}
-            max={60}
             id="arrow-key-jump-distance"
-            width="20"
+            max={60}
+            min={0}
             onChange={(_str, num) => setArrowKeyJumpDistance(num)}
+            precision={2}
+            step={0.1}
+            value={arrowKeyJumpDistance}
+            width={32}
           >
             <NumberInputField />
             <NumberInputStepper>
