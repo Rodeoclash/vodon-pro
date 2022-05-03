@@ -10,6 +10,7 @@ import {
   ArrowUpRight as ArrowUpRightIcon,
   Rectangle as RectangleIcon,
   Circle as CircleIcon,
+  Trash as TrashIcon,
 } from 'tabler-icons-react';
 import useStore from '../../services/stores/videos';
 
@@ -53,7 +54,6 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Select" aria-label="Select">
             <IconButton
               icon={<ClickIcon />}
-              disabled={playing}
               aria-label="Select"
               css={activeTool === 'select' ? selectedStyle : unSlectedStyle}
               onClick={() => selectTool('select')}
@@ -62,7 +62,6 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Pencil" aria-label="Pencil">
             <IconButton
               icon={<PencilIcon />}
-              disabled={playing}
               aria-label="Pencil"
               css={
                 activeTool === TDShapeType.Draw ? selectedStyle : unSlectedStyle
@@ -73,7 +72,6 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Arrow" aria-label="Arrow">
             <IconButton
               icon={<ArrowUpRightIcon />}
-              disabled={playing}
               aria-label="Arrow"
               css={
                 activeTool === TDShapeType.Arrow
@@ -86,7 +84,6 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Rectangle" aria-label="Rectangle">
             <IconButton
               icon={<RectangleIcon />}
-              disabled={playing}
               aria-label="Rectangle"
               css={
                 activeTool === TDShapeType.Rectangle
@@ -99,7 +96,6 @@ export default function DrawingControls({ app }: PropsType) {
           <Tooltip label="Ellipse" aria-label="Ellipse">
             <IconButton
               icon={<CircleIcon />}
-              disabled={playing}
               aria-label="Ellipse"
               css={
                 activeTool === TDShapeType.Ellipse
@@ -128,6 +124,22 @@ export default function DrawingControls({ app }: PropsType) {
           <Box mt={4}>
             <DrawingControlsDashSelector app={app} />
           </Box>
+        </Box>
+      </Flex>
+      <Flex
+        mt={4}
+        pt={4}
+        borderTop="1px"
+        borderColor="whiteAlpha.300"
+        justify="center"
+      >
+        <Box>
+          <IconButton
+            icon={<TrashIcon />}
+            aria-label="Arrow"
+            css={selectedStyle}
+            onClick={() => app.deleteAll()}
+          />
         </Box>
       </Flex>
     </>
