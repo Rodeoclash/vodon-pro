@@ -1,4 +1,4 @@
-import useStore from '../../services/store';
+import useStore from '../../services/stores/videos';
 
 import { useRef, useEffect } from 'react';
 import { Tldraw, TldrawApp } from '@tldraw/tldraw';

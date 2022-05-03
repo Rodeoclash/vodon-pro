@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 
 import { Box, Center, Text, Flex } from '@chakra-ui/react';
 import { Plus as PlusIcon } from 'tabler-icons-react';
-import useStore from '../../services/store';
+import useStore from '../../services/stores/videos';
 import { createFromFile } from '../../services/models/Video';
 
 export default function VideoAdd() {

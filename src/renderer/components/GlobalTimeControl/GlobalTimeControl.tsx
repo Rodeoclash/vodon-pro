@@ -10,7 +10,7 @@ import {
   SliderThumb,
   SliderTrack,
 } from '@chakra-ui/react';
-import useStore from '../../services/store';
+import useStore from '../../services/stores/videos';
 
 import VideoBookmarkTimeline from '../VideoBookmarkTimeline/VideoBookmarkTimeline';
 

@@ -11,7 +11,7 @@ import {
   Rectangle as RectangleIcon,
   Circle as CircleIcon,
 } from 'tabler-icons-react';
-import useStore from '../../services/store';
+import useStore from '../../services/stores/videos';
 
 import DrawingControlsColorSelector from '../DrawingControlsColorSelector/DrawingControlsColorSelector';
 import DrawingControlsSizeSelector from '../DrawingControlsSizeSelector/DrawingControlsSizeSelector';

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHotkeys, isHotkeyPressed } from 'react-hotkeys-hook';
 
-import useStore from '../../services/store';
+import useStore from '../../services/stores/videos';
 import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
 
 import type { Video } from '../../services/models/Video';

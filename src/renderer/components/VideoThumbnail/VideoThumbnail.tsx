@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useLayoutEffect, useState } from 'react';
 import { css } from '@emotion/react';
 
 import { Box, Heading, Flex, Button, Text } from '@chakra-ui/react';
-import { Refresh as RefreshIcon } from 'tabler-icons-react';
-import useStore from '../../services/store';
+import useVideoStore from '../../services/stores/videos';
+import useSettingsStore from '../../services/stores/settings';
 import { getRatioDimensions } from '../../services/layout';
 
 import type { Video } from '../../services/models/Video';
@@ -16,13 +16,13 @@ export default function VideoThumbnail({ video }: Props) {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
 
-  const setActiveVideoId = useStore((state) => state.setActiveVideoId);
+  const setActiveVideoId = useVideoStore((state) => state.setActiveVideoId);
+  const activeVideoId = useVideoStore((state) => state.activeVideoId);
+  const currentTime = useVideoStore((state) => state.currentTime);
+  const playbackSpeed = useVideoStore((state) => state.playbackSpeed);
+  const playing = useVideoStore((state) => state.playing);
 
-  const activeVideoId = useStore((state) => state.activeVideoId);
-  const currentTime = useStore((state) => state.currentTime);
-  const playbackSpeed = useStore((state) => state.playbackSpeed);
-  const playing = useStore((state) => state.playing);
-  const slowCPUMode = useStore((state) => state.slowCPUMode);
+  const slowCPUMode = useSettingsStore((state) => state.slowCPUMode);
 
   const [videoDimensions, setVideoDimensions] = useState(null);
 

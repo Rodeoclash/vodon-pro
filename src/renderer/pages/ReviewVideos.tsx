@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useLayoutEffect } from 'react';
 import { css } from '@emotion/react';
 
-import useStore from '../services/store';
+import useStore from '../services/stores/videos';
 import { getRatioDimensions } from '../services/layout';
 
 import {
