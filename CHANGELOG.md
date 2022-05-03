@@ -1,3 +1,7 @@
+### 1.7.2
+
+- Allow decimal values when specifying jump.
+
 ### 1.7.1
 
 - Drawings persist even when the video is playing. Cleared when moving in and out of bookmarks.
