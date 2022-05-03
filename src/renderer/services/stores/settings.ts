@@ -3,17 +3,28 @@ import { persist } from 'zustand/middleware';
 
 const PERSIST_VERSION = 0;
 
+export enum ArrowKeyNavigationMode {
+  'frame' = 'Frame adjust',
+  'seek' = 'Jump time',
+}
+
 interface StateData {
+  arrowKeyJumpDistance: number;
+  arrowKeyNavigationMode: ArrowKeyNavigationMode;
   showSetupInstructions: boolean;
   slowCPUMode: boolean;
 }
 
 interface State extends StateData {
+  setArrowKeyJumpDistance: (seconds: number) => void;
+  setArrowKeyNavigationMode: (value: ArrowKeyNavigationMode) => void;
   setShowSetupInstructions: (value: boolean) => void;
   toggleSlowCPUMode: () => void;
 }
 
 const emptyState: StateData = {
+  arrowKeyJumpDistance: 10,
+  arrowKeyNavigationMode: ArrowKeyNavigationMode.frame,
   showSetupInstructions: true,
   slowCPUMode: false,
 };
@@ -29,11 +40,14 @@ const deserialize = (str: string) => {
 const useStore = createStore<State>(
   persist(
     (set) => ({
-      toggleSlowCPUMode: () =>
-        set((state) => ({ slowCPUMode: !state.slowCPUMode })),
-
+      setArrowKeyJumpDistance: (seconds) =>
+        set(() => ({ arrowKeyJumpDistance: seconds })),
+      setArrowKeyNavigationMode: (mode) =>
+        set(() => ({ arrowKeyNavigationMode: mode })),
       setShowSetupInstructions: (value) =>
         set(() => ({ showSetupInstructions: value })),
+      toggleSlowCPUMode: () =>
+        set((state) => ({ slowCPUMode: !state.slowCPUMode })),
 
       ...emptyState,
     }),
