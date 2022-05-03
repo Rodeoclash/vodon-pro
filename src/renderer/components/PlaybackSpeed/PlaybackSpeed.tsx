@@ -1,5 +1,5 @@
 import { Select } from '@chakra-ui/react';
-import useStore from '../../services/store';
+import useStore from '../../services/stores/videos';
 
 const availableSpeeds = [0.1, 0.25, 0.5, 0.75, 1];
 

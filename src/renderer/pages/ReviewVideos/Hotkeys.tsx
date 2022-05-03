@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useHotkeys, isHotkeyPressed } from 'react-hotkeys-hook';
+import { useState, useEffect, useCallback } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 
-import useStore from '../../services/store';
+import useVideoStore from '../../services/stores/videos';
+import useSettingsStore, {
+  ArrowKeyNavigationMode,
+} from '../../services/stores/settings';
 import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
 
 import type { Video } from '../../services/models/Video';
@@ -15,15 +18,39 @@ export default function HotKeys({
   onEscape,
   video,
 }: Props): React.ReactElement {
-  const startPlaying = useStore((state) => state.startPlaying);
-  const stopPlaying = useStore((state) => state.stopPlaying);
-  const setCurrentTime = useStore((state) => state.setCurrentTime);
+  const startPlaying = useVideoStore((state) => state.startPlaying);
+  const stopPlaying = useVideoStore((state) => state.stopPlaying);
+  const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
+  const currentTime = useVideoStore((state) => state.currentTime);
+  const playing = useVideoStore((state) => state.playing);
 
-  const currentTime = useStore((state) => state.currentTime);
-  const playing = useStore((state) => state.playing);
+  const arrowKeyJumpDistance = useSettingsStore(
+    (state) => state.arrowKeyJumpDistance
+  );
+  const arrowKeyNavigationMode = useSettingsStore(
+    (state) => state.arrowKeyNavigationMode
+  );
 
-  const [framePreviousHeld, setFramePreviousHeld] = useState(false);
-  const [frameNextHeld, setFrameNextHeld] = useState(false);
+  const [previousHeld, setPreviousHeld] = useState(false);
+  const [nextHeld, setNextHeld] = useState(false);
+
+  const handlePrevious = useCallback(() => {
+    const updatedCurrentTime =
+      arrowKeyNavigationMode === ArrowKeyNavigationMode.frame
+        ? useVideoStore.getState().currentTime - 1 / video.frameRate
+        : useVideoStore.getState().currentTime - arrowKeyJumpDistance;
+
+    setCurrentTime(updatedCurrentTime);
+  }, [setCurrentTime, video, arrowKeyJumpDistance, arrowKeyNavigationMode]);
+
+  const handleNext = useCallback(() => {
+    const updatedCurrentTime =
+      arrowKeyNavigationMode === ArrowKeyNavigationMode.frame
+        ? useVideoStore.getState().currentTime + 1 / video.frameRate
+        : useVideoStore.getState().currentTime + arrowKeyJumpDistance;
+
+    setCurrentTime(updatedCurrentTime);
+  }, [setCurrentTime, video, arrowKeyJumpDistance, arrowKeyNavigationMode]);
 
   /**
    * Handle the effects of the keys being held down. We ignore any frame
@@ -32,23 +59,23 @@ export default function HotKeys({
    */
   useEffect(() => {
     if (playing === true) {
-      return;
+      return undefined;
     }
 
     const interval = setInterval(() => {
-      if (framePreviousHeld === true && frameNextHeld === false) {
-        setCurrentTime(useStore.getState().currentTime - 1 / video.frameRate);
+      if (previousHeld === true && nextHeld === false) {
+        handlePrevious();
       }
 
-      if (frameNextHeld === true && framePreviousHeld === false) {
-        setCurrentTime(useStore.getState().currentTime + 1 / video.frameRate);
+      if (nextHeld === true && previousHeld === false) {
+        handleNext();
       }
     }, STEP_ADVANCE_INTERVAL);
 
     return () => {
       clearTimeout(interval);
     };
-  }, [playing, framePreviousHeld, frameNextHeld]);
+  }, [playing, previousHeld, nextHeld, handlePrevious, handleNext]);
 
   /**
    * Previous frame control held down
@@ -56,16 +83,16 @@ export default function HotKeys({
   useHotkeys(
     'left, a',
     () => {
-      if (framePreviousHeld === true) {
+      if (previousHeld === true) {
         return;
       }
-      setCurrentTime(currentTime - 1 / video.frameRate); // trigger an instant frameback
-      setFramePreviousHeld(true);
+      handlePrevious();
+      setPreviousHeld(true);
     },
     {
       keydown: true,
     },
-    [framePreviousHeld, currentTime]
+    [previousHeld, currentTime]
   );
 
   /**
@@ -74,7 +101,7 @@ export default function HotKeys({
   useHotkeys(
     'left, a',
     () => {
-      setFramePreviousHeld(false);
+      setPreviousHeld(false);
     },
     {
       keyup: true,
@@ -88,17 +115,17 @@ export default function HotKeys({
   useHotkeys(
     'right, d',
     () => {
-      if (frameNextHeld === true) {
+      if (nextHeld === true) {
         return;
       }
 
-      setCurrentTime(currentTime + 1 / video.frameRate); // trigger an instant frameback
-      setFrameNextHeld(true);
+      handleNext();
+      setNextHeld(true);
     },
     {
       keydown: true,
     },
-    [frameNextHeld, currentTime]
+    [nextHeld, currentTime]
   );
 
   /**
@@ -107,7 +134,7 @@ export default function HotKeys({
   useHotkeys(
     'right, d',
     () => {
-      setFrameNextHeld(false);
+      setNextHeld(false);
     },
     {
       keyup: true,

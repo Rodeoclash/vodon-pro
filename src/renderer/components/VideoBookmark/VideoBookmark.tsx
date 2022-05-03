@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import useStore from '../../services/store';
+import useStore from '../../services/stores/videos';
 
 import { Box, Flex, Button, ButtonGroup, Text } from '@chakra-ui/react';
 import Draggable from 'react-draggable'; // The default

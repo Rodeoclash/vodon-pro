@@ -3,14 +3,14 @@ import { persist } from 'zustand/middleware';
 import { produce } from 'immer';
 import superjson from 'superjson';
 
-import { findMaxNormalisedDuration } from './models/Video';
-import { create as createVideoBookmark } from './models/VideoBookmark';
+import { findMaxNormalisedDuration } from '../models/Video';
+import { create as createVideoBookmark } from '../models/VideoBookmark';
 
-import type { Video } from './models/Video';
+import type { Video } from '../models/Video';
 import type {
   VideoBookmark,
   VideoBookmarkCoordinates,
-} from './models/VideoBookmark';
+} from '../models/VideoBookmark';
 
 const PERSIST_VERSION = 0;
 
@@ -31,13 +31,11 @@ interface State extends StateData {
   removeVideo: (video: Video) => void;
   setActiveVideoId: (id: string | null) => void;
   setCurrentTime: (currentTime: number) => void;
-  setShowSetupInstructions: (value: boolean) => void;
   setVideoDuration: (video: Video, duration: number) => void;
   setVideoName: (video: Video, name: string) => void;
   setVideoSyncTime: (video: Video, offset: number) => void;
   recalculateOffsets: () => void;
   setVideoVolume: (video: Video, volume: number) => void;
-  toggleSlowCPUMode: () => void;
 
   // playing
   startPlaying: () => void;
@@ -72,17 +70,14 @@ interface State extends StateData {
     bookmark: VideoBookmark,
     drawing: object
   ) => void;
-
-  showSetupInstructions: boolean | undefined;
-  slowCPUMode: boolean;
 }
 
 const emptyState: StateData = {
   activeVideoId: null,
   currentTime: 0,
   editingBookmark: false,
-  playbackSpeed: 1,
   fullDuration: null,
+  playbackSpeed: 1,
   playing: false,
   videos: [],
 };
@@ -405,24 +400,10 @@ const useStore = createStore<State>(
       startEditingBookmark: () => set((state) => ({ editingBookmark: true })),
       stopEditingBookmark: () => set((state) => ({ editingBookmark: false })),
 
-      toggleSlowCPUMode: () =>
-        set((state) => ({ slowCPUMode: !state.slowCPUMode })),
-
-      setShowSetupInstructions: (value) =>
-        set((state) => ({ showSetupInstructions: value })),
-
-      activeVideoId: null,
-      currentTime: 0,
-      editingBookmark: false,
-      fullDuration: null,
-      playbackSpeed: 1,
-      playing: false,
-      showSetupInstructions: true,
-      slowCPUMode: false,
-      videos: [],
+      ...emptyState,
     }),
     {
-      name: 'vodon-store-v5',
+      name: 'vodon-store-videos-v1',
       version: PERSIST_VERSION,
       serialize,
       deserialize,

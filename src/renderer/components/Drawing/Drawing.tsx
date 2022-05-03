@@ -1,9 +1,8 @@
-import useStore from '../../services/store';
-
 import { useRef, useEffect } from 'react';
 import { Tldraw, TldrawApp } from '@tldraw/tldraw';
 
 import { Box } from '@chakra-ui/react';
+import useStore from '../../services/stores/videos';
 
 import type { Video } from '../../services/models/Video';
 import type { VideoBookmark } from '../../services/models/VideoBookmark';
@@ -72,15 +71,15 @@ export default function Drawing({
     }
 
     tlDrawRef.current.setCamera([0, 0], scale, 'layout_mounted');
-  }, [currentTime, videoBookmark]);
+  }, [videoBookmark]);
 
   return (
     <Box
       position="absolute"
-      top={'0'}
-      left={'0'}
-      right={'0'}
-      bottom={'0'}
+      top="0"
+      left="0"
+      right="0"
+      bottom="0"
       ref={outerRef}
     >
       <Tldraw onMount={handleMount} onPersist={handlePersist} showUI={false} />

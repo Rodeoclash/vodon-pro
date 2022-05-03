@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import useStore from '../../services/store';
+import useStore from '../../services/stores/videos';
 import { truncateString } from '../../services/text';
 
 import { Box, Tooltip } from '@chakra-ui/react';

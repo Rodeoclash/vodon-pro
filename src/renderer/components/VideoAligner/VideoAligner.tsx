@@ -30,7 +30,7 @@ import {
   PlayerPause as PlayerPauseIcon,
 } from 'tabler-icons-react';
 import { secondsToHms } from '../../services/time';
-import useStore from '../../services/store';
+import useStore from '../../services/stores/videos';
 
 import VideoStepControl from '../VideoStepControl/VideoStepControl';
 
