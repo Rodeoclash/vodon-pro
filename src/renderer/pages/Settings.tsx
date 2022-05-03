@@ -107,12 +107,11 @@ export default function Settings() {
             </Text>
             <Text mb={2}>
               <strong>Frame adjust</strong> will make pressing the arrow keys
-              navigate one frame at a time (holding shift will jump time)
+              navigate one frame at a time
             </Text>
             <Text mb={2}>
               <strong>Jump time</strong> will make pressing the arrow keys
-              navigate forwards and back by a set amount of time (holding shift
-              will navigate by frames)
+              navigate forwards and back by a set amount of time.
             </Text>
           </FormHelperText>
         </FormControl>
