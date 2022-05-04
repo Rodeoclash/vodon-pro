@@ -12,7 +12,6 @@ import {
   Circle as CircleIcon,
   Trash as TrashIcon,
 } from 'tabler-icons-react';
-import useStore from '../../services/stores/videos';
 
 import DrawingControlsColorSelector from '../DrawingControlsColorSelector/DrawingControlsColorSelector';
 import DrawingControlsSizeSelector from '../DrawingControlsSizeSelector/DrawingControlsSizeSelector';
@@ -32,7 +31,6 @@ const unSlectedStyle = css`
 
 export default function DrawingControls({ app }: PropsType) {
   const activeTool = app.useStore((s) => s.appState.activeTool);
-  const playing = useStore((state) => state.playing);
 
   const selectTool = React.useCallback(
     (type: TDToolType) => {
@@ -40,12 +38,6 @@ export default function DrawingControls({ app }: PropsType) {
     },
     [app]
   );
-
-  React.useEffect(() => {
-    if (playing === true) {
-      selectTool('select');
-    }
-  }, [playing, selectTool]);
 
   return (
     <>
