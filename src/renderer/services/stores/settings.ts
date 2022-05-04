@@ -9,7 +9,7 @@ export enum ArrowKeyNavigationMode {
 }
 
 interface StateData {
-  arrowKeyJumpDistance: number;
+  arrowKeyJumpDistance: string;
   arrowKeyNavigationMode: ArrowKeyNavigationMode;
   clearDrawingsOnPlay: boolean;
   showSetupInstructions: boolean;
@@ -17,7 +17,7 @@ interface StateData {
 }
 
 interface State extends StateData {
-  setArrowKeyJumpDistance: (seconds: number) => void;
+  setArrowKeyJumpDistance: (seconds: string) => void;
   setArrowKeyNavigationMode: (value: ArrowKeyNavigationMode) => void;
   setShowSetupInstructions: (value: boolean) => void;
   toggleClearDrawingsOnPlay: () => void;
@@ -25,7 +25,7 @@ interface State extends StateData {
 }
 
 const emptyState: StateData = {
-  arrowKeyJumpDistance: 10,
+  arrowKeyJumpDistance: '10.00',
   arrowKeyNavigationMode: ArrowKeyNavigationMode.frame,
   clearDrawingsOnPlay: true,
   showSetupInstructions: true,
@@ -57,7 +57,7 @@ const useStore = createStore<State>(
       ...emptyState,
     }),
     {
-      name: 'vodon-store-settings-v2',
+      name: 'vodon-store-settings-v3',
       version: CURRENT_PERSIST_VERSION,
       serialize,
       deserialize,

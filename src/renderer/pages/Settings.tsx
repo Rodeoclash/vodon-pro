@@ -53,6 +53,12 @@ export default function Settings() {
 
   const slowCPUMode = useSettingsStore((state) => state.slowCPUMode);
 
+  function handleArrowKeyJumpDistanceChange(value: string) {
+    if (value) {
+      setArrowKeyJumpDistance(value);
+    }
+  }
+
   const arrowKeyNavigationModes = Object.entries(
     ArrowKeyNavigationMode
   ) as Array<[string, string]>;
@@ -144,10 +150,10 @@ export default function Settings() {
           <NumberInput
             id="arrow-key-jump-distance"
             max={60}
-            min={0}
-            onChange={(_str, num) => setArrowKeyJumpDistance(num)}
+            min={1}
+            onChange={(str) => handleArrowKeyJumpDistanceChange(str)}
             precision={2}
-            step={0.1}
+            step={1}
             value={arrowKeyJumpDistance}
             width={32}
           >

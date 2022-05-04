@@ -27,6 +27,9 @@ export default function HotKeys({
   const arrowKeyJumpDistance = useSettingsStore(
     (state) => state.arrowKeyJumpDistance
   );
+
+  const parsedArrowKeyJumpDistance = parseFloat(arrowKeyJumpDistance);
+
   const arrowKeyNavigationMode = useSettingsStore(
     (state) => state.arrowKeyNavigationMode
   );
@@ -38,19 +41,29 @@ export default function HotKeys({
     const updatedCurrentTime =
       arrowKeyNavigationMode === ArrowKeyNavigationMode.frame
         ? useVideoStore.getState().currentTime - 1 / video.frameRate
-        : useVideoStore.getState().currentTime - arrowKeyJumpDistance;
+        : useVideoStore.getState().currentTime - parsedArrowKeyJumpDistance;
 
     setCurrentTime(updatedCurrentTime);
-  }, [setCurrentTime, video, arrowKeyJumpDistance, arrowKeyNavigationMode]);
+  }, [
+    setCurrentTime,
+    video,
+    parsedArrowKeyJumpDistance,
+    arrowKeyNavigationMode,
+  ]);
 
   const handleNext = useCallback(() => {
     const updatedCurrentTime =
       arrowKeyNavigationMode === ArrowKeyNavigationMode.frame
         ? useVideoStore.getState().currentTime + 1 / video.frameRate
-        : useVideoStore.getState().currentTime + arrowKeyJumpDistance;
+        : useVideoStore.getState().currentTime + parsedArrowKeyJumpDistance;
 
     setCurrentTime(updatedCurrentTime);
-  }, [setCurrentTime, video, arrowKeyJumpDistance, arrowKeyNavigationMode]);
+  }, [
+    setCurrentTime,
+    video,
+    parsedArrowKeyJumpDistance,
+    arrowKeyNavigationMode,
+  ]);
 
   /**
    * Handle the effects of the keys being held down. We ignore any frame
