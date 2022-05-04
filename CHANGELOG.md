@@ -1,3 +1,11 @@
+### 1.7.3
+
+- Improved the way you input the jump length number.
+- Improved behaviour around the way the screen is cleared of drawings (when set)
+- Full screen now full screens the full video element (drawings are lost)
+- Don't deselect current tool when playing.
+- Restored duration display when syncing videos (makes it easier to see which video is which when length is known)
+
 ### 1.7.2
 
 - Allow decimal values when specifying jump.
