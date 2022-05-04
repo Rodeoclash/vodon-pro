@@ -154,7 +154,7 @@ export default function VideoAligner({ video }: Props) {
 
         <Box mx={2}>
           <Text whiteSpace="nowrap" fontSize="sm" mx="2" align="center">
-            Sync @ {secondsToHms(Math.round(video.syncTime))}
+            {secondsToHms(Math.round(video.syncTime))} / {secondsToHms(Math.round(video.duration))}
           </Text>
         </Box>
 
