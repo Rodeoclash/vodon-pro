@@ -1,8 +1,9 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { Tldraw, TldrawApp } from '@tldraw/tldraw';
 
 import { Box } from '@chakra-ui/react';
-import useStore from '../../services/stores/videos';
+import useVideoStore from '../../services/stores/videos';
+import useSettingsStore from '../../services/stores/settings';
 
 import type { Video } from '../../services/models/Video';
 import type { VideoBookmark } from '../../services/models/VideoBookmark';
@@ -20,13 +21,17 @@ export default function Drawing({
   video,
   videoBookmark,
 }: Props) {
-  const tlDrawRef = useRef<TldrawApp>(null);
+  const tlDrawRef = useRef<TldrawApp | null>(null);
   const outerRef = useRef(null);
 
-  const currentTime = useStore((state) => state.currentTime);
+  const playing = useVideoStore((state) => state.playing);
 
-  const setVideoBookmarkDrawing = useStore(
+  const setVideoBookmarkDrawing = useVideoStore(
     (state) => state.setVideoBookmarkDrawing
+  );
+
+  const clearDrawingsOnPlay = useSettingsStore(
+    (state) => state.clearDrawingsOnPlay
   );
 
   function handleMount(app: TldrawApp) {
@@ -36,12 +41,24 @@ export default function Drawing({
   }
 
   function handlePersist(app: TldrawApp) {
-    if (videoBookmark) {
-      setVideoBookmarkDrawing(video, videoBookmark, app.document);
+    if (videoBookmark === undefined || playing === true) {
+      return;
     }
+
+    setVideoBookmarkDrawing(video, videoBookmark, app.document);
   }
 
-  useEffect(() => {
+  const clearDrawing = useCallback(() => {
+    if (tlDrawRef.current === null) {
+      return;
+    }
+
+    const tool = tlDrawRef.current.useStore.getState().appState.activeTool;
+    tlDrawRef.current.deleteAll();
+    tlDrawRef.current.selectTool(tool);
+  }, []);
+
+  const rescaleDrawing = useCallback(() => {
     if (tlDrawRef.current === null) {
       return;
     }
@@ -50,8 +67,14 @@ export default function Drawing({
   }, [scale]);
 
   /**
-   * On the current time / active bookmark changing, handle updating the
-   * drawing
+   * Rescale drawing as parent scales
+   */
+  useEffect(() => {
+    rescaleDrawing();
+  }, [scale, rescaleDrawing]);
+
+  /**
+   * Load video bookmarks
    */
   useEffect(() => {
     if (tlDrawRef.current === null) {
@@ -64,14 +87,24 @@ export default function Drawing({
       );
 
       tlDrawRef.current.selectNone();
+      rescaleDrawing();
     } else {
-      const tool = tlDrawRef.current.useStore.getState().appState.activeTool;
-      tlDrawRef.current.deleteAll();
-      tlDrawRef.current.selectTool(tool);
+      clearDrawing();
+    }
+  }, [clearDrawing, rescaleDrawing, videoBookmark]);
+
+  /**
+   * Clear drawings between time changes if enabled
+   */
+  useEffect(() => {
+    if (tlDrawRef.current === null) {
+      return;
     }
 
-    tlDrawRef.current.setCamera([0, 0], scale, 'layout_mounted');
-  }, [videoBookmark]);
+    if (clearDrawingsOnPlay === true && playing === true) {
+      clearDrawing();
+    }
+  }, [playing, clearDrawingsOnPlay, clearDrawing]);
 
   return (
     <Box
@@ -82,7 +115,11 @@ export default function Drawing({
       bottom="0"
       ref={outerRef}
     >
-      <Tldraw onMount={handleMount} onPersist={handlePersist} showUI={false} />
+      <Tldraw
+        onMount={(app) => handleMount(app)}
+        onPersist={(app) => handlePersist(app)}
+        showUI={false}
+      />
     </Box>
   );
 }

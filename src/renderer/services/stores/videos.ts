@@ -12,7 +12,7 @@ import type {
   VideoBookmarkCoordinates,
 } from '../models/VideoBookmark';
 
-const PERSIST_VERSION = 0;
+const CURRENT_PERSIST_VERSION = 0;
 
 interface StateData {
   activeVideoId: string | null;
@@ -139,7 +139,7 @@ const deserialize = async (str: string) => {
 
 const useStore = createStore<State>(
   persist(
-    (set, get) => ({
+    (set) => ({
       /**
        * Video control
        */
@@ -379,32 +379,32 @@ const useStore = createStore<State>(
         ),
 
       setActiveVideoId: (id: string | null) =>
-        set((state) => ({ activeVideoId: id })),
+        set(() => ({ activeVideoId: id })),
 
       /**
        * Play control
        */
       setCurrentTime: (currentTime: number) =>
-        set((state) => {
+        set(() => {
           return {
             currentTime,
           };
         }),
 
-      startPlaying: () => set((state) => ({ playing: true })),
-      stopPlaying: () => set((state) => ({ playing: false })),
+      startPlaying: () => set(() => ({ playing: true })),
+      stopPlaying: () => set(() => ({ playing: false })),
       togglePlaying: () => set((state) => ({ playing: !state.playing })),
       setPlaybackSpeed: (playbackSpeed: number) =>
-        set((state) => ({ playbackSpeed })),
+        set(() => ({ playbackSpeed })),
 
-      startEditingBookmark: () => set((state) => ({ editingBookmark: true })),
-      stopEditingBookmark: () => set((state) => ({ editingBookmark: false })),
+      startEditingBookmark: () => set(() => ({ editingBookmark: true })),
+      stopEditingBookmark: () => set(() => ({ editingBookmark: false })),
 
       ...emptyState,
     }),
     {
       name: 'vodon-store-videos-v1',
-      version: PERSIST_VERSION,
+      version: CURRENT_PERSIST_VERSION,
       serialize,
       deserialize,
     }
@@ -417,9 +417,9 @@ export default useStore;
  * Handle the save request from the main thread. Calculate the current state
  * then pass it back to the main thread along with the filepath to persist.
  */
-window.app.onSaveProjectRequest((event: any, filePath: string) => {
+window.app.onSaveProjectRequest((_event: any, filePath: string) => {
   const serializedState = serialize({
-    version: PERSIST_VERSION,
+    version: CURRENT_PERSIST_VERSION,
     state: useStore.getState(),
   });
 
@@ -430,7 +430,7 @@ window.app.onSaveProjectRequest((event: any, filePath: string) => {
  * Handle the save request from the main thread. Calculate the current state
  * then pass it back to the main thread along with the filepath to persist.
  */
-window.app.onLoadProjectRequest(async (event: any, project: string) => {
+window.app.onLoadProjectRequest(async (_event: any, project: string) => {
   const unserializedState = await deserialize(project);
   useStore.setState(unserializedState.state);
 });
@@ -439,7 +439,8 @@ window.app.onLoadProjectRequest(async (event: any, project: string) => {
  * Handle the new project request from the main thread. Just reset everything
  * back to new.
  */
-window.app.onNewProjectRequest(async (event: any) => {
+window.app.onNewProjectRequest(async () => {
+  // eslint-disable-next-line no-alert
   if (window.confirm('This will remove all videos and bookmarks, continue?')) {
     useStore.setState({
       ...useStore.getState(),

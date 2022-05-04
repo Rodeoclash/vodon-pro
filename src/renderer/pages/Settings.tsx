@@ -35,12 +35,20 @@ export default function Settings() {
     (state) => state.setArrowKeyJumpDistance
   );
 
+  const toggleClearDrawingsOnPlay = useSettingsStore(
+    (state) => state.toggleClearDrawingsOnPlay
+  );
+
   const arrowKeyNavigationMode = useSettingsStore(
     (state) => state.arrowKeyNavigationMode
   );
 
   const arrowKeyJumpDistance = useSettingsStore(
     (state) => state.arrowKeyJumpDistance
+  );
+
+  const clearDrawingsOnPlay = useSettingsStore(
+    (state) => state.clearDrawingsOnPlay
   );
 
   const slowCPUMode = useSettingsStore((state) => state.slowCPUMode);
@@ -61,19 +69,17 @@ export default function Settings() {
 
   return (
     <NoSidebar>
-      <Box p="8" width="container.sm">
-        <Heading as="h1" fontSize="4xl">
+      <Box p="8" overflow="auto" height="100%" width="100%">
+        <Heading as="h1" fontSize="5xl">
           Settings
         </Heading>
 
-        <Heading as="h1" fontSize="2xl" mt="8" mb="4">
+        <Heading as="h1" fontSize="3xl" mt="8" mb="4">
           General
         </Heading>
 
-        <FormControl my={4}>
-          <FormLabel htmlFor="slow-cpu-setting" mb="4">
-            Slow CPU mode
-          </FormLabel>
+        <FormControl my={4} width="container.sm">
+          <FormLabel htmlFor="slow-cpu-setting">Slow CPU mode</FormLabel>
           <Switch
             id="slow-cpu-setting"
             isChecked={slowCPUMode}
@@ -85,11 +91,26 @@ export default function Settings() {
           </FormHelperText>
         </FormControl>
 
-        <Heading as="h1" fontSize="2xl" mt="8" mb="4">
+        <FormControl my={4} width="container.sm">
+          <FormLabel htmlFor="clear-drawings-on-play">
+            Clear drawings when playing
+          </FormLabel>
+          <Switch
+            id="clear-drawings-on-play"
+            isChecked={clearDrawingsOnPlay}
+            onChange={toggleClearDrawingsOnPlay}
+          />
+          <FormHelperText>
+            When set, playing a video or navigating by frame will cause the
+            drawing to be cleared off the screen.
+          </FormHelperText>
+        </FormControl>
+
+        <Heading as="h1" fontSize="3xl" mt="8" mb="4">
           Video navigation
         </Heading>
 
-        <FormControl my={4}>
+        <FormControl my={4} width="container.sm">
           <Heading as="h1" fontSize="1xl" mb={4}>
             Default arrow key behaviour
           </Heading>
@@ -116,7 +137,7 @@ export default function Settings() {
           </FormHelperText>
         </FormControl>
 
-        <FormControl my={4}>
+        <FormControl my={4} width="container.sm">
           <FormLabel htmlFor="arrow-key-jump-distance" mb="4">
             Arrow key jump distance
           </FormLabel>

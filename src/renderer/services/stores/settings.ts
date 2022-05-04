@@ -1,7 +1,7 @@
 import createStore from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const PERSIST_VERSION = 0;
+const CURRENT_PERSIST_VERSION = 0;
 
 export enum ArrowKeyNavigationMode {
   'frame' = 'Frame adjust',
@@ -11,6 +11,7 @@ export enum ArrowKeyNavigationMode {
 interface StateData {
   arrowKeyJumpDistance: number;
   arrowKeyNavigationMode: ArrowKeyNavigationMode;
+  clearDrawingsOnPlay: boolean;
   showSetupInstructions: boolean;
   slowCPUMode: boolean;
 }
@@ -19,12 +20,14 @@ interface State extends StateData {
   setArrowKeyJumpDistance: (seconds: number) => void;
   setArrowKeyNavigationMode: (value: ArrowKeyNavigationMode) => void;
   setShowSetupInstructions: (value: boolean) => void;
+  toggleClearDrawingsOnPlay: () => void;
   toggleSlowCPUMode: () => void;
 }
 
 const emptyState: StateData = {
   arrowKeyJumpDistance: 10,
   arrowKeyNavigationMode: ArrowKeyNavigationMode.frame,
+  clearDrawingsOnPlay: true,
   showSetupInstructions: true,
   slowCPUMode: false,
 };
@@ -46,14 +49,16 @@ const useStore = createStore<State>(
         set(() => ({ arrowKeyNavigationMode: mode })),
       setShowSetupInstructions: (value) =>
         set(() => ({ showSetupInstructions: value })),
+      toggleClearDrawingsOnPlay: () =>
+        set((state) => ({ clearDrawingsOnPlay: !state.clearDrawingsOnPlay })),
       toggleSlowCPUMode: () =>
         set((state) => ({ slowCPUMode: !state.slowCPUMode })),
 
       ...emptyState,
     }),
     {
-      name: 'vodon-store-settings-v1',
-      version: PERSIST_VERSION,
+      name: 'vodon-store-settings-v2',
+      version: CURRENT_PERSIST_VERSION,
       serialize,
       deserialize,
     }
