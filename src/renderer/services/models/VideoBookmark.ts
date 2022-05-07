@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { Video } from './Video';
 
 export type VideoBookmarkCoordinates = {
   x: number;
@@ -22,10 +23,14 @@ export type VideoBookmark = {
   drawing: object | null;
 
   /** The scale the bookmark was created at */
-  scale: number | null;
+  scale: number;
+
+  /** What video this bookmark belongs to */
+  video_id: string;
 };
 
 export function create(
+  video: Video,
   content: string,
   time: number,
   scale: number,
@@ -36,7 +41,8 @@ export function create(
     drawing: JSON.parse(JSON.stringify(drawing)),
     id: uuidv4(),
     position: null,
-    time,
     scale,
+    time,
+    video_id: video.id,
   };
 }
