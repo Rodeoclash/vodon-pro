@@ -1,3 +1,7 @@
+### 1.7.4
+
+- Bookmarks now have navigation controls to jump between them.
+
 ### 1.7.3
 
 - Improved the way you input the jump length number.
