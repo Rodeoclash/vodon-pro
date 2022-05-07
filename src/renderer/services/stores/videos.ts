@@ -261,7 +261,13 @@ const useStore = createStore<State>(
               return innerVideo.id === video.id;
             });
 
-            const bookmark = createVideoBookmark(content, time, scale, drawing);
+            const bookmark = createVideoBookmark(
+              video,
+              content,
+              time,
+              scale,
+              drawing
+            );
 
             state.videos[index].bookmarks.push(bookmark);
           })
@@ -403,7 +409,7 @@ const useStore = createStore<State>(
       ...emptyState,
     }),
     {
-      name: 'vodon-store-videos-v1',
+      name: 'vodon-store-videos-v2',
       version: CURRENT_PERSIST_VERSION,
       serialize,
       deserialize,

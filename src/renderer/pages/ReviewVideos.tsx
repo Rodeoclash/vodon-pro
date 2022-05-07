@@ -28,7 +28,7 @@ import GlobalTimeControl from '../components/GlobalTimeControl/GlobalTimeControl
 import GlobalTimeDisplay from '../components/GlobalTimeDisplay/GlobalTimeDisplay';
 import Hotkeys from './ReviewVideos/Hotkeys';
 import PlaybackSpeed from '../components/PlaybackSpeed/PlaybackSpeed';
-import VideoBookmark from '../components/VideoBookmark/VideoBookmark';
+import VideoBookmark from '../components/VideoBookmarkShow/VideoBookmarkShow';
 import VideoBookmarkAdd from '../components/VideoBookmarkAdd/VideoBookmarkAdd';
 import VideoStepControl from '../components/VideoStepControl/VideoStepControl';
 import VideoThumbnail from '../components/VideoThumbnail/VideoThumbnail';

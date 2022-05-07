@@ -91,6 +91,74 @@ export function findMaxNormalisedDuration(videos: Video[]): number | null {
   );
 }
 
+/**
+ * Given a bookmark, find the next available bookmark across all videos.
+ */
+export function findNextBookmark(
+  videos: Array<Video>,
+  bookmark: VideoBookmark
+): [Video, VideoBookmark] | undefined {
+  const bookmarks = videos
+    .flatMap((video) => {
+      return video.bookmarks;
+    })
+    .sort((a, b) => {
+      return a.time - b.time;
+    });
+
+  const foundBookmark = bookmarks.find((innerBookmark) => {
+    return innerBookmark.time > bookmark.time;
+  });
+
+  if (foundBookmark === undefined) {
+    return undefined;
+  }
+
+  const foundVideo = videos.find((video) => {
+    return foundBookmark.video_id === video.id;
+  });
+
+  if (foundVideo === undefined) {
+    return undefined;
+  }
+
+  return [foundVideo, foundBookmark];
+}
+
+/**
+ * Given a bookmark, find the previous available bookmark across all videos.
+ */
+export function findPreviousBookmark(
+  videos: Array<Video>,
+  bookmark: VideoBookmark
+): [Video, VideoBookmark] | undefined {
+  const bookmarks = videos
+    .flatMap((video) => {
+      return video.bookmarks;
+    })
+    .sort((a, b) => {
+      return b.time - a.time;
+    });
+
+  const foundBookmark = bookmarks.find((innerBookmark) => {
+    return innerBookmark.time < bookmark.time;
+  });
+
+  if (foundBookmark === undefined) {
+    return undefined;
+  }
+
+  const foundVideo = videos.find((video) => {
+    return foundBookmark.video_id === video.id;
+  });
+
+  if (foundVideo === undefined) {
+    return undefined;
+  }
+
+  return [foundVideo, foundBookmark];
+}
+
 export async function createFromFile(filePath: string): Promise<Video> {
   const metadata = await window.video.getMetadata(filePath);
 

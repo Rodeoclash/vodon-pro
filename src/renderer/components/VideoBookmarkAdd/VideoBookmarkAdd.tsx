@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import useStore from '../../services/stores/videos';
 
 import { TldrawApp } from '@tldraw/tldraw';
 
 import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 
 import { Bookmark as BookmarkIcon } from 'tabler-icons-react';
+import useStore from '../../services/stores/videos';
 
 import type { Video } from '../../services/models/Video';
 
@@ -32,13 +32,13 @@ export default function VideoBookmark({ video, scale, disabled, app }: Props) {
 
   useEffect(() => {
     stopEditingBookmark();
-  }, [currentTime]);
+  }, [currentTime, stopEditingBookmark]);
 
   return (
     <Tooltip label="Bookmark this moment">
       <Box>
         <IconButton
-          onClick={handleCreate}
+          onClick={() => handleCreate()}
           icon={<BookmarkIcon />}
           aria-label="Bookmark this moment"
           disabled={disabled}
