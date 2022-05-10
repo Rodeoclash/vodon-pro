@@ -77,6 +77,12 @@ _Vodon Pro even has drawing tools. Use these to annotate the frame that you're t
 
 _Bookmark important moments before your review to bring up with the team_
 
+### Settings
+
+![Settings](https://raw.githubusercontent.com/Rodeoclash/vodon-pro/main/screenshots/settings.png)
+
+_Configuring the app_
+
 ## Frequently asked questions
 
 ### Why do I get warned about the download?
