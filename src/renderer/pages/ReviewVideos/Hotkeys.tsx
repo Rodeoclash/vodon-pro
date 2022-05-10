@@ -41,6 +41,7 @@ export default function HotKeys({
    * Handle going back by a frame
    */
   const handlePreviousFrame = useCallback(() => {
+    stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime - 1 / video.frameRate);
   }, [setCurrentTime, video]);
 
@@ -48,6 +49,7 @@ export default function HotKeys({
    * Handle going back by a jump
    */
   const handlePreviousJump = useCallback(() => {
+    stopPlaying();
     setCurrentTime(
       useVideoStore.getState().currentTime - parsedArrowKeyJumpDistance
     );
@@ -57,6 +59,7 @@ export default function HotKeys({
    * Handle going foward by a frame
    */
   const handleNextFrame = useCallback(() => {
+    stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime + 1 / video.frameRate);
   }, [setCurrentTime, video]);
 
@@ -64,6 +67,7 @@ export default function HotKeys({
    * Handle going forward by a jump
    */
   const handleNextJump = useCallback(() => {
+    stopPlaying();
     setCurrentTime(
       useVideoStore.getState().currentTime + parsedArrowKeyJumpDistance
     );

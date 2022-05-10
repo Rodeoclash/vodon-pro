@@ -73,6 +73,7 @@ export default function ReviewVideos() {
   }
 
   function handleClickStep(distance: number) {
+    stopPlaying();
     setCurrentTime(useStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
   }
 
