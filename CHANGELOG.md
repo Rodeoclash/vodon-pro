@@ -1,3 +1,9 @@
+### 1.7.5
+
+- Added shift modifier key option to a, d, left arrow, right arrow. Will perform the "other" behaviour depending on how you have the navigation set. If set to frame by frame navigation, holding shift and using they keys will jump seconds, if set to jump seconds, holding shift will navigate frame by frame.
+
+- Default arrow keys to navigate by jumping, not frames.
+
 ### 1.7.4
 
 - Bookmarks now have navigation controls to jump between them.
