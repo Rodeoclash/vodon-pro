@@ -37,33 +37,81 @@ export default function HotKeys({
   const [previousHeld, setPreviousHeld] = useState(false);
   const [nextHeld, setNextHeld] = useState(false);
 
-  const handlePrevious = useCallback(() => {
-    const updatedCurrentTime =
-      arrowKeyNavigationMode === ArrowKeyNavigationMode.frame
-        ? useVideoStore.getState().currentTime - 1 / video.frameRate
-        : useVideoStore.getState().currentTime - parsedArrowKeyJumpDistance;
+  /**
+   * Handle going back by a frame
+   */
+  const handlePreviousFrame = useCallback(() => {
+    setCurrentTime(useVideoStore.getState().currentTime - 1 / video.frameRate);
+  }, [setCurrentTime, video]);
 
-    setCurrentTime(updatedCurrentTime);
-  }, [
-    setCurrentTime,
-    video,
-    parsedArrowKeyJumpDistance,
-    arrowKeyNavigationMode,
-  ]);
+  /**
+   * Handle going back by a jump
+   */
+  const handlePreviousJump = useCallback(() => {
+    setCurrentTime(
+      useVideoStore.getState().currentTime - parsedArrowKeyJumpDistance
+    );
+  }, [setCurrentTime, parsedArrowKeyJumpDistance]);
 
-  const handleNext = useCallback(() => {
-    const updatedCurrentTime =
-      arrowKeyNavigationMode === ArrowKeyNavigationMode.frame
-        ? useVideoStore.getState().currentTime + 1 / video.frameRate
-        : useVideoStore.getState().currentTime + parsedArrowKeyJumpDistance;
+  /**
+   * Handle going foward by a frame
+   */
+  const handleNextFrame = useCallback(() => {
+    setCurrentTime(useVideoStore.getState().currentTime + 1 / video.frameRate);
+  }, [setCurrentTime, video]);
 
-    setCurrentTime(updatedCurrentTime);
-  }, [
-    setCurrentTime,
-    video,
-    parsedArrowKeyJumpDistance,
-    arrowKeyNavigationMode,
-  ]);
+  /**
+   * Handle going forward by a jump
+   */
+  const handleNextJump = useCallback(() => {
+    setCurrentTime(
+      useVideoStore.getState().currentTime + parsedArrowKeyJumpDistance
+    );
+  }, [setCurrentTime, parsedArrowKeyJumpDistance]);
+
+  /**
+   * Perform a previous navigation when the modifier is not held
+   */
+  const handlePreviousMain = useCallback(() => {
+    if (arrowKeyNavigationMode === ArrowKeyNavigationMode.frame) {
+      handlePreviousFrame();
+    } else {
+      handlePreviousJump();
+    }
+  }, [handlePreviousFrame, handlePreviousJump, arrowKeyNavigationMode]);
+
+  /**
+   * Perform a previous navigation when the modifier is held
+   */
+  const handlePreviousModifier = useCallback(() => {
+    if (arrowKeyNavigationMode === ArrowKeyNavigationMode.frame) {
+      handlePreviousJump();
+    } else {
+      handlePreviousFrame();
+    }
+  }, [handlePreviousFrame, handlePreviousJump, arrowKeyNavigationMode]);
+
+  /**
+   * Perform a previous navigation when the modifier is not held
+   */
+  const handleNextMain = useCallback(() => {
+    if (arrowKeyNavigationMode === ArrowKeyNavigationMode.frame) {
+      handleNextFrame();
+    } else {
+      handleNextJump();
+    }
+  }, [handleNextFrame, handleNextJump, arrowKeyNavigationMode]);
+
+  /**
+   * Perform a previous navigation when the modifier is held
+   */
+  const handleNextModifier = useCallback(() => {
+    if (arrowKeyNavigationMode === ArrowKeyNavigationMode.frame) {
+      handleNextJump();
+    } else {
+      handleNextFrame();
+    }
+  }, [handleNextFrame, handleNextJump, arrowKeyNavigationMode]);
 
   /**
    * Handle the effects of the keys being held down. We ignore any frame
@@ -77,21 +125,29 @@ export default function HotKeys({
 
     const interval = setInterval(() => {
       if (previousHeld === true && nextHeld === false) {
-        handlePrevious();
+        handlePreviousMain();
       }
 
       if (nextHeld === true && previousHeld === false) {
-        handleNext();
+        handleNextMain();
       }
     }, STEP_ADVANCE_INTERVAL);
 
     return () => {
       clearTimeout(interval);
     };
-  }, [playing, previousHeld, nextHeld, handlePrevious, handleNext]);
+  }, [
+    playing,
+    previousHeld,
+    nextHeld,
+    handlePreviousMain,
+    handlePreviousModifier,
+    handleNextMain,
+    handleNextModifier,
+  ]);
 
   /**
-   * Previous frame control held down
+   * Previous frame main held down
    */
   useHotkeys(
     'left, a',
@@ -99,7 +155,7 @@ export default function HotKeys({
       if (previousHeld === true) {
         return;
       }
-      handlePrevious();
+      handlePreviousMain();
       setPreviousHeld(true);
     },
     {
@@ -109,7 +165,7 @@ export default function HotKeys({
   );
 
   /**
-   * Previous frame control released
+   * Previous frame main released
    */
   useHotkeys(
     'left, a',
@@ -123,6 +179,20 @@ export default function HotKeys({
   );
 
   /**
+   * Previous frame modifier pressed
+   */
+  useHotkeys(
+    'shift+left, shift+a',
+    () => {
+      if (previousHeld === true) {
+        return;
+      }
+      handlePreviousModifier();
+    },
+    [previousHeld, currentTime]
+  );
+
+  /**
    * Next frame control held down
    */
   useHotkeys(
@@ -132,7 +202,7 @@ export default function HotKeys({
         return;
       }
 
-      handleNext();
+      handleNextMain();
       setNextHeld(true);
     },
     {
@@ -153,6 +223,20 @@ export default function HotKeys({
       keyup: true,
     },
     []
+  );
+
+  /**
+   * Next frame modifier pressed
+   */
+  useHotkeys(
+    'shift+right, shift+d',
+    () => {
+      if (previousHeld === true) {
+        return;
+      }
+      handleNextModifier();
+    },
+    [previousHeld, currentTime]
   );
 
   /**
@@ -184,5 +268,5 @@ export default function HotKeys({
     [playing]
   );
 
-  return null;
+  return <></>;
 }

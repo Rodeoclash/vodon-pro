@@ -4,8 +4,8 @@ import { persist } from 'zustand/middleware';
 const CURRENT_PERSIST_VERSION = 0;
 
 export enum ArrowKeyNavigationMode {
-  'frame' = 'Frame adjust',
   'seek' = 'Jump time',
+  'frame' = 'Frame adjust',
 }
 
 interface StateData {
@@ -26,7 +26,7 @@ interface State extends StateData {
 
 const emptyState: StateData = {
   arrowKeyJumpDistance: '10.00',
-  arrowKeyNavigationMode: ArrowKeyNavigationMode.frame,
+  arrowKeyNavigationMode: ArrowKeyNavigationMode.seek,
   clearDrawingsOnPlay: true,
   showSetupInstructions: true,
   slowCPUMode: false,
