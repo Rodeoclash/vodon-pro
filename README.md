@@ -3,6 +3,8 @@
 # Vodon Pro
 
 ![GitHub all releases](https://img.shields.io/github/downloads/Rodeoclash/vodon-pro/total?style=flat-square)
+![Twitter Follow](https://img.shields.io/twitter/follow/GgVodon?style=social)
+![Discord](https://img.shields.io/discord/908876087747022919)
 
 Vodon Pro is a **synchronised**, desktop video player for esport "VOD" reviews. It is designed for live reviews, either over screenshare or in person.
 
