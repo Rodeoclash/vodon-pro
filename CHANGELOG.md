@@ -1,3 +1,7 @@
+### 1.7.7
+
+- Removed focus on fullscreen button after click. Prevents spacebar toggling fullscreen on and off when trying to pause video.
+
 ### 1.7.6
 
 - Fix for the fullscreen video controls losing sync.
