@@ -39,6 +39,7 @@ export default function ReviewVideos() {
   const overlayRef = useRef(null);
   const videoRef = useRef(null);
   const fullscreenRef = useRef(null);
+  const fullscreenButtonRef = useRef(null);
 
   const [startedPlayingAt, setStartedPlayingAt] = useState(null);
   const [videoDimensions, setVideoDimensions] = useState(null);
@@ -148,9 +149,11 @@ export default function ReviewVideos() {
       (async () => {
         await fullscreenRef.current.requestFullscreen();
         window.dispatchEvent(new Event('resize'));
+        fullscreenButtonRef.current.blur();
       })();
     } else if (document.fullscreenElement) {
       document.exitFullscreen();
+      fullscreenButtonRef.current.blur();
 
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
@@ -410,6 +413,7 @@ export default function ReviewVideos() {
                 icon={<MaximizeIcon />}
                 aria-label="Fullscreen video"
                 disabled={isAfterRange}
+                ref={fullscreenButtonRef}
               />
             </Box>
           </Tooltip>
