@@ -38,6 +38,7 @@ import WithSidebar from '../layouts/WithSidebar';
 export default function ReviewVideos() {
   const overlayRef = useRef(null);
   const videoRef = useRef(null);
+  const fullscreenRef = useRef(null);
 
   const [startedPlayingAt, setStartedPlayingAt] = useState(null);
   const [videoDimensions, setVideoDimensions] = useState(null);
@@ -145,7 +146,7 @@ export default function ReviewVideos() {
 
     if (fullscreen === true) {
       (async () => {
-        await activeVideo.el.requestFullscreen();
+        await fullscreenRef.current.requestFullscreen();
         window.dispatchEvent(new Event('resize'));
       })();
     } else if (document.fullscreenElement) {
@@ -427,6 +428,7 @@ export default function ReviewVideos() {
           direction="column"
           width="100%"
           height={'calc(100vh - 5rem)'}
+          ref={fullscreenRef}
         >
           {renderedContent}
         </Flex>
