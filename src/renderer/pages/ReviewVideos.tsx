@@ -1,8 +1,11 @@
-import { useRef, useEffect, useState, useLayoutEffect } from 'react';
+import {
+  useRef,
+  useEffect,
+  useState,
+  useLayoutEffect,
+  useCallback,
+} from 'react';
 import { css } from '@emotion/react';
-
-import useStore from '../services/stores/videos';
-import { getRatioDimensions } from '../services/layout';
 
 import {
   Box,
@@ -21,6 +24,8 @@ import {
 
 import { TldrawApp } from '@tldraw/tldraw';
 import { Link } from 'react-router-dom';
+import { getRatioDimensions } from '../services/layout';
+import useStore from '../services/stores/videos';
 
 import Drawing from '../components/Drawing/Drawing';
 import DrawingControls from '../components/DrawingControls/DrawingControls';
@@ -37,13 +42,15 @@ import WithSidebar from '../layouts/WithSidebar';
 
 export default function ReviewVideos() {
   const overlayRef = useRef(null);
-  const videoRef = useRef(null);
-  const fullscreenRef = useRef(null);
-  const fullscreenButtonRef = useRef(null);
+  const videoContainerRef = useRef<HTMLDivElement | null>(null);
+  const fullscreenRef = useRef<HTMLDivElement | null>(null);
+  const fullscreenButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const [startedPlayingAt, setStartedPlayingAt] = useState(null);
-  const [videoDimensions, setVideoDimensions] = useState(null);
-  const [fullscreen, setFullscreen] = useState(false);
+  const [startedPlayingAt, setStartedPlayingAt] = useState<number | null>(null);
+  const [videoDimensions, setVideoDimensions] = useState<
+    [number, number] | null
+  >(null);
+  const [fullscreen, setFullscreen] = useState<boolean>(false);
   const [app, setApp] = useState<TldrawApp>();
 
   const startPlaying = useStore((state) => state.startPlaying);
@@ -62,30 +69,35 @@ export default function ReviewVideos() {
   });
 
   const activeBookmark = !activeVideo
-    ? null
+    ? undefined
     : activeVideo.bookmarks.find((bookmark) => {
         return bookmark.time === currentTime;
       });
 
+  // True when the active video has exceded its viewable range
   const isAfterRange =
-    activeVideo && currentTime >= activeVideo.durationNormalised;
-
-  function handleEscapePressed() {
-    setFullscreen(false);
-  }
+    (activeVideo &&
+      activeVideo.durationNormalised &&
+      currentTime >= activeVideo.durationNormalised) ||
+    false;
 
   function handleClickStep(distance: number) {
     stopPlaying();
     setCurrentTime(useStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
   }
 
-  async function handleClickFullscreen() {
-    setFullscreen(!fullscreen);
-  }
+  const updateCurrentTime = useCallback(() => {
+    if (startedPlayingAt === null) {
+      return;
+    }
 
-  function handleTLDrawAppMount(app: TldrawApp) {
-    setApp(app);
-  }
+    // HACK HACK - We should use something where we have control over the clock driving the video (i.e. gstreamer)
+    setCurrentTime(
+      currentTime +
+        ((Date.now() - startedPlayingAt) / 1000 - 0.06) * playbackSpeed
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startedPlayingAt, setCurrentTime, playbackSpeed]);
 
   /**
    * Stop the video playing when leaving
@@ -94,18 +106,22 @@ export default function ReviewVideos() {
     return () => {
       stopPlaying();
     };
-  }, []);
+  }, [stopPlaying]);
 
   /**
    * Handles mounting the videos into the main playing area.
    */
   useEffect(() => {
-    if (activeVideo === undefined || videoRef.current === null) {
+    if (
+      activeVideo === undefined ||
+      activeVideo.el === null ||
+      videoContainerRef.current === null
+    ) {
       return;
     }
 
-    videoRef.current.innerHTML = '';
-    videoRef.current.appendChild(activeVideo.el);
+    videoContainerRef.current.innerHTML = '';
+    videoContainerRef.current.appendChild(activeVideo.el);
 
     activeVideo.el.volume = activeVideo.volume;
   }, [activeVideo]);
@@ -113,7 +129,8 @@ export default function ReviewVideos() {
   // when we start playing, store the time that play started
   useEffect(() => {
     if (playing === false) {
-      return setStartedPlayingAt(null);
+      setStartedPlayingAt(null);
+      return;
     }
 
     setStartedPlayingAt(Date.now());
@@ -121,23 +138,13 @@ export default function ReviewVideos() {
 
   // when we have a time we started playing at, start a click to update the current time
   useEffect(() => {
-    if (startedPlayingAt === null) {
-      return;
-    }
-
-    function updateCurrentTime() {
-      setCurrentTime(
-        currentTime + ((Date.now() - startedPlayingAt) / 1000 - 0.06) * playbackSpeed
-      ); // HACK HACK - We should use something where we have control over the clock driving the video (i.e. gstreamer)
-    }
-
     const timer = setInterval(updateCurrentTime, 500);
 
     return () => {
       updateCurrentTime();
       clearInterval(timer);
     };
-  }, [startedPlayingAt]);
+  }, [updateCurrentTime]);
 
   // watch for fullscreen being set and trigger
   useEffect(() => {
@@ -147,17 +154,28 @@ export default function ReviewVideos() {
 
     if (fullscreen === true) {
       (async () => {
+        if (fullscreenRef.current === null) {
+          return;
+        }
+
         await fullscreenRef.current.requestFullscreen();
+
+        if (fullscreenButtonRef.current) {
+          fullscreenButtonRef.current.blur();
+        }
+
         window.dispatchEvent(new Event('resize'));
-        fullscreenButtonRef.current.blur();
       })();
     } else if (document.fullscreenElement) {
-      document.exitFullscreen();
-      fullscreenButtonRef.current.blur();
+      (async () => {
+        await document.exitFullscreen();
 
-      setTimeout(() => {
+        if (fullscreenButtonRef.current) {
+          fullscreenButtonRef.current.blur();
+        }
+
         window.dispatchEvent(new Event('resize'));
-      }, 100);
+      })();
     }
   }, [fullscreen]);
 
@@ -225,9 +243,9 @@ export default function ReviewVideos() {
 
   const renderedSidebar = (
     <Flex
-      direction={'column'}
-      height={'calc(100vh - 5rem)'}
-      justifyContent={'space-evenly'}
+      direction="column"
+      height="calc(100vh - 5rem)"
+      justifyContent="space-evenly"
     >
       {renderedSidebarVideos}
     </Flex>
@@ -238,10 +256,10 @@ export default function ReviewVideos() {
       return (
         <Flex
           flexGrow={1}
-          align={'center'}
-          justifyContent={'center'}
-          fontSize={'3xl'}
-          color={'whiteAlpha.400'}
+          align="center"
+          justifyContent="center"
+          fontSize="3xl"
+          color="whiteAlpha.400"
         >
           <Link to="/">
             <Text>Please setup some videos first</Text>
@@ -254,10 +272,10 @@ export default function ReviewVideos() {
       return (
         <Flex
           flexGrow={1}
-          align={'center'}
-          justifyContent={'center'}
-          fontSize={'3xl'}
-          color={'whiteAlpha.400'}
+          align="center"
+          justifyContent="center"
+          fontSize="3xl"
+          color="whiteAlpha.400"
         >
           <Link to="/">
             <Text>Please choose a video</Text>
@@ -269,62 +287,62 @@ export default function ReviewVideos() {
     return (
       <>
         {videoDimensions && (
-          <Box borderBottom={'1px'} borderColor={'whiteAlpha.300'}>
+          <Box borderBottom="1px" borderColor="whiteAlpha.300">
             <Flex
-              mx={'auto'}
-              alignItems={'center'}
-              justifyContent={'center'}
-              height={'4rem'}
+              mx="auto"
+              alignItems="center"
+              justifyContent="center"
+              height="4rem"
               px={8}
-              boxSizing={'border-box'}
+              boxSizing="border-box"
             >
               <Box>
-                <Heading fontSize={'2xl'}>{activeVideo.name}</Heading>
+                <Heading fontSize="2xl">{activeVideo.name}</Heading>
               </Box>
             </Flex>
           </Box>
         )}
-        <Flex flexGrow={1} flexShrink={1} overflow={'hidden'}>
+        <Flex flexGrow={1} flexShrink={1} overflow="hidden">
           <Box
-            borderRight={'1px'}
-            borderColor={'whiteAlpha.300'}
-            boxSizing={'border-box'}
+            borderRight="1px"
+            borderColor="whiteAlpha.300"
+            boxSizing="border-box"
             padding={4}
           >
             {app && <DrawingControls app={app} />}
           </Box>
           <Flex
-            align={'center'}
+            align="center"
             flexGrow={1}
             flexShrink={1}
-            justifyContent={'center'}
+            justifyContent="center"
             ref={overlayRef}
-            overflow={'hidden'}
+            overflow="hidden"
           >
-            <Box position={'relative'} css={overlayStyle}>
+            <Box position="relative" css={overlayStyle}>
               <Drawing
-                onMount={handleTLDrawAppMount}
+                onMount={(innerApp) => setApp(innerApp)}
                 scale={scale}
                 video={activeVideo}
                 videoBookmark={activeBookmark}
               />
-              {activeVideoId !== null && (
+              {activeBookmark && (
                 <VideoBookmark
                   video={activeVideo}
                   bookmark={activeBookmark}
                   scale={scale}
                 />
               )}
-              {isAfterRange && (
+              {isAfterRange && activeVideo.durationNormalised && (
                 <Flex
-                  position={'absolute'}
+                  position="absolute"
                   top={0}
                   left={0}
                   right={0}
                   bottom={0}
-                  backgroundColor={'gray.800'}
-                  align={'center'}
-                  justifyContent={'center'}
+                  backgroundColor="gray.800"
+                  align="center"
+                  justifyContent="center"
                 >
                   Finished{' '}
                   {Math.round(
@@ -333,20 +351,20 @@ export default function ReviewVideos() {
                   s ago
                 </Flex>
               )}
-              <Box css={videoStyle} ref={videoRef} />
+              <Box css={videoStyle} ref={videoContainerRef} />
             </Box>
           </Flex>
         </Flex>
         <Flex
           flexGrow={0}
           align="center"
-          p={'4'}
-          boxSizing={'border-box'}
-          borderTop={'1px'}
-          borderColor={'whiteAlpha.300'}
+          p="4"
+          boxSizing="border-box"
+          borderTop="1px"
+          borderColor="whiteAlpha.300"
         >
           <Tooltip label={playing ? 'Pause' : 'Play'}>
-            <Box mr={'2'}>
+            <Box mr="2">
               {!playing && (
                 <IconButton
                   onClick={startPlaying}
@@ -369,47 +387,49 @@ export default function ReviewVideos() {
             <PlaybackSpeed disabled={playing} />
           </Box>
 
-          <Box mx={'2'}>
+          <Box mx="2">
             <VideoStepControl
               direction="backwards"
               frameRate={activeVideo.frameRate}
-              onClick={handleClickStep}
+              onClick={(value) => handleClickStep(value)}
             />
           </Box>
 
-          <Box mx={'2'}>
+          <Box mx="2">
             <GlobalTimeDisplay />
           </Box>
 
-          <Box flexGrow={1} mx={'2'}>
+          <Box flexGrow={1} mx="2">
             <GlobalTimeControl video={activeVideo} />
           </Box>
 
-          <Box mx={'2'}>
+          <Box mx="2">
             <VideoVolume video={activeVideo} />
           </Box>
 
-          <Box mx={'2'}>
+          <Box mx="2">
             <VideoStepControl
               direction="forwards"
               frameRate={activeVideo.frameRate}
-              onClick={handleClickStep}
+              onClick={(value) => handleClickStep(value)}
             />
           </Box>
 
-          <Box mx={'2'}>
-            <VideoBookmarkAdd
-              app={app}
-              disabled={!!activeBookmark || editingBookmark || isAfterRange}
-              scale={scale}
-              video={activeVideo}
-            />
-          </Box>
+          {app && (
+            <Box mx="2">
+              <VideoBookmarkAdd
+                app={app}
+                disabled={!!activeBookmark || editingBookmark || isAfterRange}
+                scale={scale}
+                video={activeVideo}
+              />
+            </Box>
+          )}
 
           <Tooltip label="Go fullscreen">
-            <Box ml={'2'}>
+            <Box ml="2">
               <IconButton
-                onClick={handleClickFullscreen}
+                onClick={() => setFullscreen(!fullscreen)}
                 icon={<MaximizeIcon />}
                 aria-label="Fullscreen video"
                 disabled={isAfterRange}
@@ -425,13 +445,13 @@ export default function ReviewVideos() {
   return (
     <>
       {activeVideo !== undefined && (
-        <Hotkeys onEscape={handleEscapePressed} video={activeVideo} />
+        <Hotkeys onEscape={() => setFullscreen(false)} video={activeVideo} />
       )}
       <WithSidebar sidebar={renderedSidebar} disableSidebar={videos.length < 2}>
         <Flex
           direction="column"
           width="100%"
-          height={'calc(100vh - 5rem)'}
+          height="calc(100vh - 5rem)"
           ref={fullscreenRef}
         >
           {renderedContent}
