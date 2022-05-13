@@ -43,7 +43,7 @@ export default function HotKeys({
   const handlePreviousFrame = useCallback(() => {
     stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime - 1 / video.frameRate);
-  }, [setCurrentTime, video]);
+  }, [setCurrentTime, video, stopPlaying]);
 
   /**
    * Handle going back by a jump
@@ -53,7 +53,7 @@ export default function HotKeys({
     setCurrentTime(
       useVideoStore.getState().currentTime - parsedArrowKeyJumpDistance
     );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance]);
+  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying]);
 
   /**
    * Handle going foward by a frame
@@ -61,7 +61,7 @@ export default function HotKeys({
   const handleNextFrame = useCallback(() => {
     stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime + 1 / video.frameRate);
-  }, [setCurrentTime, video]);
+  }, [setCurrentTime, video, stopPlaying]);
 
   /**
    * Handle going forward by a jump
@@ -71,7 +71,7 @@ export default function HotKeys({
     setCurrentTime(
       useVideoStore.getState().currentTime + parsedArrowKeyJumpDistance
     );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance]);
+  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying]);
 
   /**
    * Perform a previous navigation when the modifier is not held
