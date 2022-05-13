@@ -5,7 +5,10 @@ import {
   useLayoutEffect,
   useCallback,
 } from 'react';
+
 import { css } from '@emotion/react';
+
+import { useThrottle } from '@react-hook/throttle';
 
 import {
   Box,
@@ -33,6 +36,7 @@ import GlobalTimeControl from '../components/GlobalTimeControl/GlobalTimeControl
 import GlobalTimeDisplay from '../components/GlobalTimeDisplay/GlobalTimeDisplay';
 import Hotkeys from './ReviewVideos/Hotkeys';
 import PlaybackSpeed from '../components/PlaybackSpeed/PlaybackSpeed';
+import ReviewVideosBanner from '../components/ReviewVideosBanner/ReviewVideosBanner';
 import VideoBookmark from '../components/VideoBookmarkShow/VideoBookmarkShow';
 import VideoBookmarkAdd from '../components/VideoBookmarkAdd/VideoBookmarkAdd';
 import VideoStepControl from '../components/VideoStepControl/VideoStepControl';
@@ -43,14 +47,20 @@ import WithSidebar from '../layouts/WithSidebar';
 export default function ReviewVideos() {
   const overlayRef = useRef(null);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
-  const fullscreenRef = useRef<HTMLDivElement | null>(null);
-  const fullscreenButtonRef = useRef<HTMLButtonElement | null>(null);
+  const fullscreenTargetRef = useRef<HTMLDivElement | null>(null);
+  const fullscreenTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const [startedPlayingAt, setStartedPlayingAt] = useState<number | null>(null);
   const [videoDimensions, setVideoDimensions] = useState<
     [number, number] | null
   >(null);
   const [fullscreen, setFullscreen] = useState<boolean>(false);
+  const [mouseLastActive, setMouseLastActive] = useThrottle<number | null>(
+    null,
+    10,
+    true
+  );
+  const [controlsOn, setControlsOn] = useState<boolean>(false);
   const [app, setApp] = useState<TldrawApp>();
 
   const startPlaying = useStore((state) => state.startPlaying);
@@ -154,14 +164,14 @@ export default function ReviewVideos() {
 
     if (fullscreen === true) {
       (async () => {
-        if (fullscreenRef.current === null) {
+        if (fullscreenTargetRef.current === null) {
           return;
         }
 
-        await fullscreenRef.current.requestFullscreen();
+        await fullscreenTargetRef.current.requestFullscreen();
 
-        if (fullscreenButtonRef.current) {
-          fullscreenButtonRef.current.blur();
+        if (fullscreenTriggerRef.current) {
+          fullscreenTriggerRef.current.blur();
         }
 
         window.dispatchEvent(new Event('resize'));
@@ -170,8 +180,8 @@ export default function ReviewVideos() {
       (async () => {
         await document.exitFullscreen();
 
-        if (fullscreenButtonRef.current) {
-          fullscreenButtonRef.current.blur();
+        if (fullscreenTriggerRef.current) {
+          fullscreenTriggerRef.current.blur();
         }
 
         window.dispatchEvent(new Event('resize'));
@@ -215,6 +225,23 @@ export default function ReviewVideos() {
   }, []);
 
   /**
+   * Watch for the mouse being active and set a deactivation if it stops moving
+   */
+  useLayoutEffect(() => {
+    if (mouseLastActive === null) {
+      return undefined;
+    }
+
+    const timeout = setTimeout(() => {
+      setMouseLastActive(null);
+    }, 750);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [mouseLastActive, setMouseLastActive]);
+
+  /**
    * The scale of how much the current video has been reduced in size. If no
    * video has been loaded, we default to 1. If a video has been loaded,
    * determine how much smaller it is compared to its native resolution. This
@@ -237,6 +264,9 @@ export default function ReviewVideos() {
     }
   `;
 
+  /**
+   * Selectable videos used in the sidebar
+   */
   const renderedSidebarVideos = videos.map((video) => {
     return <VideoThumbnail key={video.id} video={video} />;
   });
@@ -251,117 +281,150 @@ export default function ReviewVideos() {
     </Flex>
   );
 
+  const showControls = mouseLastActive !== null || controlsOn === true;
+
+  /**
+   * Drawing control palette
+   */
+  const renderedDrawingControls = app !== undefined &&
+    showControls === true && (
+      <Flex
+        align="center"
+        bottom={0}
+        justify="center"
+        left={0}
+        pointerEvents="none"
+        position="absolute"
+        top={0}
+        zIndex={2}
+      >
+        <Box
+          background="gray.900"
+          borderColor="whiteAlpha.500"
+          borderLeft="none"
+          borderWidth="1px"
+          boxSizing="border-box"
+          onMouseEnter={() => setControlsOn(true)}
+          onMouseLeave={() => setControlsOn(false)}
+          padding={4}
+          pointerEvents="all"
+        >
+          <DrawingControls app={app} />
+        </Box>
+      </Flex>
+    );
+
+  /**
+   * Main content for the page
+   */
   const renderedContent = (() => {
     if (videos.length === 0) {
       return (
-        <Flex
-          flexGrow={1}
-          align="center"
-          justifyContent="center"
-          fontSize="3xl"
-          color="whiteAlpha.400"
-        >
+        <ReviewVideosBanner>
           <Link to="/">
             <Text>Please setup some videos first</Text>
           </Link>
-        </Flex>
+        </ReviewVideosBanner>
       );
     }
 
     if (activeVideo === undefined) {
       return (
-        <Flex
-          flexGrow={1}
-          align="center"
-          justifyContent="center"
-          fontSize="3xl"
-          color="whiteAlpha.400"
-        >
-          <Link to="/">
-            <Text>Please choose a video</Text>
-          </Link>
-        </Flex>
+        <ReviewVideosBanner>
+          <Text>Please choose a video</Text>
+        </ReviewVideosBanner>
       );
     }
 
-    return (
-      <>
-        {videoDimensions && (
-          <Box borderBottom="1px" borderColor="whiteAlpha.300">
-            <Flex
-              mx="auto"
-              alignItems="center"
-              justifyContent="center"
-              height="4rem"
-              px={8}
-              boxSizing="border-box"
-            >
-              <Box>
-                <Heading fontSize="2xl">{activeVideo.name}</Heading>
-              </Box>
-            </Flex>
-          </Box>
-        )}
-        <Flex flexGrow={1} flexShrink={1} overflow="hidden">
-          <Box
-            borderRight="1px"
-            borderColor="whiteAlpha.300"
-            boxSizing="border-box"
-            padding={4}
-          >
-            {app && <DrawingControls app={app} />}
-          </Box>
-          <Flex
-            align="center"
-            flexGrow={1}
-            flexShrink={1}
-            justifyContent="center"
-            ref={overlayRef}
-            overflow="hidden"
-          >
-            <Box position="relative" css={overlayStyle}>
-              <Drawing
-                onMount={(innerApp) => setApp(innerApp)}
-                scale={scale}
-                video={activeVideo}
-                videoBookmark={activeBookmark}
-              />
-              {activeBookmark && (
-                <VideoBookmark
-                  video={activeVideo}
-                  bookmark={activeBookmark}
-                  scale={scale}
-                />
-              )}
-              {isAfterRange && activeVideo.durationNormalised && (
-                <Flex
-                  position="absolute"
-                  top={0}
-                  left={0}
-                  right={0}
-                  bottom={0}
-                  backgroundColor="gray.800"
-                  align="center"
-                  justifyContent="center"
-                >
-                  Finished{' '}
-                  {Math.round(
-                    Math.abs(activeVideo.durationNormalised - currentTime)
-                  )}
-                  s ago
-                </Flex>
-              )}
-              <Box css={videoStyle} ref={videoContainerRef} />
-            </Box>
-          </Flex>
-        </Flex>
+    /**
+     * Header used at the top of the screen. Contains the players name.
+     */
+    const renderedHeader = videoDimensions !== null &&
+      showControls === true && (
         <Flex
-          flexGrow={0}
-          align="center"
-          p="4"
+          alignItems="center"
           boxSizing="border-box"
-          borderTop="1px"
-          borderColor="whiteAlpha.300"
+          justify="center"
+          left={0}
+          pointerEvents="none"
+          position="absolute"
+          right={0}
+          top={0}
+          zIndex={2}
+        >
+          <Box
+            background="gray.900"
+            borderColor="whiteAlpha.500"
+            borderTop="none"
+            borderWidth="1px"
+            onMouseEnter={() => setControlsOn(true)}
+            onMouseLeave={() => setControlsOn(false)}
+            p={4}
+            pointerEvents="all"
+          >
+            <Heading fontSize="xl">{activeVideo.name}</Heading>
+          </Box>
+        </Flex>
+      );
+
+    const renderedDrawing = (
+      <Drawing
+        onMount={(innerApp) => setApp(innerApp)}
+        scale={scale}
+        video={activeVideo}
+        videoBookmark={activeBookmark}
+      />
+    );
+
+    const renderedActiveBookmark = activeBookmark !== undefined && (
+      <VideoBookmark
+        video={activeVideo}
+        bookmark={activeBookmark}
+        scale={scale}
+      />
+    );
+
+    const renderedVideoEnded = isAfterRange &&
+      activeVideo.durationNormalised && (
+        <Flex
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          backgroundColor="gray.800"
+          align="center"
+          justifyContent="center"
+          shadow="outline"
+        >
+          Finished{' '}
+          {Math.round(Math.abs(activeVideo.durationNormalised - currentTime))}s
+          ago
+        </Flex>
+      );
+
+    const renderedNavigationControls = showControls === true && (
+      <Flex
+        align="center"
+        bottom={0}
+        boxSizing="border-box"
+        justify="center"
+        left={0}
+        onMouseEnter={() => setControlsOn(true)}
+        onMouseLeave={() => setControlsOn(false)}
+        position="absolute"
+        right={0}
+        zIndex={2}
+      >
+        <Flex
+          align="center"
+          background="gray.900"
+          borderBottom="none"
+          borderColor="whiteAlpha.500"
+          borderWidth="1px"
+          minWidth="50vw"
+          p={4}
+          pointerEvents="all"
         >
           <Tooltip label={playing ? 'Pause' : 'Play'}>
             <Box mr="2">
@@ -399,7 +462,7 @@ export default function ReviewVideos() {
             <GlobalTimeDisplay />
           </Box>
 
-          <Box flexGrow={1} mx="2">
+          <Box flexGrow={1} mx="2" minW="25vw">
             <GlobalTimeControl video={activeVideo} />
           </Box>
 
@@ -426,19 +489,50 @@ export default function ReviewVideos() {
             </Box>
           )}
 
-          <Tooltip label="Go fullscreen">
+          <Tooltip label="Presentation mode">
             <Box ml="2">
               <IconButton
                 onClick={() => setFullscreen(!fullscreen)}
                 icon={<MaximizeIcon />}
                 aria-label="Fullscreen video"
                 disabled={isAfterRange}
-                ref={fullscreenButtonRef}
+                ref={fullscreenTriggerRef}
               />
             </Box>
           </Tooltip>
         </Flex>
-      </>
+      </Flex>
+    );
+
+    return (
+      <Flex
+        direction="column"
+        width="100%"
+        height="calc(100vh - 5rem)"
+        ref={fullscreenTargetRef}
+        onMouseMove={() => setMouseLastActive(Date.now())}
+      >
+        <Flex flexGrow={1} flexShrink={1} overflow="hidden" position="relative">
+          {renderedHeader}
+          {renderedDrawingControls}
+          {renderedNavigationControls}
+          <Flex
+            align="center"
+            flexGrow={1}
+            flexShrink={1}
+            justifyContent="center"
+            ref={overlayRef}
+            overflow="hidden"
+          >
+            <Box position="relative" css={overlayStyle}>
+              {renderedDrawing}
+              {renderedActiveBookmark}
+              {renderedVideoEnded}
+              <Box css={videoStyle} ref={videoContainerRef} />
+            </Box>
+          </Flex>
+        </Flex>
+      </Flex>
     );
   })();
 
@@ -448,14 +542,7 @@ export default function ReviewVideos() {
         <Hotkeys onEscape={() => setFullscreen(false)} video={activeVideo} />
       )}
       <WithSidebar sidebar={renderedSidebar} disableSidebar={videos.length < 2}>
-        <Flex
-          direction="column"
-          width="100%"
-          height="calc(100vh - 5rem)"
-          ref={fullscreenRef}
-        >
-          {renderedContent}
-        </Flex>
+        {renderedContent}
       </WithSidebar>
     </>
   );

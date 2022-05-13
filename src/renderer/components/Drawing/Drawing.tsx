@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react';
-import { Tldraw, TldrawApp } from '@tldraw/tldraw';
+import { Tldraw, TldrawApp, ColorStyle } from '@tldraw/tldraw';
 
 import { Box } from '@chakra-ui/react';
 import useVideoStore from '../../services/stores/videos';
@@ -37,6 +37,7 @@ export default function Drawing({
   function handleMount(app: TldrawApp) {
     tlDrawRef.current = app;
     tlDrawRef.current.setCamera([0, 0], scale, 'layout_mounted');
+    tlDrawRef.current.style({ color: ColorStyle.Red });
     onMount(app);
   }
 
