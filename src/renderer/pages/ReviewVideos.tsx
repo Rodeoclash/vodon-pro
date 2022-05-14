@@ -71,6 +71,7 @@ export default function ReviewVideos() {
   const activeVideoId = useStore((state) => state.activeVideoId);
   const currentTime = useStore((state) => state.currentTime);
   const editingBookmark = useStore((state) => state.editingBookmark);
+  const overrideHideControls = useStore((state) => state.overrideHideControls);
   const playbackSpeed = useStore((state) => state.playbackSpeed);
   const playing = useStore((state) => state.playing);
   const videos = useStore((state) => state.videos);
@@ -253,7 +254,9 @@ export default function ReviewVideos() {
       ? 1
       : videoDimensions[0] / activeVideo.codedWidth;
 
-  const showControls = mouseLastActive !== null || controlsOn === true;
+  const showControls =
+    overrideHideControls === false &&
+    (mouseLastActive !== null || controlsOn === true);
 
   const overlayStyle = css`
     width: ${videoDimensions ? videoDimensions[0] : ''}px;

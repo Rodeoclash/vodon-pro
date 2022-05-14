@@ -19,6 +19,7 @@ interface StateData {
   currentTime: number;
   editingBookmark: boolean;
   fullDuration: number | null;
+  overrideHideControls: boolean;
   playbackSpeed: number;
   playing: boolean;
   videos: Video[];
@@ -36,6 +37,8 @@ interface State extends StateData {
   setVideoSyncTime: (video: Video, offset: number) => void;
   recalculateOffsets: () => void;
   setVideoVolume: (video: Video, volume: number) => void;
+
+  setOverrideHideControls: (value: boolean) => void;
 
   // playing
   startPlaying: () => void;
@@ -77,6 +80,7 @@ const emptyState: StateData = {
   currentTime: 0,
   editingBookmark: false,
   fullDuration: null,
+  overrideHideControls: false,
   playbackSpeed: 1,
   playing: false,
   videos: [],
@@ -405,6 +409,9 @@ const useStore = createStore<State>(
 
       startEditingBookmark: () => set(() => ({ editingBookmark: true })),
       stopEditingBookmark: () => set(() => ({ editingBookmark: false })),
+
+      setOverrideHideControls: (value: boolean) =>
+        set(() => ({ overrideHideControls: value })),
 
       ...emptyState,
     }),

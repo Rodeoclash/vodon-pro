@@ -21,6 +21,10 @@ export default function HotKeys({
   const startPlaying = useVideoStore((state) => state.startPlaying);
   const stopPlaying = useVideoStore((state) => state.stopPlaying);
   const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
+  const setOverrideHideControls = useVideoStore(
+    (state) => state.setOverrideHideControls
+  );
+
   const currentTime = useVideoStore((state) => state.currentTime);
   const playing = useVideoStore((state) => state.playing);
 
@@ -270,6 +274,34 @@ export default function HotKeys({
     },
     {},
     [playing]
+  );
+
+  /**
+   * Holding H
+   */
+  useHotkeys(
+    'h',
+    () => {
+      setOverrideHideControls(true);
+    },
+    {
+      keydown: true,
+    },
+    [previousHeld, currentTime]
+  );
+
+  /**
+   * Holding H
+   */
+  useHotkeys(
+    'h',
+    () => {
+      setOverrideHideControls(false);
+    },
+    {
+      keyup: true,
+    },
+    [previousHeld, currentTime]
   );
 
   return <></>;
