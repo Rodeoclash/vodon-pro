@@ -14,6 +14,7 @@ export default function ReviewVideosBanner({ children }: Props) {
       justifyContent="center"
       fontSize="3xl"
       color="whiteAlpha.400"
+      height="calc(100vh - 5rem)"
     >
       {children}
     </Flex>
