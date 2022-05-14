@@ -1,3 +1,10 @@
+### 1.7.9
+
+- Introduces new floating controls
+- Hold H to hide controls
+- Slow audio down rather than trying to pitch shift it.
+- Added 1.5x and 2x speed controls for video.
+
 ### 1.7.7
 
 - Removed focus on fullscreen button after click. Prevents spacebar toggling fullscreen on and off when trying to pause video.
