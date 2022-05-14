@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { v4 as uuidv4 } from 'uuid';
 import { basename } from '../file';
 
@@ -176,6 +177,10 @@ export async function createFromFile(filePath: string): Promise<Video> {
   // video element
   const el = document.createElement('video');
   el.src = filePath;
+
+  // @ts-ignore-start
+  el.preservesPitch = false;
+  // @ts-ignore-end
 
   return {
     bookmarks: [],
