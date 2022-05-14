@@ -4,6 +4,10 @@
 - Hold H to hide controls
 - Slow audio down rather than trying to pitch shift it.
 - Added 1.5x and 2x speed controls for video.
+- Removed preview thumbnail images from seek bar as they were too slow to generate.
+-
+
+### 1.7.8::- Pre-release for user testing
 
 ### 1.7.7
 
