@@ -252,9 +252,12 @@ export default function ReviewVideos() {
       ? 1
       : videoDimensions[0] / activeVideo.codedWidth;
 
+  const showControls = mouseLastActive !== null || controlsOn === true;
+
   const overlayStyle = css`
     width: ${videoDimensions ? videoDimensions[0] : ''}px;
     height: ${videoDimensions ? videoDimensions[1] : ''}px;
+    cursor: ${playing === true && showControls === false ? 'none' : 'auto'};
   `;
 
   const videoStyle = css`
@@ -280,8 +283,6 @@ export default function ReviewVideos() {
       {renderedSidebarVideos}
     </Flex>
   );
-
-  const showControls = mouseLastActive !== null || controlsOn === true;
 
   /**
    * Drawing control palette
@@ -524,7 +525,7 @@ export default function ReviewVideos() {
             ref={overlayRef}
             overflow="hidden"
           >
-            <Box position="relative" css={overlayStyle}>
+            <Box position="relative" css={overlayStyle} id="overlay">
               {renderedDrawing}
               {renderedActiveBookmark}
               {renderedVideoEnded}
