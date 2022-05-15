@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 
 import { Flex, Box } from '@chakra-ui/react';
 import Draggable from 'react-draggable';
+import { useThrottle } from '@react-hook/throttle';
 
 interface Props {
   children: React.ReactNode;
@@ -19,6 +20,8 @@ export default function WithSidebar({
   const [overrideSidebarWidth, setOverrideSidebarWidth] = React.useState<
     number | null
   >(null);
+
+  const [resizeLastAt, setResizeLastAt] = useThrottle<number | null>(null, 10);
 
   const sidebarStylePresetWidths = {
     sm: '40vw',
@@ -44,11 +47,16 @@ export default function WithSidebar({
   const handleDrag = (event: any) => {
     const newWidth = window.innerWidth - event.clientX;
     setOverrideSidebarWidth(newWidth);
+    setResizeLastAt(Date.now());
   };
 
   const handleDragStop = () => {
     window.dispatchEvent(new Event('resize'));
   };
+
+  React.useEffect(() => {
+    window.dispatchEvent(new Event('resize'));
+  }, [resizeLastAt]);
 
   return (
     <Flex width="100%">
