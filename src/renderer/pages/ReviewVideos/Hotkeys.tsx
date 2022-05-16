@@ -112,13 +112,9 @@ export default function HotKeys({
     return () => {
       clearTimeout(interval);
     };
-  }, [
-    playing,
-    previousFrameHeld,
-    nextFrameHeld,
-    handlePreviousFrame,
-    handleNextFrame,
-  ]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, previousFrameHeld, nextFrameHeld]);
 
   /**
    * Previous frame held down
