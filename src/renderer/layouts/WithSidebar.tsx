@@ -17,28 +17,11 @@ export default function WithSidebar({
   sidebar,
   disableSidebar = false,
 }: Props) {
-  const [overrideSidebarWidth, setOverrideSidebarWidth] = React.useState<
-    number | null
-  >(null);
+  const [sidebarWidth, setSidebarWidth] = React.useState<number>(450);
 
   const [resizeLastAt, setResizeLastAt] = useThrottle<number | null>(null, 10);
 
-  const sidebarStylePresetWidths = {
-    sm: '40vw',
-    lg: '35vw',
-    xl: '30vw',
-    '2xl': '25vw',
-  };
-
-  const sidebarWidth =
-    overrideSidebarWidth === null
-      ? sidebarStylePresetWidths
-      : overrideSidebarWidth;
-
-  const mainWidth =
-    overrideSidebarWidth === null
-      ? 'auto'
-      : window.innerWidth - overrideSidebarWidth;
+  const mainWidth = window.innerWidth - sidebarWidth;
 
   const sidebarStyles = css`
     display: ${disableSidebar === true ? 'none' : 'block'};
@@ -46,7 +29,7 @@ export default function WithSidebar({
 
   const handleDrag = (event: any) => {
     const newWidth = window.innerWidth - event.clientX;
-    setOverrideSidebarWidth(newWidth);
+    setSidebarWidth(newWidth);
     setResizeLastAt(Date.now());
   };
 

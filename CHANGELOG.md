@@ -1,3 +1,7 @@
+### 1.7.11
+
+- Fix bug with sidebar size after exiting presentation mode.
+
 ### 1.7.10
 
 - Improved frame step controls so they don't overwhelm the video with requests and cause it to stall out.
