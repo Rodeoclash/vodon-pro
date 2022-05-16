@@ -29,7 +29,7 @@ Add viewpoints from each player in a match, tell Vodon how to synchronise the vi
 - 🖥 Includes a "Slow CPU" mode to reduce load when many videos are loaded in at once.
 - 👀 Presentation mode which maximises the video sent over screenshare.
 
-## Supports
+## Tested with
 
 - MP4 and WebM video formats.
 - 60fps / 30fps videos.
