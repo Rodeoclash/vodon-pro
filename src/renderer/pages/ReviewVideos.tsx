@@ -29,7 +29,7 @@ import { TldrawApp } from '@tldraw/tldraw';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getRatioDimensions } from '../services/layout';
-import useStore from '../services/stores/videos';
+import useVideoStore from '../services/stores/videos';
 
 import Drawing from '../components/Drawing/Drawing';
 import DrawingControls from '../components/DrawingControls/DrawingControls';
@@ -62,19 +62,22 @@ export default function ReviewVideos() {
     true
   );
   const [controlsOn, setControlsOn] = useState<boolean>(false);
+  const [playerHeaderOn, setPlayerHeaderOn] = useState<boolean>(false);
   const [app, setApp] = useState<TldrawApp>();
 
-  const startPlaying = useStore((state) => state.startPlaying);
-  const stopPlaying = useStore((state) => state.stopPlaying);
-  const setCurrentTime = useStore((state) => state.setCurrentTime);
+  const startPlaying = useVideoStore((state) => state.startPlaying);
+  const stopPlaying = useVideoStore((state) => state.stopPlaying);
+  const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
 
-  const activeVideoId = useStore((state) => state.activeVideoId);
-  const currentTime = useStore((state) => state.currentTime);
-  const editingBookmark = useStore((state) => state.editingBookmark);
-  const overrideHideControls = useStore((state) => state.overrideHideControls);
-  const playbackSpeed = useStore((state) => state.playbackSpeed);
-  const playing = useStore((state) => state.playing);
-  const videos = useStore((state) => state.videos);
+  const activeVideoId = useVideoStore((state) => state.activeVideoId);
+  const currentTime = useVideoStore((state) => state.currentTime);
+  const editingBookmark = useVideoStore((state) => state.editingBookmark);
+  const overrideHideControls = useVideoStore(
+    (state) => state.overrideHideControls
+  );
+  const playbackSpeed = useVideoStore((state) => state.playbackSpeed);
+  const playing = useVideoStore((state) => state.playing);
+  const videos = useVideoStore((state) => state.videos);
 
   const activeVideo = videos.find((video) => {
     return activeVideoId === video.id;
@@ -95,7 +98,7 @@ export default function ReviewVideos() {
 
   function handleClickStep(distance: number) {
     stopPlaying();
-    setCurrentTime(useStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
+    setCurrentTime(useVideoStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
   }
 
   const updateCurrentTime = useCallback(() => {
@@ -245,16 +248,16 @@ export default function ReviewVideos() {
 
   // When changing between active videos, show the controls for some time
   useEffect(() => {
-    setControlsOn(true);
+    setPlayerHeaderOn(true);
 
     const timer = setTimeout(() => {
-      setControlsOn(false);
+      setPlayerHeaderOn(false);
     }, 1500);
 
     return () => {
       clearInterval(timer);
     };
-  }, [activeVideoId, setControlsOn]);
+  }, [activeVideoId, setPlayerHeaderOn]);
 
   /**
    * The scale of how much the current video has been reduced in size. If no
@@ -364,7 +367,7 @@ export default function ReviewVideos() {
      * Header used at the top of the screen. Contains the players name.
      */
     const renderedHeader = videoDimensions !== null &&
-      showControls === true && (
+      (showControls === true || playerHeaderOn) && (
         <Flex
           alignItems="center"
           boxSizing="border-box"
@@ -490,6 +493,7 @@ export default function ReviewVideos() {
                 direction="backwards"
                 frameRate={activeVideo.frameRate}
                 onClick={(value) => handleClickStep(value)}
+                pause={activeVideo.seeking}
               />
             </Box>
 
@@ -510,6 +514,7 @@ export default function ReviewVideos() {
                 direction="forwards"
                 frameRate={activeVideo.frameRate}
                 onClick={(value) => handleClickStep(value)}
+                pause={activeVideo.seeking}
               />
             </Box>
 

@@ -19,7 +19,6 @@ export default function HotKeys({
   const setActiveVideoId = useVideoStore((state) => state.setActiveVideoId);
   const startPlaying = useVideoStore((state) => state.startPlaying);
   const stopPlaying = useVideoStore((state) => state.stopPlaying);
-  const anySeeking = useVideoStore((state) => state.anySeeking);
   const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
   const setOverrideHideControls = useVideoStore(
     (state) => state.setOverrideHideControls
@@ -42,19 +41,19 @@ export default function HotKeys({
    * Handle going back by a frame
    */
   const handlePreviousFrame = useCallback(() => {
-    if (anySeeking() === true) {
+    if (video.seeking === true) {
       return;
     }
 
     stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime - 1 / video.frameRate);
-  }, [setCurrentTime, video, stopPlaying, anySeeking]);
+  }, [setCurrentTime, video, stopPlaying]);
 
   /**
    * Handle going back by a jump
    */
   const handlePreviousJump = useCallback(() => {
-    if (anySeeking() === true) {
+    if (video.seeking === true) {
       return;
     }
 
@@ -62,25 +61,25 @@ export default function HotKeys({
     setCurrentTime(
       useVideoStore.getState().currentTime - parsedArrowKeyJumpDistance
     );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying, anySeeking]);
+  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying, video]);
 
   /**
    * Handle going foward by a frame
    */
   const handleNextFrame = useCallback(() => {
-    if (anySeeking() === true) {
+    if (video.seeking === true) {
       return;
     }
 
     stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime + 1 / video.frameRate);
-  }, [setCurrentTime, video, stopPlaying, anySeeking]);
+  }, [setCurrentTime, video, stopPlaying]);
 
   /**
    * Handle going forward by a jump
    */
   const handleNextJump = useCallback(() => {
-    if (anySeeking() === true) {
+    if (video.seeking === true) {
       return;
     }
 
@@ -88,7 +87,7 @@ export default function HotKeys({
     setCurrentTime(
       useVideoStore.getState().currentTime + parsedArrowKeyJumpDistance
     );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying, anySeeking]);
+  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying, video]);
 
   /**
    * Handle the effects of the keys being held down. We ignore any frame

@@ -51,20 +51,27 @@ export default function VideoAligner({ video }: Props) {
 
   const [playing, setPlaying] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [seeking, setSeeking] = useState(false);
 
   useLayoutEffect(() => {
-    function handleSeeked(event: Event) {
+    function handleSeeking() {
+      setSeeking(true);
+    }
+
+    function handleSeeked() {
+      setSeeking(false);
       setVideoSyncTime(video, videoRef.current.currentTime);
       recalculateOffsets();
     }
 
-    function handleLoadedMetaData(event: Event) {
+    function handleLoadedMetaData() {
       setVideoDuration(video, videoRef.current.duration);
       videoRef.current.currentTime = video.syncTime;
       videoRef.current.volume = 0;
     }
 
     videoRef.current.addEventListener('loadedmetadata', handleLoadedMetaData);
+    videoRef.current.addEventListener('seeking', handleSeeking);
     videoRef.current.addEventListener('seeked', handleSeeked);
 
     return () => {
@@ -72,6 +79,7 @@ export default function VideoAligner({ video }: Props) {
         'loadedmetadata',
         handleLoadedMetaData
       );
+      videoRef.current.removeEventListener('seeking', handleSeeking);
       videoRef.current.removeEventListener('seeked', handleSeeked);
     };
   }, []);
@@ -149,6 +157,7 @@ export default function VideoAligner({ video }: Props) {
             direction="backwards"
             frameRate={video.frameRate}
             onClick={(distance) => handleClickStep(distance)}
+            pause={seeking}
           />
         </Box>
 
@@ -178,6 +187,7 @@ export default function VideoAligner({ video }: Props) {
             direction="forwards"
             frameRate={video.frameRate}
             onClick={(distance) => handleClickStep(distance)}
+            pause={seeking}
           />
         </Box>
       </Flex>
