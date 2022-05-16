@@ -190,7 +190,7 @@ export default function HotKeys({
    * Jump previous pressed
    */
   useHotkeys(
-    's',
+    'down, s',
     () => {
       handlePreviousJump();
     },
@@ -202,7 +202,7 @@ export default function HotKeys({
    * Jump next pressed
    */
   useHotkeys(
-    'w',
+    'up, w',
     () => {
       handleNextJump();
     },
