@@ -22,6 +22,7 @@ Add viewpoints from each player in a match, tell Vodon how to synchronise the vi
 - ▶ Frame advance and rewind controls.
 - 🔖 Bookmark system to remind you of critical moments you need to talk about with the team.
 - 💤 Slow motion mode, reduce speed to 10%, 25%, 50%, 75% of the original video.
+- ⏩ Fast motion mode, increase speed to 1.5x, 2x of the original video.
 - 💾 Load and save your projects (includes autosave as you work)
 - 👀 No advertising or tracking.
 - ⚙️ Sensible defaults but can be customised to match your workflow.
