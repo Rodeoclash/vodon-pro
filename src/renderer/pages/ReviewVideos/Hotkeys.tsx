@@ -16,6 +16,7 @@ export default function HotKeys({
   onEscape,
   video,
 }: Props): React.ReactElement {
+  const setActiveVideoId = useVideoStore((state) => state.setActiveVideoId);
   const startPlaying = useVideoStore((state) => state.startPlaying);
   const stopPlaying = useVideoStore((state) => state.stopPlaying);
   const anySeeking = useVideoStore((state) => state.anySeeking);
@@ -26,6 +27,7 @@ export default function HotKeys({
 
   const currentTime = useVideoStore((state) => state.currentTime);
   const playing = useVideoStore((state) => state.playing);
+  const videos = useVideoStore((state) => state.videos);
 
   const arrowKeyJumpDistance = useSettingsStore(
     (state) => state.arrowKeyJumpDistance
@@ -203,6 +205,21 @@ export default function HotKeys({
     'w',
     () => {
       handleNextJump();
+    },
+    {},
+    []
+  );
+
+  /**
+   * Switch between videos
+   */
+  useHotkeys(
+    '1,2,3,4,5,6,7,8,9',
+    (arg1) => {
+      const index = parseInt(arg1.key, 10) - 1;
+      if (videos[index] !== undefined) {
+        setActiveVideoId(videos[index].id);
+      }
     },
     {},
     []

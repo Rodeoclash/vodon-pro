@@ -243,6 +243,19 @@ export default function ReviewVideos() {
     };
   }, [mouseLastActive, setMouseLastActive]);
 
+  // When changing between active videos, show the controls for some time
+  useEffect(() => {
+    setControlsOn(true);
+
+    const timer = setTimeout(() => {
+      setControlsOn(false);
+    }, 1500);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [activeVideoId, setControlsOn]);
+
   /**
    * The scale of how much the current video has been reduced in size. If no
    * video has been loaded, we default to 1. If a video has been loaded,
