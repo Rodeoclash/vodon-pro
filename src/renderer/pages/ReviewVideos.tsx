@@ -254,6 +254,8 @@ export default function ReviewVideos() {
       setPlayerHeaderOn(false);
     }, 1500);
 
+    window.dispatchEvent(new Event('resize'));
+
     return () => {
       clearInterval(timer);
     };
