@@ -2,9 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import useVideoStore from '../../services/stores/videos';
-import useSettingsStore, {
-  ArrowKeyNavigationMode,
-} from '../../services/stores/settings';
+import useSettingsStore from '../../services/stores/settings';
 import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
 
 import type { Video } from '../../services/models/Video';
@@ -20,6 +18,7 @@ export default function HotKeys({
 }: Props): React.ReactElement {
   const startPlaying = useVideoStore((state) => state.startPlaying);
   const stopPlaying = useVideoStore((state) => state.stopPlaying);
+  const anySeeking = useVideoStore((state) => state.anySeeking);
   const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
   const setOverrideHideControls = useVideoStore(
     (state) => state.setOverrideHideControls
@@ -34,92 +33,60 @@ export default function HotKeys({
 
   const parsedArrowKeyJumpDistance = parseFloat(arrowKeyJumpDistance);
 
-  const arrowKeyNavigationMode = useSettingsStore(
-    (state) => state.arrowKeyNavigationMode
-  );
-
-  const [previousHeld, setPreviousHeld] = useState(false);
-  const [nextHeld, setNextHeld] = useState(false);
+  const [previousFrameHeld, setPreviousFrameHeld] = useState(false);
+  const [nextFrameHeld, setNextFrameHeld] = useState(false);
 
   /**
    * Handle going back by a frame
    */
   const handlePreviousFrame = useCallback(() => {
+    if (anySeeking() === true) {
+      return;
+    }
+
     stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime - 1 / video.frameRate);
-  }, [setCurrentTime, video, stopPlaying]);
+  }, [setCurrentTime, video, stopPlaying, anySeeking]);
 
   /**
    * Handle going back by a jump
    */
   const handlePreviousJump = useCallback(() => {
+    if (anySeeking() === true) {
+      return;
+    }
+
     stopPlaying();
     setCurrentTime(
       useVideoStore.getState().currentTime - parsedArrowKeyJumpDistance
     );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying]);
+  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying, anySeeking]);
 
   /**
    * Handle going foward by a frame
    */
   const handleNextFrame = useCallback(() => {
+    if (anySeeking() === true) {
+      return;
+    }
+
     stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime + 1 / video.frameRate);
-  }, [setCurrentTime, video, stopPlaying]);
+  }, [setCurrentTime, video, stopPlaying, anySeeking]);
 
   /**
    * Handle going forward by a jump
    */
   const handleNextJump = useCallback(() => {
+    if (anySeeking() === true) {
+      return;
+    }
+
     stopPlaying();
     setCurrentTime(
       useVideoStore.getState().currentTime + parsedArrowKeyJumpDistance
     );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying]);
-
-  /**
-   * Perform a previous navigation when the modifier is not held
-   */
-  const handlePreviousMain = useCallback(() => {
-    if (arrowKeyNavigationMode === ArrowKeyNavigationMode.frame) {
-      handlePreviousFrame();
-    } else {
-      handlePreviousJump();
-    }
-  }, [handlePreviousFrame, handlePreviousJump, arrowKeyNavigationMode]);
-
-  /**
-   * Perform a previous navigation when the modifier is held
-   */
-  const handlePreviousModifier = useCallback(() => {
-    if (arrowKeyNavigationMode === ArrowKeyNavigationMode.frame) {
-      handlePreviousJump();
-    } else {
-      handlePreviousFrame();
-    }
-  }, [handlePreviousFrame, handlePreviousJump, arrowKeyNavigationMode]);
-
-  /**
-   * Perform a previous navigation when the modifier is not held
-   */
-  const handleNextMain = useCallback(() => {
-    if (arrowKeyNavigationMode === ArrowKeyNavigationMode.frame) {
-      handleNextFrame();
-    } else {
-      handleNextJump();
-    }
-  }, [handleNextFrame, handleNextJump, arrowKeyNavigationMode]);
-
-  /**
-   * Perform a previous navigation when the modifier is held
-   */
-  const handleNextModifier = useCallback(() => {
-    if (arrowKeyNavigationMode === ArrowKeyNavigationMode.frame) {
-      handleNextJump();
-    } else {
-      handleNextFrame();
-    }
-  }, [handleNextFrame, handleNextJump, arrowKeyNavigationMode]);
+  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying, anySeeking]);
 
   /**
    * Handle the effects of the keys being held down. We ignore any frame
@@ -132,12 +99,12 @@ export default function HotKeys({
     }
 
     const interval = setInterval(() => {
-      if (previousHeld === true && nextHeld === false) {
-        handlePreviousMain();
+      if (previousFrameHeld === true && nextFrameHeld === false) {
+        handlePreviousFrame();
       }
 
-      if (nextHeld === true && previousHeld === false) {
-        handleNextMain();
+      if (nextFrameHeld === true && previousFrameHeld === false) {
+        handleNextFrame();
       }
     }, STEP_ADVANCE_INTERVAL);
 
@@ -146,39 +113,37 @@ export default function HotKeys({
     };
   }, [
     playing,
-    previousHeld,
-    nextHeld,
-    handlePreviousMain,
-    handlePreviousModifier,
-    handleNextMain,
-    handleNextModifier,
+    previousFrameHeld,
+    nextFrameHeld,
+    handlePreviousFrame,
+    handleNextFrame,
   ]);
 
   /**
-   * Previous frame main held down
+   * Previous frame held down
    */
   useHotkeys(
     'left, a',
     () => {
-      if (previousHeld === true) {
+      if (previousFrameHeld === true) {
         return;
       }
-      handlePreviousMain();
-      setPreviousHeld(true);
+      handlePreviousFrame();
+      setPreviousFrameHeld(true);
     },
     {
       keydown: true,
     },
-    [previousHeld, currentTime]
+    [previousFrameHeld, currentTime]
   );
 
   /**
-   * Previous frame main released
+   * Previous frame released
    */
   useHotkeys(
     'left, a',
     () => {
-      setPreviousHeld(false);
+      setPreviousFrameHeld(false);
     },
     {
       keyup: true,
@@ -187,45 +152,31 @@ export default function HotKeys({
   );
 
   /**
-   * Previous frame modifier pressed
-   */
-  useHotkeys(
-    'shift+left, shift+a',
-    () => {
-      if (previousHeld === true) {
-        return;
-      }
-      handlePreviousModifier();
-    },
-    [previousHeld, currentTime]
-  );
-
-  /**
-   * Next frame control held down
+   * Next frame held down
    */
   useHotkeys(
     'right, d',
     () => {
-      if (nextHeld === true) {
+      if (nextFrameHeld === true) {
         return;
       }
 
-      handleNextMain();
-      setNextHeld(true);
+      handleNextFrame();
+      setNextFrameHeld(true);
     },
     {
       keydown: true,
     },
-    [nextHeld, currentTime]
+    [nextFrameHeld, currentTime]
   );
 
   /**
-   * Next frame control released
+   * Next frame released
    */
   useHotkeys(
     'right, d',
     () => {
-      setNextHeld(false);
+      setNextFrameHeld(false);
     },
     {
       keyup: true,
@@ -234,17 +185,27 @@ export default function HotKeys({
   );
 
   /**
-   * Next frame modifier pressed
+   * Jump previous pressed
    */
   useHotkeys(
-    'shift+right, shift+d',
+    's',
     () => {
-      if (previousHeld === true) {
-        return;
-      }
-      handleNextModifier();
+      handlePreviousJump();
     },
-    [previousHeld, currentTime]
+    {},
+    []
+  );
+
+  /**
+   * Jump next pressed
+   */
+  useHotkeys(
+    'w',
+    () => {
+      handleNextJump();
+    },
+    {},
+    []
   );
 
   /**
@@ -287,11 +248,11 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [previousHeld, currentTime]
+    [previousFrameHeld, currentTime]
   );
 
   /**
-   * Holding H
+   * Let go of H
    */
   useHotkeys(
     'h',
@@ -301,7 +262,7 @@ export default function HotKeys({
     {
       keyup: true,
     },
-    [previousHeld, currentTime]
+    [previousFrameHeld, currentTime]
   );
 
   return <></>;

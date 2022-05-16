@@ -3,12 +3,8 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  Radio,
-  RadioGroup,
   FormHelperText,
-  Stack,
   Switch,
-  Text,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -16,9 +12,7 @@ import {
   NumberDecrementStepper,
 } from '@chakra-ui/react';
 
-import useSettingsStore, {
-  ArrowKeyNavigationMode,
-} from '../services/stores/settings';
+import useSettingsStore from '../services/stores/settings';
 
 import NoSidebar from '../layouts/NoSidebar';
 
@@ -27,20 +21,12 @@ export default function Settings() {
     (state) => state.toggleSlowCPUMode
   );
 
-  const setArrowKeyNavigationMode = useSettingsStore(
-    (state) => state.setArrowKeyNavigationMode
-  );
-
   const setArrowKeyJumpDistance = useSettingsStore(
     (state) => state.setArrowKeyJumpDistance
   );
 
   const toggleClearDrawingsOnPlay = useSettingsStore(
     (state) => state.toggleClearDrawingsOnPlay
-  );
-
-  const arrowKeyNavigationMode = useSettingsStore(
-    (state) => state.arrowKeyNavigationMode
   );
 
   const arrowKeyJumpDistance = useSettingsStore(
@@ -58,20 +44,6 @@ export default function Settings() {
       setArrowKeyJumpDistance(value);
     }
   }
-
-  const arrowKeyNavigationModes = Object.entries(
-    ArrowKeyNavigationMode
-  ) as Array<[string, string]>;
-
-  const renderedArrowKeyNavigationModes = arrowKeyNavigationModes.map(
-    ([key, value]) => {
-      return (
-        <Radio value={value} mr={4} key={key}>
-          {value}
-        </Radio>
-      );
-    }
-  );
 
   return (
     <NoSidebar>
@@ -117,43 +89,16 @@ export default function Settings() {
         </Heading>
 
         <FormControl my={4} width="container.sm">
-          <Heading as="h1" fontSize="1xl" mb={4}>
-            Default arrow key behaviour
-          </Heading>
-          <RadioGroup
-            value={arrowKeyNavigationMode}
-            onChange={(mode: ArrowKeyNavigationMode) =>
-              setArrowKeyNavigationMode(mode)
-            }
-          >
-            <Stack direction="row">{renderedArrowKeyNavigationModes}</Stack>
-          </RadioGroup>
-          <FormHelperText>
-            <Text mb={2}>
-              Changes the behaviour of the arrow keys when reviewing videos.
-            </Text>
-            <Text mb={2}>
-              <strong>Frame adjust</strong> will make pressing the arrow keys
-              navigate one frame at a time
-            </Text>
-            <Text mb={2}>
-              <strong>Jump time</strong> will make pressing the arrow keys
-              navigate forwards and back by a set amount of time.
-            </Text>
-          </FormHelperText>
-        </FormControl>
-
-        <FormControl my={4} width="container.sm">
           <FormLabel htmlFor="arrow-key-jump-distance" mb="4">
             Arrow key jump distance
           </FormLabel>
           <NumberInput
             id="arrow-key-jump-distance"
             max={60}
-            min={1}
-            onChange={(str) => handleArrowKeyJumpDistanceChange(str)}
+            min={0.1}
+            onChange={(str: string) => handleArrowKeyJumpDistanceChange(str)}
             precision={2}
-            step={1}
+            step={0.1}
             value={arrowKeyJumpDistance}
             width={32}
           >

@@ -3,14 +3,8 @@ import { persist } from 'zustand/middleware';
 
 const CURRENT_PERSIST_VERSION = 0;
 
-export enum ArrowKeyNavigationMode {
-  'seek' = 'Jump time',
-  'frame' = 'Frame adjust',
-}
-
 interface StateData {
   arrowKeyJumpDistance: string;
-  arrowKeyNavigationMode: ArrowKeyNavigationMode;
   clearDrawingsOnPlay: boolean;
   showSetupInstructions: boolean;
   slowCPUMode: boolean;
@@ -18,7 +12,6 @@ interface StateData {
 
 interface State extends StateData {
   setArrowKeyJumpDistance: (seconds: string) => void;
-  setArrowKeyNavigationMode: (value: ArrowKeyNavigationMode) => void;
   setShowSetupInstructions: (value: boolean) => void;
   toggleClearDrawingsOnPlay: () => void;
   toggleSlowCPUMode: () => void;
@@ -26,7 +19,6 @@ interface State extends StateData {
 
 const emptyState: StateData = {
   arrowKeyJumpDistance: '10.00',
-  arrowKeyNavigationMode: ArrowKeyNavigationMode.seek,
   clearDrawingsOnPlay: true,
   showSetupInstructions: true,
   slowCPUMode: false,
@@ -45,8 +37,6 @@ const useStore = createStore<State>(
     (set) => ({
       setArrowKeyJumpDistance: (seconds) =>
         set(() => ({ arrowKeyJumpDistance: seconds })),
-      setArrowKeyNavigationMode: (mode) =>
-        set(() => ({ arrowKeyNavigationMode: mode })),
       setShowSetupInstructions: (value) =>
         set(() => ({ showSetupInstructions: value })),
       toggleClearDrawingsOnPlay: () =>

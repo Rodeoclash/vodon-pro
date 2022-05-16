@@ -17,10 +17,13 @@ export default function VideoThumbnail({ video }: Props) {
   const containerRef = useRef(null);
 
   const setActiveVideoId = useVideoStore((state) => state.setActiveVideoId);
+  const setSeeking = useVideoStore((state) => state.setSeeking);
+
   const activeVideoId = useVideoStore((state) => state.activeVideoId);
   const currentTime = useVideoStore((state) => state.currentTime);
   const playbackSpeed = useVideoStore((state) => state.playbackSpeed);
   const playing = useVideoStore((state) => state.playing);
+  const seeking = useVideoStore((state) => state.seeking);
 
   const slowCPUMode = useSettingsStore((state) => state.slowCPUMode);
 
@@ -38,8 +41,7 @@ export default function VideoThumbnail({ video }: Props) {
   }
 
   /**
-   * After the video has loaded, we need to trigger a resize event now that the
-   * canvas is populated.
+   * Actions that run once when the video is loaded. This is useful for setting event listeners on the video object.
    */
   useEffect(() => {
     const handleLoadedMetaData = () => {
@@ -50,12 +52,32 @@ export default function VideoThumbnail({ video }: Props) {
       window.dispatchEvent(new Event('resize'));
     };
 
+    const handleSeeking = () => {
+      if (containerRef.current === null) {
+        return;
+      }
+
+      setSeeking(video, true);
+    };
+
+    const handleSeeked = () => {
+      if (containerRef.current === null) {
+        return;
+      }
+
+      setSeeking(video, false);
+    };
+
     video.el.addEventListener('loadedmetadata', handleLoadedMetaData);
+    video.el.addEventListener('seeking', handleSeeking);
+    video.el.addEventListener('seeked', handleSeeked);
 
     return () => {
       video.el.removeEventListener('loadedmetadata', handleLoadedMetaData);
+      video.el.removeEventListener('seeking', handleSeeking);
+      video.el.removeEventListener('seeked', handleSeeked);
     };
-  }, []);
+  }, [video.el]);
 
   // when this video becomes inactive, replace it in the list
   useEffect(() => {

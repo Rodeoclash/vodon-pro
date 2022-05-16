@@ -20,6 +20,7 @@ interface StateData {
   editingBookmark: boolean;
   fullDuration: number | null;
   overrideHideControls: boolean;
+  seeking: boolean;
   playbackSpeed: number;
   playing: boolean;
   videos: Video[];
@@ -28,14 +29,16 @@ interface StateData {
 interface State extends StateData {
   addVideo: (video: Video) => void;
   clearVideos: () => void;
-
   removeVideo: (video: Video) => void;
+
+  anySeeking: () => boolean;
+  recalculateOffsets: () => void;
   setActiveVideoId: (id: string | null) => void;
   setCurrentTime: (currentTime: number) => void;
+  setSeeking: (video: Video, value: boolean) => void;
   setVideoDuration: (video: Video, duration: number) => void;
   setVideoName: (video: Video, name: string) => void;
   setVideoSyncTime: (video: Video, offset: number) => void;
-  recalculateOffsets: () => void;
   setVideoVolume: (video: Video, volume: number) => void;
 
   setOverrideHideControls: (value: boolean) => void;
@@ -83,6 +86,7 @@ const emptyState: StateData = {
   overrideHideControls: false,
   playbackSpeed: 1,
   playing: false,
+  seeking: false,
   videos: [],
 };
 
@@ -143,7 +147,7 @@ const deserialize = async (str: string) => {
 
 const useStore = createStore<State>(
   persist(
-    (set) => ({
+    (set, get) => ({
       /**
        * Video control
        */
@@ -175,6 +179,12 @@ const useStore = createStore<State>(
           ...state,
           ...emptyState,
         })),
+
+      anySeeking: (): boolean => {
+        return get().videos.some((video) => {
+          return video.seeking === true;
+        });
+      },
 
       // TODO: Combine with name update
       setVideoDuration: (video: Video, duration: number) =>
@@ -209,6 +219,18 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].volume = volume;
+          })
+        ),
+
+      // TODO: Combine with duration update
+      setSeeking: (video: Video, value: boolean) =>
+        set(
+          produce((state: State) => {
+            const index = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
+
+            state.videos[index].seeking = value;
           })
         ),
 

@@ -43,6 +43,9 @@ export type Video = {
   /** Calculated offset from the global start (relative to other videos) */
   offset: number | null;
 
+  /** Is this video currently seeking */
+  seeking: boolean;
+
   /** What time in this video is the "shared moment" with the other videos */
   syncTime: number;
 
@@ -196,6 +199,7 @@ export async function createFromFile(filePath: string): Promise<Video> {
     id: uuidv4(),
     name: basename(filePath),
     offset: null,
+    seeking: false,
     syncTime: 0,
     volume: 0.8,
   };
