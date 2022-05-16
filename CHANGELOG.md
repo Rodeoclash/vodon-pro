@@ -6,7 +6,7 @@
 
 - Improved frame step controls so they don't overwhelm the video with requests and cause it to stall out.
 - Added unified help button. Help button will display help based on which page you are on (only setup and review for now)
-- Changed shortcuts so that "a" and "d" move frame by frame, "w" and "s" jump frames (based on jump distance in settings)\
+- Changed shortcuts so that "a" and "d" move frame by frame, "w" and "s" jump frames (based on jump distance in settings)
 - Removed ability to change arrow keys from frame navigation to jump frame (just added more shortcuts)
 - Added ability to resize the sidebar where thumbnails are located.
 - Added keyboard shortcuts to jump between viewpoints using the number keys.
