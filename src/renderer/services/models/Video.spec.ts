@@ -21,6 +21,7 @@ const baseVideo: Video = {
   id: '1',
   name: 'A Video',
   offset: null,
+  seeking: false,
   syncTime: 0,
   volume: 1,
 };
