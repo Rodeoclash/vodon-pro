@@ -237,6 +237,8 @@ export default function ReviewVideos() {
       return undefined;
     }
 
+    window.dispatchEvent(new Event('resize'));
+
     const timeout = setTimeout(() => {
       setMouseLastActive(null);
     }, 750);
