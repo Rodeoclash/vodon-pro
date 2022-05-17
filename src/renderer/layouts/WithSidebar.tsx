@@ -1,10 +1,11 @@
 import * as React from 'react';
 
 import { css } from '@emotion/react';
+import { useThrottle } from '@react-hook/throttle';
 
 import { Flex, Box } from '@chakra-ui/react';
 import Draggable from 'react-draggable';
-import { useThrottle } from '@react-hook/throttle';
+import useSettingsStore from '../services/stores/settings';
 
 interface Props {
   children: React.ReactNode;
@@ -17,7 +18,8 @@ export default function WithSidebar({
   sidebar,
   disableSidebar = false,
 }: Props) {
-  const [sidebarWidth, setSidebarWidth] = React.useState<number>(450);
+  const sidebarWidth = useSettingsStore((state) => state.sidebarWidth);
+  const setSidebarWidth = useSettingsStore((state) => state.setSidebarWidth);
 
   const [resizeLastAt, setResizeLastAt] = useThrottle<number | null>(null, 10);
 
