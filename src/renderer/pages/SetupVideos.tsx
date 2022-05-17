@@ -63,7 +63,7 @@ export default function SetupVideos() {
           borderBottom="1px"
           borderColor="whiteAlpha.300"
           height="4rem"
-          px={8}
+          px={4}
           alignItems="center"
           justifyContent="flex-start"
         >
