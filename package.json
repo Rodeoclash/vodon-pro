@@ -1,6 +1,6 @@
 {
   "name": "vodon-pro",
-  "version": "1.7.11",
+  "version": "1.7.12",
   "description": "The synchronised VOD review tool",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
@@ -19,7 +19,9 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-
+    "*.{js,jsx,ts,tsx}": [
+      "cross-env NODE_ENV=development eslint --cache"
+    ],
     "*.json,.{eslintrc,prettierrc}": [
       "prettier --ignore-path .eslintignore --parser json --write"
     ],

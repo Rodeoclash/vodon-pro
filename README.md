@@ -27,7 +27,7 @@ Add viewpoints from each player in a match, tell Vodon how to synchronise the vi
 - 👀 No advertising or tracking.
 - ⚙️ Sensible defaults but can be customised to match your workflow.
 - 🖥 Includes a "Slow CPU" mode to reduce load when many videos are loaded in at once.
-- 👀 Presentation mode which maximises the video sent over screenshare.
+- 😎 Presentation mode which maximises the video sent over screenshare.
 
 ## Tested with
 

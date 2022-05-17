@@ -1,3 +1,11 @@
+### 1.7.12
+
+- Greatly improved the way the app works when you've associated video files with it.
+- Save sidebar width when navigating between pages and restoring app.
+- Reduce padding of remove videos button in header
+- Fixed bug with thumbnail size when coming back to the review tab.
+- Improved speed of frame advance / rewind when using keyboard controls.
+
 ### 1.7.11
 
 - Fix bug with sidebar size after exiting presentation mode.
