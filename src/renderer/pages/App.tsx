@@ -140,8 +140,8 @@ export default function App() {
                   <Kbd>W</Kbd>, <Kbd>↑</Kbd>
                 </Td>
                 <Td>
-                  Jump {arrowKeyJumpDistance}s forward (you adjust distance in
-                  Settings page)
+                  Jump {arrowKeyJumpDistance}s forward (you can adjust distance
+                  in the Settings page)
                 </Td>
               </Tr>
               <Tr>
@@ -149,8 +149,8 @@ export default function App() {
                   <Kbd>S</Kbd>, <Kbd>↓</Kbd>
                 </Td>
                 <Td>
-                  Jump {arrowKeyJumpDistance}s back (you adjust distance in
-                  Settings page)
+                  Jump {arrowKeyJumpDistance}s back (you can adjust distance in
+                  the Settings page)
                 </Td>
               </Tr>
               <Tr>
