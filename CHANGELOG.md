@@ -1,3 +1,7 @@
+### 1.7.13
+
+- Fixed bug with bookmarks not appear until a resize event triggered.
+
 ### 1.7.12
 
 - Greatly improved the way the app works when you've associated video files with it.
