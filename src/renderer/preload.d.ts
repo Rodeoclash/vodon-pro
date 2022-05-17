@@ -1,10 +1,13 @@
-import * as fs from 'fs';
 import type { VideoMetadata } from './services/models/Video';
 
 declare global {
   interface Window {
     app: {
       getVersion: () => Promise<string>;
+      getArgv: () => Promise<Array<string>>;
+      onLoadAdditionalVideos: (
+        cb: (event: any, paths: Array<string>) => void
+      ) => void;
       onNewProjectRequest: (cb: (event: any) => void) => void;
       onLoadProjectRequest: (cb: (event: any, project: string) => void) => void;
       onSaveProjectRequest: (

@@ -3,24 +3,16 @@ import { useDropzone } from 'react-dropzone';
 
 import { Box, Center, Text, Flex } from '@chakra-ui/react';
 import { Plus as PlusIcon } from 'tabler-icons-react';
-import useStore from '../../services/stores/videos';
-import { createFromFile } from '../../services/models/Video';
+import { createVideosFromPaths } from '../../services/stores/videos';
 
 export default function VideoAdd() {
-  const videos = useStore((state) => state.videos);
-  const addVideo = useStore((state) => state.addVideo);
+  const handleDrop = useCallback((files: File[]) => {
+    const paths = files.map((file) => {
+      return file.path;
+    });
 
-  const handleDrop = useCallback(
-    async (files: File[]) => {
-      for (const file of files) {
-        const video = await createFromFile(file.path);
-
-        // add the video to the store
-        addVideo(video);
-      }
-    },
-    [videos]
-  );
+    createVideosFromPaths(paths);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: handleDrop,

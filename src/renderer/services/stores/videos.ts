@@ -3,7 +3,8 @@ import { persist } from 'zustand/middleware';
 import { produce } from 'immer';
 import superjson from 'superjson';
 
-import { findMaxNormalisedDuration } from '../models/Video';
+import { getPossibleArgVMoviePaths } from '../file';
+import { createFromFile, findMaxNormalisedDuration } from '../models/Video';
 import { create as createVideoBookmark } from '../models/VideoBookmark';
 
 import type { Video } from '../models/Video';
@@ -449,6 +450,20 @@ const useStore = createStore<State>(
 export default useStore;
 
 /**
+ * Used to add videos to the store. Called from the VideoAdd component, when
+ * booting the app using "open with" and when a second instance of the app
+ * is launched.
+ */
+export async function createVideosFromPaths(paths: Array<string>) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const path of paths) {
+    // eslint-disable-next-line no-await-in-loop
+    const video = await createFromFile(path);
+    useStore.getState().addVideo(video);
+  }
+}
+
+/**
  * Handle the save request from the main thread. Calculate the current state
  * then pass it back to the main thread along with the filepath to persist.
  */
@@ -481,5 +496,16 @@ window.app.onNewProjectRequest(async () => {
       ...useStore.getState(),
       ...emptyState,
     });
+  }
+});
+
+/**
+ * Handle additional incoming videos.
+ */
+window.app.onLoadAdditionalVideos(async (_event: any, argV: Array<string>) => {
+  const paths = getPossibleArgVMoviePaths(argV);
+
+  if (paths.length > 0) {
+    createVideosFromPaths(paths);
   }
 });

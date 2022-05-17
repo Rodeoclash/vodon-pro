@@ -7,21 +7,10 @@ import {
   Flex,
   Grid,
   GridItem,
-  Heading,
-  ListItem,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  OrderedList,
 } from '@chakra-ui/react';
 
-import { Help as HelpIcon, X as XIcon } from 'tabler-icons-react';
+import { X as XIcon } from 'tabler-icons-react';
 import useVideoStore from '../services/stores/videos';
-import useSettingsStore from '../services/stores/settings';
 
 import VideoAdd from '../components/VideoAdd/VideoAdd';
 import VideoAligner from '../components/VideoAligner/VideoAligner';
@@ -42,14 +31,8 @@ const addVideoCellStyles = css`
 `;
 
 export default function SetupVideos() {
-  const showSetupInstructions = useSettingsStore(
-    (state) => state.showSetupInstructions
-  );
   const videos = useVideoStore((state) => state.videos);
 
-  const setShowSetupInstructions = useSettingsStore(
-    (state) => state.setShowSetupInstructions
-  );
   const clearVideos = useVideoStore((state) => state.clearVideos);
 
   const renderedVideos = videos.map((video) => {
@@ -64,10 +47,6 @@ export default function SetupVideos() {
       </GridItem>
     );
   });
-
-  function handleCloseInstructions() {
-    setShowSetupInstructions(false);
-  }
 
   function handleClearVideos() {
     // eslint-disable-next-line no-alert
@@ -90,13 +69,6 @@ export default function SetupVideos() {
         >
           <ButtonGroup size="sm">
             <Button
-              colorScheme="cyan"
-              leftIcon={<HelpIcon />}
-              onClick={() => setShowSetupInstructions(true)}
-            >
-              Instructions
-            </Button>
-            <Button
               colorScheme="red"
               leftIcon={<XIcon />}
               onClick={() => handleClearVideos()}
@@ -118,48 +90,6 @@ export default function SetupVideos() {
           </GridItem>
         </Grid>
       </Box>
-      <Modal
-        isOpen={showSetupInstructions}
-        onClose={() => handleCloseInstructions()}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>How to use</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Heading color="white" fontSize="lg" mb="4">
-              Getting started
-            </Heading>
-            <OrderedList my="4">
-              <ListItem mb="4">
-                Either click to add videos or drag and drop them from your
-                desktop.
-              </ListItem>
-              <ListItem mb="4">
-                Pick a point in time that is easy to identify in all the videos
-                (countdowns before a round start works well here)
-              </ListItem>
-              <ListItem mb="4">
-                Align all the videos to the same point in time using the
-                controls on each video.
-              </ListItem>
-              <ListItem mb="4">
-                When all videos are aligned, go to the Review tab to start the
-                VOD review
-              </ListItem>
-            </OrderedList>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              colorScheme="blue"
-              onClick={() => handleCloseInstructions()}
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </>
   );
 }

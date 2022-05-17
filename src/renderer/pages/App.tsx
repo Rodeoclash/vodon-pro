@@ -33,14 +33,21 @@ import {
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { Help as HelpIcon } from 'tabler-icons-react';
+import { getPossibleArgVMoviePaths } from '../services/file';
 
 import useSettingsStore from '../services/stores/settings';
+import useVideoStore, {
+  createVideosFromPaths,
+} from '../services/stores/videos';
 import theme from '../services/theme';
 import garet from '../assets/fonts/Garet-Heavy.otf';
 
 import NavLink from '../components/NavLink/NavLink';
 
 export default function App() {
+  const addVideo = useVideoStore((state) => state.addVideo);
+  const clearVideos = useVideoStore((state) => state.clearVideos);
+
   const arrowKeyJumpDistance = useSettingsStore(
     (state) => state.arrowKeyJumpDistance
   );
@@ -50,17 +57,34 @@ export default function App() {
 
   const { pathname } = useLocation();
 
-  // On load, fetch the version of the app
   useEffect(() => {
+    // Fetch the version of the app
     window.app
       .getVersion()
-      .then((result: string) => {
+      .then((result) => {
         return setVersion(result);
       })
       .catch((e) => {
         throw e;
       });
-  }, []);
+
+    // Fetch any arguments passed to theapp
+    window.app
+      .getArgv()
+      .then((results) => {
+        const paths = getPossibleArgVMoviePaths(results);
+
+        if (paths.length > 0) {
+          clearVideos();
+          createVideosFromPaths(paths);
+        }
+
+        return undefined;
+      })
+      .catch((e) => {
+        throw e;
+      });
+  }, [addVideo, clearVideos]);
 
   const showHelp = pathname === '/' || pathname === '/review';
 

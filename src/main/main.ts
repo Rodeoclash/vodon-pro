@@ -13,7 +13,6 @@ import { app, BrowserWindow, shell, ipcMain, protocol } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import * as fsPromise from 'fs/promises';
-import * as fs from 'fs';
 import ffmpegBins from 'ffmpeg-ffprobe-static';
 import ffmpeg from 'fluent-ffmpeg';
 import os from 'os';
@@ -136,9 +135,42 @@ const createWindow = async () => {
   // new AppUpdater();
 };
 
+const gotTheLock = app.requestSingleInstanceLock();
+
 /**
  * Add event listeners...
  */
+
+/**
+ * If the app is already running, quit, also, when a second instance is
+ * launched then push the opened videos to the first.
+ */
+if (gotTheLock === false) {
+  app.quit();
+} else {
+  app.on('second-instance', (_event, argV) => {
+    /**
+     * If we're loading multiple videos on a cold load, we need to wait a
+     * couple of seconds to ensure that the first app is ready to receive
+     * the new videos.
+     */
+    setTimeout(() => {
+      if (!mainWindow) {
+        return;
+      }
+
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+
+      mainWindow.focus();
+      mainWindow.webContents.send('onLoadAdditionalVideos', argV);
+    }, 2000);
+  });
+
+  // Create myWindow, load the rest of the app, etc...
+  app.on('ready', () => {});
+}
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
@@ -168,6 +200,13 @@ ipcMain.handle('app:getVersion', async () => {
 });
 
 /**
+ * Get arguments passed to the app
+ */
+ipcMain.handle('app:getArgv', async () => {
+  return process.argv;
+});
+
+/**
  * Saves the given project (string'd json) to the supplied filePath
  */
 ipcMain.handle(
@@ -182,7 +221,7 @@ ipcMain.handle(
  */
 ipcMain.handle('video:getMetadata', async (_event, filePath: string) => {
   const result = await new Promise((resolve) => {
-    ffmpeg.ffprobe(filePath, (err: unknown, metadata: object) => {
+    ffmpeg.ffprobe(filePath, (_err: unknown, metadata: object) => {
       resolve(metadata);
     });
   });
