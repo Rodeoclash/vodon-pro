@@ -1,3 +1,7 @@
+### 1.7.14
+
+- Fixed bug with bookmarks closing when controls fading out. Controls now stay open when a bookmark is being edited.
+
 ### 1.7.13
 
 - Fixed bug with bookmarks not appear until a resize event triggered.
