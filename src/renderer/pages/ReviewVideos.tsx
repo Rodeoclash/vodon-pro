@@ -275,8 +275,9 @@ export default function ReviewVideos() {
       : videoDimensions[0] / activeVideo.codedWidth;
 
   const showControls =
-    overrideHideControls === false &&
-    (mouseLastActive !== null || controlsOn === true);
+    editingBookmark === true ||
+    (overrideHideControls === false &&
+      (mouseLastActive !== null || controlsOn === true));
 
   const overlayStyle = css`
     width: ${videoDimensions ? videoDimensions[0] : ''}px;
