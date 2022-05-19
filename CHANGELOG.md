@@ -1,3 +1,7 @@
+### 1.7.15
+
+- Don't restrict files the user can choose (i.e. support mkv files)
+
 ### 1.7.14
 
 - Fixed bug with bookmarks closing when controls fading out. Controls now stay open when a bookmark is being edited.

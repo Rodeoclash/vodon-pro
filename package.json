@@ -1,6 +1,6 @@
 {
   "name": "vodon-pro",
-  "version": "1.7.14",
+  "version": "1.7.15",
   "description": "The synchronised VOD review tool",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
