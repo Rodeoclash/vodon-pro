@@ -111,3 +111,9 @@ You can or join me and the other users on
 - [Email me](mailto:sam@vodon.gg)
 - [Join our Discord](https://discord.gg/EaJdhHtZEk)
 - [Follow our Twitter](https://twitter.com/GgVodon)
+
+## Development
+
+1. Clone the repo
+2. `npm install`
+3. `npm start` to being development
