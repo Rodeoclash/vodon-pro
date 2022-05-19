@@ -16,7 +16,6 @@ export default function VideoAdd() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: handleDrop,
-    accept: 'video/mp4, video/webm, video/ogg',
     useFsAccessApi: false,
   });
 
