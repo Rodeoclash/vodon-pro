@@ -1,5 +1,7 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from 'react';
 
+import { useHotkeys } from 'react-hotkeys-hook';
+
 import {
   Box,
   Button,
@@ -60,28 +62,35 @@ export default function VideoAligner({ video }: Props) {
 
     function handleSeeked() {
       setSeeking(false);
-      setVideoSyncTime(video, videoRef.current.currentTime);
+      if (videoRef.current !== null)
+        setVideoSyncTime(video, videoRef.current.currentTime);
       recalculateOffsets();
     }
 
     function handleLoadedMetaData() {
+      if (videoRef.current === null) return;
       setVideoDuration(video, videoRef.current.duration);
       videoRef.current.currentTime = video.syncTime;
       videoRef.current.volume = 0;
     }
 
-    videoRef.current.addEventListener('loadedmetadata', handleLoadedMetaData);
-    videoRef.current.addEventListener('seeking', handleSeeking);
-    videoRef.current.addEventListener('seeked', handleSeeked);
+    if (videoRef.current !== null) {
+      videoRef.current.addEventListener('loadedmetadata', handleLoadedMetaData);
+      videoRef.current.addEventListener('seeking', handleSeeking);
+      videoRef.current.addEventListener('seeked', handleSeeked);
+    }
 
     return () => {
+      if (videoRef.current === null) return;
       videoRef.current.removeEventListener(
         'loadedmetadata',
         handleLoadedMetaData
       );
+
       videoRef.current.removeEventListener('seeking', handleSeeking);
       videoRef.current.removeEventListener('seeked', handleSeeked);
     };
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -97,14 +106,18 @@ export default function VideoAligner({ video }: Props) {
       videoRef.current.pause();
       setVideoSyncTime(video, videoRef.current.currentTime);
     }
+
+    // eslint-disable-next-line
   }, [playing]);
 
   function handleSliderChange(newTime: number) {
+    if (videoRef.current === null) return;
     videoRef.current.currentTime = newTime;
   }
 
   function handleClickStep(distance: number) {
-    videoRef.current.currentTime = videoRef.current.currentTime + distance;
+    if (videoRef.current === null) return;
+    videoRef.current.currentTime += videoRef.current.currentTime + distance;
   }
 
   function handleClickName() {
@@ -123,6 +136,14 @@ export default function VideoAligner({ video }: Props) {
   function handleChangeVideoName(event: React.ChangeEvent<HTMLInputElement>) {
     setVideoName(video, event.target.value);
   }
+
+  /**
+   * Save edited video name by pressing enter
+   * when edit name input on the modal is not focused.
+   */
+  useHotkeys('enter', () => {
+    handleClose();
+  });
 
   const renderedControls =
     video.duration === null ? null : (
@@ -163,7 +184,8 @@ export default function VideoAligner({ video }: Props) {
 
         <Box mx={2}>
           <Text whiteSpace="nowrap" fontSize="sm" mx="2" align="center">
-            {secondsToHms(Math.round(video.syncTime))} / {secondsToHms(Math.round(video.duration))}
+            {secondsToHms(Math.round(video.syncTime))} /{' '}
+            {secondsToHms(Math.round(video.duration))}
           </Text>
         </Box>
 
@@ -254,6 +276,11 @@ export default function VideoAligner({ video }: Props) {
             <FormControl>
               <FormLabel>Name</FormLabel>
               <Input
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleClose();
+                  }
+                }}
                 value={video.name}
                 onChange={handleChangeVideoName}
                 autoFocus
