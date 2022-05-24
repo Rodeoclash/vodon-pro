@@ -1,3 +1,8 @@
+### 1.7.16
+
+- Show help pages on first load of setup and review
+- Close video name editor on enter (thanks https://github.com/Assain2)
+
 ### 1.7.15
 
 - Don't restrict files the user can choose (i.e. support mkv files)
