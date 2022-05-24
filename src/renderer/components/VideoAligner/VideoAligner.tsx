@@ -1,7 +1,5 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from 'react';
 
-import { useHotkeys } from 'react-hotkeys-hook';
-
 import {
   Box,
   Button,
@@ -136,14 +134,6 @@ export default function VideoAligner({ video }: Props) {
   function handleChangeVideoName(event: React.ChangeEvent<HTMLInputElement>) {
     setVideoName(video, event.target.value);
   }
-
-  /**
-   * Save edited video name by pressing enter
-   * when edit name input on the modal is not focused.
-   */
-  useHotkeys('enter', () => {
-    handleClose();
-  });
 
   const renderedControls =
     video.duration === null ? null : (
