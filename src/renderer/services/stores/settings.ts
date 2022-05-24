@@ -7,6 +7,8 @@ const DEFAULT_SIDEBAR_WIDTH = 450;
 interface StateData {
   arrowKeyJumpDistance: string;
   clearDrawingsOnPlay: boolean;
+  shownFirstHelpReview: boolean;
+  shownFirstHelpSetup: boolean;
   showSetupInstructions: boolean;
   sidebarWidth: number;
   slowCPUMode: boolean;
@@ -14,6 +16,8 @@ interface StateData {
 
 interface State extends StateData {
   setArrowKeyJumpDistance: (seconds: string) => void;
+  setShownFirstHelpReview: (value: boolean) => void;
+  setShownFirstHelpSetup: (value: boolean) => void;
   setShowSetupInstructions: (value: boolean) => void;
   setSidebarWidth: (value: number) => void;
   toggleClearDrawingsOnPlay: () => void;
@@ -23,6 +27,8 @@ interface State extends StateData {
 const emptyState: StateData = {
   arrowKeyJumpDistance: '10.00',
   clearDrawingsOnPlay: true,
+  shownFirstHelpReview: false,
+  shownFirstHelpSetup: false,
   showSetupInstructions: true,
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
   slowCPUMode: false,
@@ -47,6 +53,10 @@ const useStore = createStore<State>(
     (set) => ({
       setArrowKeyJumpDistance: (seconds) =>
         set(() => ({ arrowKeyJumpDistance: seconds })),
+      setShownFirstHelpReview: (shownFirstHelpReview) =>
+        set(() => ({ shownFirstHelpReview })),
+      setShownFirstHelpSetup: (shownFirstHelpSetup) =>
+        set(() => ({ shownFirstHelpSetup })),
       setShowSetupInstructions: (value) =>
         set(() => ({ showSetupInstructions: value })),
       setSidebarWidth: (sidebarWidth) => set(() => ({ sidebarWidth })),

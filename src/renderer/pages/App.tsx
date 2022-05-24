@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Global, css } from '@emotion/react';
 
 import {
@@ -48,6 +48,22 @@ export default function App() {
   const addVideo = useVideoStore((state) => state.addVideo);
   const clearVideos = useVideoStore((state) => state.clearVideos);
 
+  const setShownFirstHelpReview = useSettingsStore(
+    (state) => state.setShownFirstHelpReview
+  );
+
+  const setShownFirstHelpSetup = useSettingsStore(
+    (state) => state.setShownFirstHelpSetup
+  );
+
+  const showFirstHelpReview = useSettingsStore(
+    (state) => state.shownFirstHelpReview
+  );
+
+  const showFirstHelpSetup = useSettingsStore(
+    (state) => state.shownFirstHelpSetup
+  );
+
   const arrowKeyJumpDistance = useSettingsStore(
     (state) => state.arrowKeyJumpDistance
   );
@@ -86,7 +102,24 @@ export default function App() {
       });
   }, [addVideo, clearVideos]);
 
-  const showHelp = pathname === '/' || pathname === '/review';
+  const showHelpButton = pathname === '/' || pathname === '/review';
+
+  const modalOpen =
+    isOpen === true ||
+    (pathname === '/' && showFirstHelpSetup === false) ||
+    (pathname === '/review' && showFirstHelpReview === false);
+
+  const handleClose = useCallback(() => {
+    if (pathname === '/') {
+      setShownFirstHelpSetup(true);
+    }
+
+    if (pathname === '/review') {
+      setShownFirstHelpReview(true);
+    }
+
+    onClose();
+  }, [pathname, setShownFirstHelpSetup, setShownFirstHelpReview, onClose]);
 
   const renderedHelpContents = (() => {
     if (pathname === '/') {
@@ -228,7 +261,7 @@ export default function App() {
               <NavLink to="/about">About</NavLink>
             </Flex>
             <Spacer />
-            {showHelp === true && (
+            {showHelpButton === true && (
               <Button leftIcon={<HelpIcon />} onClick={() => onOpen()}>
                 Help
               </Button>
@@ -238,14 +271,14 @@ export default function App() {
             <Outlet />
           </Flex>
         </Flex>
-        <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+        <Modal isOpen={modalOpen} onClose={() => handleClose()} size="2xl">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Help</ModalHeader>
             <ModalCloseButton />
             <ModalBody>{renderedHelpContents}</ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" onClick={onClose}>
+              <Button colorScheme="blue" onClick={() => handleClose()}>
                 Close
               </Button>
             </ModalFooter>
