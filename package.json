@@ -239,6 +239,7 @@
     "react-router-dom": "^6.3.0",
     "superjson": "^1.8.2",
     "tabler-icons-react": "^1.45.0",
+    "use-pan-and-zoom": "^0.6.5",
     "uuid": "^8.3.2",
     "zustand": "^3.7.1"
   },
