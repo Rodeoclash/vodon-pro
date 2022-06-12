@@ -29,6 +29,7 @@ import { TldrawApp } from '@tldraw/tldraw';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import usePanZoom from 'use-pan-and-zoom';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { getRatioDimensions } from '../services/layout';
 import useVideoStore from '../services/stores/videos';
 import useSettingsStore from '../services/stores/settings';
@@ -83,9 +84,9 @@ export default function ReviewVideos() {
 
   const zoomPanEnabled = useSettingsStore((state) => state.zoomPanEnabled);
 
-  const { panZoomHandlers, setContainer, setPan, setZoom, transform } =
+  const { panZoomHandlers, setContainer, setPan, setZoom, transform, zoom } =
     usePanZoom({
-      disableWheel: zoomPanEnabled === false,
+      disableWheel: true, // zoomPanEnabled === false,
       minZoom: 1,
     });
 
@@ -112,12 +113,19 @@ export default function ReviewVideos() {
   }
 
   /**
-   * Resets the pan and zoom of the video back to normal
+   * Reset zoom / pan bounds
    */
-  const handleZoomPanReset = useCallback(() => {
-    setZoom(0);
-    setPan({ x: 0, y: 0 });
-  }, [setZoom, setPan]);
+  useHotkeys(
+    'x',
+    () => {
+      setZoom(0);
+      setPan({ x: 0, y: 0 });
+    },
+    {
+      keyup: true,
+    },
+    []
+  );
 
   const updateCurrentTime = useCallback(() => {
     if (startedPlayingAt === null) {
@@ -571,8 +579,12 @@ export default function ReviewVideos() {
     const updatedPanZoomHandlers = zoomPanEnabled
       ? {
           ...panZoomHandlers,
-          onDoubleClick: () => {
-            handleZoomPanReset();
+          onWheel: (event: WheelEvent) => {
+            if (event.deltaY < 0) {
+              setZoom(zoom + 1);
+            } else {
+              setZoom(zoom - 1);
+            }
           },
         }
       : {};
