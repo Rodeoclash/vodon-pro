@@ -210,6 +210,16 @@ export default function App() {
                 </Td>
                 <Td>Edit presentation mode</Td>
               </Tr>
+              <Tr>
+                <Td>
+                  <Kbd>Z</Kbd>
+                </Td>
+                <Td>
+                  Hold to enter pan and zoom mode, double click video while held
+                  <br />
+                  to reset position reset
+                </Td>
+              </Tr>
             </Tbody>
           </Table>
         </TableContainer>

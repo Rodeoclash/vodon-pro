@@ -31,6 +31,7 @@ export default function HotKeys({
   const arrowKeyJumpDistance = useSettingsStore(
     (state) => state.arrowKeyJumpDistance
   );
+  const setZoomPan = useSettingsStore((state) => state.setZoomPan);
 
   const parsedArrowKeyJumpDistance = parseFloat(arrowKeyJumpDistance);
 
@@ -174,6 +175,34 @@ export default function HotKeys({
     'right, d',
     () => {
       setNextFrameHeld(false);
+    },
+    {
+      keyup: true,
+    },
+    []
+  );
+
+  /**
+   * Zoom pan held down
+   */
+  useHotkeys(
+    'z',
+    () => {
+      setZoomPan(true);
+    },
+    {
+      keydown: true,
+    },
+    [nextFrameHeld, currentTime]
+  );
+
+  /**
+   * Next frame released
+   */
+  useHotkeys(
+    'z',
+    () => {
+      setZoomPan(false);
     },
     {
       keyup: true,

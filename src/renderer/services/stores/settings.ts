@@ -12,6 +12,7 @@ interface StateData {
   showSetupInstructions: boolean;
   sidebarWidth: number;
   slowCPUMode: boolean;
+  zoomPanEnabled: boolean;
 }
 
 interface State extends StateData {
@@ -20,6 +21,7 @@ interface State extends StateData {
   setShownFirstHelpSetup: (value: boolean) => void;
   setShowSetupInstructions: (value: boolean) => void;
   setSidebarWidth: (value: number) => void;
+  setZoomPan: (value: boolean) => void;
   toggleClearDrawingsOnPlay: () => void;
   toggleSlowCPUMode: () => void;
 }
@@ -32,6 +34,7 @@ const emptyState: StateData = {
   showSetupInstructions: true,
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
   slowCPUMode: false,
+  zoomPanEnabled: false,
 };
 
 const serialize = (state: object) => {
@@ -60,11 +63,11 @@ const useStore = createStore<State>(
       setShowSetupInstructions: (value) =>
         set(() => ({ showSetupInstructions: value })),
       setSidebarWidth: (sidebarWidth) => set(() => ({ sidebarWidth })),
+      setZoomPan: (value) => set(() => ({ zoomPanEnabled: value })),
       toggleClearDrawingsOnPlay: () =>
         set((state) => ({ clearDrawingsOnPlay: !state.clearDrawingsOnPlay })),
       toggleSlowCPUMode: () =>
         set((state) => ({ slowCPUMode: !state.slowCPUMode })),
-
       ...emptyState,
     }),
     {

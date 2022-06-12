@@ -28,8 +28,10 @@ import {
 import { TldrawApp } from '@tldraw/tldraw';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import usePanZoom from 'use-pan-and-zoom';
 import { getRatioDimensions } from '../services/layout';
 import useVideoStore from '../services/stores/videos';
+import useSettingsStore from '../services/stores/settings';
 
 import Drawing from '../components/Drawing/Drawing';
 import DrawingControls from '../components/DrawingControls/DrawingControls';
@@ -79,6 +81,14 @@ export default function ReviewVideos() {
   const playing = useVideoStore((state) => state.playing);
   const videos = useVideoStore((state) => state.videos);
 
+  const zoomPanEnabled = useSettingsStore((state) => state.zoomPanEnabled);
+
+  const { panZoomHandlers, setContainer, setPan, setZoom, transform } =
+    usePanZoom({
+      disableWheel: zoomPanEnabled === false,
+      minZoom: 1,
+    });
+
   const activeVideo = videos.find((video) => {
     return activeVideoId === video.id;
   });
@@ -100,6 +110,14 @@ export default function ReviewVideos() {
     stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
   }
+
+  /**
+   * Resets the pan and zoom of the video back to normal
+   */
+  const handleZoomPanReset = useCallback(() => {
+    setZoom(0);
+    setPan({ x: 0, y: 0 });
+  }, [setZoom, setPan]);
 
   const updateCurrentTime = useCallback(() => {
     if (startedPlayingAt === null) {
@@ -550,6 +568,15 @@ export default function ReviewVideos() {
       </Flex>
     );
 
+    const updatedPanZoomHandlers = zoomPanEnabled
+      ? {
+          ...panZoomHandlers,
+          onDoubleClick: () => {
+            handleZoomPanReset();
+          },
+        }
+      : {};
+
     return (
       <Flex
         direction="column"
@@ -570,11 +597,23 @@ export default function ReviewVideos() {
             ref={overlayRef}
             overflow="hidden"
           >
-            <Box position="relative" css={overlayStyle} id="overlay">
-              {renderedDrawing}
+            <Box
+              position="relative"
+              css={overlayStyle}
+              id="overlay"
+              ref={setContainer}
+              style={{ touchAction: 'none' }}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...updatedPanZoomHandlers}
+            >
+              {zoomPanEnabled === false && renderedDrawing}
               {renderedActiveBookmark}
               {renderedVideoEnded}
-              <Box css={videoStyle} ref={videoContainerRef} />
+              <Box
+                css={videoStyle}
+                ref={videoContainerRef}
+                style={{ transform }}
+              />
             </Box>
           </Flex>
         </Flex>
