@@ -1,3 +1,7 @@
+### 1.8.0
+
+- Added pan and zoom mode for main video when holding "z"
+
 ### 1.7.16
 
 - Show help pages on first load of setup and review
