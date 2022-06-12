@@ -214,11 +214,13 @@ export default function App() {
                 <Td>
                   <Kbd>Z</Kbd>
                 </Td>
+                <Td>Hold to enter pan and zoom mode</Td>
+              </Tr>
+              <Tr>
                 <Td>
-                  Hold to enter pan and zoom mode, double click video while held
-                  <br />
-                  to reset position reset
+                  <Kbd>X</Kbd>
                 </Td>
+                <Td>To reset pan and zoom</Td>
               </Tr>
             </Tbody>
           </Table>
