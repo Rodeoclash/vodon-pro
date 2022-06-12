@@ -1,6 +1,7 @@
 ### 1.8.0
 
-- Added pan and zoom mode for main video when holding "z"
+- Added pan and zoom mode for main video when holding "z". Press "x" to undo.
+- Fixed bug that caused drawings to be cleared when resizing screen.
 
 ### 1.7.16
 
