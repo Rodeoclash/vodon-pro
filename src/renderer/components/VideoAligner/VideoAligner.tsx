@@ -115,7 +115,7 @@ export default function VideoAligner({ video }: Props) {
 
   function handleClickStep(distance: number) {
     if (videoRef.current === null) return;
-    videoRef.current.currentTime += videoRef.current.currentTime + distance;
+    videoRef.current.currentTime += distance;
   }
 
   function handleClickName() {

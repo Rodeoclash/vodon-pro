@@ -1,3 +1,7 @@
+### 1.8.1
+
+- Fixed bug when nudging videos in setup
+
 ### 1.8.0
 
 - Added pan and zoom mode for main video when holding "z". Press "x" to undo.
