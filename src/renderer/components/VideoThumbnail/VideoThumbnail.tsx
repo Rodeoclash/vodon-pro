@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useLayoutEffect, useState } from 'react';
+import { useEffect, useRef, useLayoutEffect, useState } from 'react';
 import { css } from '@emotion/react';
 
-import { Box, Heading, Flex, Button, Text } from '@chakra-ui/react';
+import { Box, Heading, Flex, Text } from '@chakra-ui/react';
 import useVideoStore from '../../services/stores/videos';
 import useSettingsStore from '../../services/stores/settings';
 import { getRatioDimensions } from '../../services/layout';
@@ -23,7 +23,6 @@ export default function VideoThumbnail({ video }: Props) {
   const currentTime = useVideoStore((state) => state.currentTime);
   const playbackSpeed = useVideoStore((state) => state.playbackSpeed);
   const playing = useVideoStore((state) => state.playing);
-  const seeking = useVideoStore((state) => state.seeking);
 
   const slowCPUMode = useSettingsStore((state) => state.slowCPUMode);
 
@@ -36,7 +35,7 @@ export default function VideoThumbnail({ video }: Props) {
   /**
    * Clicking the video makes it active.
    */
-  function handleClickVideo(event: React.SyntheticEvent<EventTarget>) {
+  function handleClickVideo() {
     setActiveVideoId(video.id);
   }
 
@@ -116,7 +115,7 @@ export default function VideoThumbnail({ video }: Props) {
       (playing === true && currentActive === false && slowCPUMode === true)
     ) {
       if (video.el.seeking === true) {
-        return
+        return;
       }
 
       video.el.currentTime = currentTime - video.offset;
@@ -136,8 +135,8 @@ export default function VideoThumbnail({ video }: Props) {
    * events to ensure it has space on the screen.
    */
   useLayoutEffect(() => {
-     if (video.el === null) {
-       return;
+    if (video.el === null) {
+      return;
     }
 
     video.el.playbackRate = playbackSpeed;
@@ -183,21 +182,24 @@ export default function VideoThumbnail({ video }: Props) {
   `;
 
   const afterRangeStyles = css`
-    aspect-ratio: 16/9;
     display: ${currentActive === false && isAfterRange === true
       ? 'flex'
       : 'none'};
   `;
 
+  const afterRangeInnerStyles = css`
+    aspect-ratio: ${video.displayAspectRatio.replace(':', '/')};
+  `;
+
   return (
     <>
       <Flex
+        align="center"
+        css={containerStyles}
+        height="100%"
+        justifyContent="center"
         overflow="hidden"
         ref={containerRef}
-        height="100%"
-        css={containerStyles}
-        align="center"
-        justifyContent="center"
       >
         <Box position="relative" cursor="pointer" css={innerStyles}>
           <Heading
@@ -214,16 +216,19 @@ export default function VideoThumbnail({ video }: Props) {
           <Box onClick={handleClickVideo} ref={videoRef} />
         </Box>
       </Flex>
-      <Flex
-        css={afterRangeStyles}
-        align="center"
-        justify="center"
-        bgColor="gray.700"
-      >
-        <Text fontSize="sm">
-          Finished{' '}
-          {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago
-        </Text>
+      <Flex css={afterRangeStyles} height="100%" align="center" justifyContent="center">
+        <Flex
+          css={afterRangeInnerStyles}
+          bgColor="gray.700"
+          width="100%"
+          align="center"
+          justifyContent="center"
+        >
+          <Text fontSize="sm">
+            Finished{' '}
+            {Math.round(Math.abs(video.durationNormalised - currentTime))}s ago
+          </Text>
+        </Flex>
       </Flex>
     </>
   );
