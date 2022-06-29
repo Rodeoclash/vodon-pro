@@ -1,3 +1,7 @@
+### 1.8.3
+
+- Improved the way "finished" videos are displayed.
+
 ### 1.8.2
 
 - Improved performance of frame navigation
