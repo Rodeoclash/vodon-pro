@@ -1,3 +1,8 @@
+### 1.8.2
+
+- Improved performance of frame navigation
+- Clear drawings when resetting zoom / pan
+
 ### 1.8.1
 
 - Fixed bug when nudging videos in setup

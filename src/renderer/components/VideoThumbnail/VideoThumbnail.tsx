@@ -115,6 +115,10 @@ export default function VideoThumbnail({ video }: Props) {
       playing === false ||
       (playing === true && currentActive === false && slowCPUMode === true)
     ) {
+      if (video.el.seeking === true) {
+        return
+      }
+
       video.el.currentTime = currentTime - video.offset;
     }
   }, [playing, currentTime, currentActive]);

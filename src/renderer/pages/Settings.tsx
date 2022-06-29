@@ -109,8 +109,8 @@ export default function Settings() {
             </NumberInputStepper>
           </NumberInput>
           <FormHelperText>
-            When using the arrow keys to jump forward and back, how far will it
-            travel (in seconds)
+            When using the up down (or a and d) arrow keys to jump forward and
+            back, how far will it travel (in seconds)
           </FormHelperText>
         </FormControl>
       </Box>

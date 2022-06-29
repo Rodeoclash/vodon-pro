@@ -120,11 +120,14 @@ export default function ReviewVideos() {
     () => {
       setZoom(0);
       setPan({ x: 0, y: 0 });
+      if (app) {
+        app.deleteAll()
+      }
     },
     {
       keyup: true,
     },
-    []
+    [app]
   );
 
   const updateCurrentTime = useCallback(() => {

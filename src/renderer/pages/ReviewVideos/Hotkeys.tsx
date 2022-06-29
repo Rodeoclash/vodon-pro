@@ -42,10 +42,6 @@ export default function HotKeys({
    * Handle going back by a frame
    */
   const handlePreviousFrame = useCallback(() => {
-    if (video.seeking === true) {
-      return;
-    }
-
     stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime - 1 / video.frameRate);
   }, [setCurrentTime, video, stopPlaying]);
@@ -54,24 +50,16 @@ export default function HotKeys({
    * Handle going back by a jump
    */
   const handlePreviousJump = useCallback(() => {
-    if (video.seeking === true) {
-      return;
-    }
-
     stopPlaying();
     setCurrentTime(
       useVideoStore.getState().currentTime - parsedArrowKeyJumpDistance
     );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying, video]);
+  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying]);
 
   /**
    * Handle going foward by a frame
    */
   const handleNextFrame = useCallback(() => {
-    if (video.seeking === true) {
-      return;
-    }
-
     stopPlaying();
     setCurrentTime(useVideoStore.getState().currentTime + 1 / video.frameRate);
   }, [setCurrentTime, video, stopPlaying]);
@@ -80,15 +68,11 @@ export default function HotKeys({
    * Handle going forward by a jump
    */
   const handleNextJump = useCallback(() => {
-    if (video.seeking === true) {
-      return;
-    }
-
     stopPlaying();
     setCurrentTime(
       useVideoStore.getState().currentTime + parsedArrowKeyJumpDistance
     );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying, video]);
+  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying]);
 
   /**
    * Handle the effects of the keys being held down. We ignore any frame
@@ -197,7 +181,7 @@ export default function HotKeys({
   );
 
   /**
-   * Next frame released
+   * Zoom pan released
    */
   useHotkeys(
     'z',
