@@ -208,7 +208,7 @@ export default function App() {
                 <Td>
                   <Kbd>Escape</Kbd>
                 </Td>
-                <Td>Edit presentation mode</Td>
+                <Td>Exit presentation mode</Td>
               </Tr>
               <Tr>
                 <Td>
