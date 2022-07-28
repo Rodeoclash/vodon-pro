@@ -6,9 +6,7 @@
 ![Twitter Follow](https://img.shields.io/twitter/follow/GgVodon?style=social)
 ![Discord](https://img.shields.io/discord/908876087747022919)
 
-Vodon Pro is a **synchronised**, desktop video player for esport "VOD" reviews. It is designed for live reviews, either over screenshare or in person.
-
-Add viewpoints from each player in a match, tell Vodon how to synchronise the videos then watch your match playback with the ability to instantly jump to any of the viewpoints to review your game.
+Vodon Pro is a video player designed for esports coaches to review gameplay. The main unique feature that it has is the ability for you to load multiple viewpoints of your team into the player, synchronise them, then watch the videos with the ability to instantly jump to any of the viewpoints of your players.
 
 **[Download the latest installer](https://github.com/Rodeoclash/vodon-pro/releases/download/v1.8.3/VodonPro-Setup-1.8.3.exe)**
 
@@ -29,6 +27,14 @@ Add viewpoints from each player in a match, tell Vodon how to synchronise the vi
 - 🖥 Includes a "Slow CPU" mode to reduce load when many videos are loaded in at once.
 - 😎 Presentation mode which maximises the video sent over screenshare.
 - 🔎 Pan and zoom your videos so you don't miss any details
+
+## What games can I use it with?
+
+Vodon Pro works on video so it can be used with any game that you record. It works best with team games where each player has a different viewpoint but is in the same match. Some of the games coaches use with Vodon Pro are:
+
+- Valorant
+- Apex Legends
+- Halo Infinite
 
 ## Tested with
 
