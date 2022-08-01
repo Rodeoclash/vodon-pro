@@ -1,5 +1,5 @@
 import { useRef, useState, useLayoutEffect } from 'react';
-
+import { useBus } from 'react-bus';
 import {
   Box,
   Flex,
@@ -8,6 +8,8 @@ import {
   SliderThumb,
   SliderTrack,
 } from '@chakra-ui/react';
+import { GLOBAL_TIME_CHANGE } from '../../services/bus';
+
 import useStore from '../../services/stores/videos';
 
 import VideoBookmarkTimeline from '../VideoBookmarkTimeline/VideoBookmarkTimeline';
@@ -19,6 +21,8 @@ type Props = {
 };
 
 export default function GlobalTimeControl({ video }: Props) {
+  const bus = useBus();
+
   const trackRef = useRef<HTMLDivElement | null>(null);
 
   const stopPlaying = useStore((state) => state.stopPlaying);
@@ -30,9 +34,10 @@ export default function GlobalTimeControl({ video }: Props) {
 
   const [trackDimensions, setTrackDimensions] = useState<DOMRect | null>(null); // tracks the dimensions of the track as it's resized
 
-  function handleSliderChange(newTime: number) {
+  function handleSliderChange(time: number) {
     stopPlaying();
-    setCurrentTime(newTime);
+    bus.emit(GLOBAL_TIME_CHANGE, { time });
+    setCurrentTime(time);
   }
 
   useLayoutEffect(() => {

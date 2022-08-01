@@ -9,6 +9,7 @@ import {
 import { css } from '@emotion/react';
 
 import { useThrottle } from '@react-hook/throttle';
+import { useBus } from 'react-bus';
 
 import {
   Box,
@@ -30,6 +31,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import usePanZoom from 'use-pan-and-zoom';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { GLOBAL_TIME_CHANGE } from '../services/bus';
 import { getRatioDimensions } from '../services/layout';
 import useVideoStore from '../services/stores/videos';
 import useSettingsStore from '../services/stores/settings';
@@ -49,6 +51,7 @@ import VideoVolume from '../components/VideoVolume/VideoVolume';
 import WithSidebar from '../layouts/WithSidebar';
 
 export default function ReviewVideos() {
+  const bus = useBus();
   const overlayRef = useRef(null);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
   const fullscreenTargetRef = useRef<HTMLDivElement | null>(null);
@@ -109,7 +112,9 @@ export default function ReviewVideos() {
 
   function handleClickStep(distance: number) {
     stopPlaying();
-    setCurrentTime(useVideoStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
+    const time = activeVideo.el.currentTime + distance + activeVideo.offset;
+    bus.emit(GLOBAL_TIME_CHANGE, { time });
+    setCurrentTime(time); // HACK HACK - why does it have to read directly from the state here??
   }
 
   /**
