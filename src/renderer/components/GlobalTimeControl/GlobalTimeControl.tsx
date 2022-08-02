@@ -37,7 +37,7 @@ export default function GlobalTimeControl({ video }: Props) {
   function handleSliderChange(time: number) {
     stopPlaying();
     bus.emit(GLOBAL_TIME_CHANGE, { time });
-    setCurrentTime(time);
+    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME CALCULATED FROM CURRENT VIDEO
   }
 
   useLayoutEffect(() => {

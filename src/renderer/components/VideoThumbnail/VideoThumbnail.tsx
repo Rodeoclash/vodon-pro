@@ -127,6 +127,10 @@ export default function VideoThumbnail({ video }: Props) {
   */
 
   const handleGlobalTimeUpdate = useCallback(({ time }) => {
+    if (video.seeking) {
+      return;
+    }
+
     console.log('=== fired global time update', time)
     video.el.currentTime = time - video.offset;
   }, [video]);

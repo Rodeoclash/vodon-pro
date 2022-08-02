@@ -8,4 +8,4 @@
  * this happens.
  */
 // eslint-disable-next-line import/prefer-default-export
-export const STEP_ADVANCE_INTERVAL = 100;
+export const STEP_ADVANCE_INTERVAL = 200;

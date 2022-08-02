@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useBus } from 'react-bus';
+import { GLOBAL_TIME_CHANGE } from '../../services/bus';
 
 import useVideoStore from '../../services/stores/videos';
 import useSettingsStore from '../../services/stores/settings';
@@ -16,6 +18,7 @@ export default function HotKeys({
   onEscape,
   video,
 }: Props): React.ReactElement {
+  const bus = useBus();
   const setActiveVideoId = useVideoStore((state) => state.setActiveVideoId);
   const startPlaying = useVideoStore((state) => state.startPlaying);
   const stopPlaying = useVideoStore((state) => state.stopPlaying);
@@ -38,41 +41,87 @@ export default function HotKeys({
   const [previousFrameHeld, setPreviousFrameHeld] = useState(false);
   const [nextFrameHeld, setNextFrameHeld] = useState(false);
 
+  const videoOffset = video.offset ? video.offset : 0;
+
   /**
    * Handle going back by a frame
    */
   const handlePreviousFrame = useCallback(() => {
+    if (!video.el) {
+      return;
+    }
+
     stopPlaying();
-    setCurrentTime(useVideoStore.getState().currentTime - 1 / video.frameRate);
-  }, [setCurrentTime, video, stopPlaying]);
+
+    const time = video.el.currentTime - 1 / video.frameRate + videoOffset;
+
+    bus.emit(GLOBAL_TIME_CHANGE, { time });
+    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME UPDATED
+  }, [setCurrentTime, video, stopPlaying, bus, videoOffset]);
 
   /**
    * Handle going back by a jump
    */
   const handlePreviousJump = useCallback(() => {
+    if (!video.el) {
+      return;
+    }
+
     stopPlaying();
-    setCurrentTime(
-      useVideoStore.getState().currentTime - parsedArrowKeyJumpDistance
-    );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying]);
+
+    const time =
+      video.el.currentTime - parsedArrowKeyJumpDistance + videoOffset;
+
+    bus.emit(GLOBAL_TIME_CHANGE, { time });
+    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME UPDATED
+  }, [
+    setCurrentTime,
+    video,
+    stopPlaying,
+    bus,
+    videoOffset,
+    parsedArrowKeyJumpDistance,
+  ]);
 
   /**
    * Handle going foward by a frame
    */
   const handleNextFrame = useCallback(() => {
+    if (!video.el) {
+      return;
+    }
+
     stopPlaying();
-    setCurrentTime(useVideoStore.getState().currentTime + 1 / video.frameRate);
-  }, [setCurrentTime, video, stopPlaying]);
+
+    const time = video.el.currentTime + 1 / video.frameRate + videoOffset;
+
+    bus.emit(GLOBAL_TIME_CHANGE, { time });
+    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME UPDATED
+  }, [setCurrentTime, video, stopPlaying, bus, videoOffset]);
 
   /**
    * Handle going forward by a jump
    */
   const handleNextJump = useCallback(() => {
+    if (!video.el) {
+      return;
+    }
+
     stopPlaying();
-    setCurrentTime(
-      useVideoStore.getState().currentTime + parsedArrowKeyJumpDistance
-    );
-  }, [setCurrentTime, parsedArrowKeyJumpDistance, stopPlaying]);
+
+    const time =
+      video.el.currentTime + parsedArrowKeyJumpDistance + videoOffset;
+
+    bus.emit(GLOBAL_TIME_CHANGE, { time });
+    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME UPDATED
+  }, [
+    setCurrentTime,
+    video,
+    stopPlaying,
+    bus,
+    videoOffset,
+    parsedArrowKeyJumpDistance,
+  ]);
 
   /**
    * Handle the effects of the keys being held down. We ignore any frame

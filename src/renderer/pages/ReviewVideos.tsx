@@ -111,10 +111,17 @@ export default function ReviewVideos() {
     false;
 
   function handleClickStep(distance: number) {
+    if (!activeVideo || !activeVideo.el) {
+      return;
+    }
+
     stopPlaying();
-    const time = activeVideo.el.currentTime + distance + activeVideo.offset;
+    const time =
+      activeVideo.el.currentTime +
+      distance +
+      (activeVideo.offset ? activeVideo.offset : 0);
     bus.emit(GLOBAL_TIME_CHANGE, { time });
-    setCurrentTime(time); // HACK HACK - why does it have to read directly from the state here??
+    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME CALCULATED FROM CURRENT VIDEO
   }
 
   /**
@@ -135,6 +142,7 @@ export default function ReviewVideos() {
     [app]
   );
 
+  // TODO: This should be updated to run off the position of the current active video
   const updateCurrentTime = useCallback(() => {
     if (startedPlayingAt === null) {
       return;
