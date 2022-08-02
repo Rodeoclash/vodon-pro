@@ -110,28 +110,15 @@ export default function VideoThumbnail({ video }: Props) {
     }
   }, [playing]);
 
-  // watch current time and update as needed
-  /*
-  useEffect(() => {
-    if (
-      playing === false ||
-      (playing === true && currentActive === false && slowCPUMode === true)
-    ) {
-      if (video.el.seeking === true) {
-        return;
-      }
-
-      video.el.currentTime = currentTime - video.offset;
-    }
-  }, [playing, currentTime, currentActive]);
-  */
-
+  /**
+   * When global time updates are broadcast, listen to them here and set the
+   * current time of the video as needed.
+   */
   const handleGlobalTimeUpdate = useCallback(({ time }) => {
-    if (video.seeking) {
+    if (video.el.seeking === true) {
       return;
     }
 
-    console.log('=== fired global time update', time)
     video.el.currentTime = time - video.offset;
   }, [video]);
 
