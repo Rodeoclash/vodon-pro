@@ -50,6 +50,7 @@ export default function VideoThumbnail({ video }: Props) {
         return;
       }
 
+      video.el.currentTime = video.offset * -1;
       window.dispatchEvent(new Event('resize'));
     };
 

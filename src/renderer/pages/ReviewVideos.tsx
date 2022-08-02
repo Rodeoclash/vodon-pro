@@ -57,7 +57,6 @@ export default function ReviewVideos() {
   const fullscreenTargetRef = useRef<HTMLDivElement | null>(null);
   const fullscreenTriggerRef = useRef<HTMLButtonElement | null>(null);
 
-  const [startedPlayingAt, setStartedPlayingAt] = useState<number | null>(null);
   const [videoDimensions, setVideoDimensions] = useState<
     [number, number] | null
   >(null);
@@ -81,7 +80,6 @@ export default function ReviewVideos() {
   const overrideHideControls = useVideoStore(
     (state) => state.overrideHideControls
   );
-  const playbackSpeed = useVideoStore((state) => state.playbackSpeed);
   const playing = useVideoStore((state) => state.playing);
   const videos = useVideoStore((state) => state.videos);
 
@@ -142,19 +140,19 @@ export default function ReviewVideos() {
     [app]
   );
 
-  // TODO: This should be updated to run off the position of the current active video
+  /**
+   * Used to update the current time, only used by the progress bar.
+   */
   const updateCurrentTime = useCallback(() => {
-    if (startedPlayingAt === null) {
+    if (!activeVideo || !activeVideo.el || activeVideo.el.paused === true) {
       return;
     }
 
-    // HACK HACK - We should use something where we have control over the clock driving the video (i.e. gstreamer)
-    setCurrentTime(
-      currentTime +
-        ((Date.now() - startedPlayingAt) / 1000 - 0.06) * playbackSpeed
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startedPlayingAt, setCurrentTime, playbackSpeed]);
+    const offset = activeVideo.offset ? activeVideo.offset : 0;
+    const time = Math.round(activeVideo.el.currentTime + offset);
+
+    setCurrentTime(time);
+  }, [activeVideo, setCurrentTime]);
 
   /**
    * Stop the video playing when leaving
@@ -182,16 +180,6 @@ export default function ReviewVideos() {
 
     activeVideo.el.volume = activeVideo.volume;
   }, [activeVideo]);
-
-  // when we start playing, store the time that play started
-  useEffect(() => {
-    if (playing === false) {
-      setStartedPlayingAt(null);
-      return;
-    }
-
-    setStartedPlayingAt(Date.now());
-  }, [playing]);
 
   // when we have a time we started playing at, start a click to update the current time
   useEffect(() => {
