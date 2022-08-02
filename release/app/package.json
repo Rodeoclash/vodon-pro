@@ -1,6 +1,6 @@
 {
   "name": "vodon-pro",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "The synchronised VOD review tool",
   "main": "./dist/main/main.js",
   "author": {
