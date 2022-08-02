@@ -50,7 +50,7 @@ export default function VideoThumbnail({ video }: Props) {
         return;
       }
 
-      video.el.currentTime = video.offset * -1;
+      video.el.currentTime = currentTime - video.offset || video.offset * -1;
       window.dispatchEvent(new Event('resize'));
     };
 
@@ -79,7 +79,7 @@ export default function VideoThumbnail({ video }: Props) {
       video.el.removeEventListener('seeking', handleSeeking);
       video.el.removeEventListener('seeked', handleSeeked);
     };
-  }, [video.el]);
+  }, [video.el, currentTime]);
 
   // when this video becomes inactive, replace it in the list
   useEffect(() => {
@@ -119,6 +119,8 @@ export default function VideoThumbnail({ video }: Props) {
     if (video.el.seeking === true) {
       return;
     }
+
+    console.log('Going to', time - video.offset);
 
     video.el.currentTime = time - video.offset;
   }, [video]);
