@@ -1,3 +1,15 @@
+### 1.9.2
+
+- Removed slow cpu mode, incompatible with the way the current synced time system now works.
+
+### 1.9.1
+
+- Ensure videos start from the last place they were saved at
+
+### 1.9.0
+
+- Reworked the way video times are synchronised to avoid hitching
+
 ### 1.8.3
 
 - Improved the way "finished" videos are displayed.
