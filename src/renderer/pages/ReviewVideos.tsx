@@ -9,6 +9,7 @@ import {
 import { css } from '@emotion/react';
 
 import { useThrottle } from '@react-hook/throttle';
+import { useBus } from 'react-bus';
 
 import {
   Box,
@@ -30,6 +31,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import usePanZoom from 'use-pan-and-zoom';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { GLOBAL_TIME_CHANGE } from '../services/bus';
 import { getRatioDimensions } from '../services/layout';
 import useVideoStore from '../services/stores/videos';
 import useSettingsStore from '../services/stores/settings';
@@ -49,12 +51,12 @@ import VideoVolume from '../components/VideoVolume/VideoVolume';
 import WithSidebar from '../layouts/WithSidebar';
 
 export default function ReviewVideos() {
+  const bus = useBus();
   const overlayRef = useRef(null);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
   const fullscreenTargetRef = useRef<HTMLDivElement | null>(null);
   const fullscreenTriggerRef = useRef<HTMLButtonElement | null>(null);
 
-  const [startedPlayingAt, setStartedPlayingAt] = useState<number | null>(null);
   const [videoDimensions, setVideoDimensions] = useState<
     [number, number] | null
   >(null);
@@ -78,7 +80,6 @@ export default function ReviewVideos() {
   const overrideHideControls = useVideoStore(
     (state) => state.overrideHideControls
   );
-  const playbackSpeed = useVideoStore((state) => state.playbackSpeed);
   const playing = useVideoStore((state) => state.playing);
   const videos = useVideoStore((state) => state.videos);
 
@@ -108,8 +109,17 @@ export default function ReviewVideos() {
     false;
 
   function handleClickStep(distance: number) {
+    if (!activeVideo || !activeVideo.el) {
+      return;
+    }
+
     stopPlaying();
-    setCurrentTime(useVideoStore.getState().currentTime + distance); // HACK HACK - why does it have to read directly from the state here??
+    const time =
+      activeVideo.el.currentTime +
+      distance +
+      (activeVideo.offset ? activeVideo.offset : 0);
+    bus.emit(GLOBAL_TIME_CHANGE, { time });
+    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME CALCULATED FROM CURRENT VIDEO
   }
 
   /**
@@ -130,18 +140,19 @@ export default function ReviewVideos() {
     [app]
   );
 
+  /**
+   * Used to update the current time, only used by the progress bar.
+   */
   const updateCurrentTime = useCallback(() => {
-    if (startedPlayingAt === null) {
+    if (!activeVideo || !activeVideo.el || activeVideo.el.paused === true) {
       return;
     }
 
-    // HACK HACK - We should use something where we have control over the clock driving the video (i.e. gstreamer)
-    setCurrentTime(
-      currentTime +
-        ((Date.now() - startedPlayingAt) / 1000 - 0.06) * playbackSpeed
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startedPlayingAt, setCurrentTime, playbackSpeed]);
+    const offset = activeVideo.offset ? activeVideo.offset : 0;
+    const time = Math.round(activeVideo.el.currentTime + offset);
+
+    setCurrentTime(time);
+  }, [activeVideo, setCurrentTime]);
 
   /**
    * Stop the video playing when leaving
@@ -169,16 +180,6 @@ export default function ReviewVideos() {
 
     activeVideo.el.volume = activeVideo.volume;
   }, [activeVideo]);
-
-  // when we start playing, store the time that play started
-  useEffect(() => {
-    if (playing === false) {
-      setStartedPlayingAt(null);
-      return;
-    }
-
-    setStartedPlayingAt(Date.now());
-  }, [playing]);
 
   // when we have a time we started playing at, start a click to update the current time
   useEffect(() => {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Global, css } from '@emotion/react';
+import { Provider as BusProvider } from 'react-bus';
 
 import {
   Box,
@@ -249,53 +250,55 @@ export default function App() {
       />
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <ChakraProvider theme={theme}>
-        <Flex direction="column" height="100vh" width="100vw">
-          <Flex
-            px={4}
-            as="header"
-            align="center"
-            borderBottom="1px"
-            borderColor="whiteAlpha.300"
-            height="5rem"
-          >
-            <Box>
-              <Heading fontWeight="normal" fontFamily="Garet" fontSize="2xl">
-                VODON PRO
-              </Heading>
-              <Text fontSize="sm" mt={0}>
-                v{version}
-              </Text>
-            </Box>
-            <Flex as="nav" ml="4">
-              <NavLink to="/">Setup</NavLink>
-              <NavLink to="/review">Review</NavLink>
-              <NavLink to="/settings">Settings</NavLink>
-              <NavLink to="/about">About</NavLink>
+        <BusProvider>
+          <Flex direction="column" height="100vh" width="100vw">
+            <Flex
+              px={4}
+              as="header"
+              align="center"
+              borderBottom="1px"
+              borderColor="whiteAlpha.300"
+              height="5rem"
+            >
+              <Box>
+                <Heading fontWeight="normal" fontFamily="Garet" fontSize="2xl">
+                  VODON PRO
+                </Heading>
+                <Text fontSize="sm" mt={0}>
+                  v{version}
+                </Text>
+              </Box>
+              <Flex as="nav" ml="4">
+                <NavLink to="/">Setup</NavLink>
+                <NavLink to="/review">Review</NavLink>
+                <NavLink to="/settings">Settings</NavLink>
+                <NavLink to="/about">About</NavLink>
+              </Flex>
+              <Spacer />
+              {showHelpButton === true && (
+                <Button leftIcon={<HelpIcon />} onClick={() => onOpen()}>
+                  Help
+                </Button>
+              )}
             </Flex>
-            <Spacer />
-            {showHelpButton === true && (
-              <Button leftIcon={<HelpIcon />} onClick={() => onOpen()}>
-                Help
-              </Button>
-            )}
+            <Flex as="main" height="calc(100vh - 5rem)" overflow="hidden">
+              <Outlet />
+            </Flex>
           </Flex>
-          <Flex as="main" height="calc(100vh - 5rem)" overflow="hidden">
-            <Outlet />
-          </Flex>
-        </Flex>
-        <Modal isOpen={modalOpen} onClose={() => handleClose()} size="2xl">
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Help</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>{renderedHelpContents}</ModalBody>
-            <ModalFooter>
-              <Button colorScheme="blue" onClick={() => handleClose()}>
-                Close
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+          <Modal isOpen={modalOpen} onClose={() => handleClose()} size="2xl">
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Help</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>{renderedHelpContents}</ModalBody>
+              <ModalFooter>
+                <Button colorScheme="blue" onClick={() => handleClose()}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </BusProvider>
       </ChakraProvider>
     </>
   );

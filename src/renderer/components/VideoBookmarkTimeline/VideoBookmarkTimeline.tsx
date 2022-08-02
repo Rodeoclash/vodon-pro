@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import useStore from '../../services/stores/videos';
-import { truncateString } from '../../services/text';
-
+import { useBus } from 'react-bus';
 import { Box, Tooltip } from '@chakra-ui/react';
-
 import { Bookmark as BookmarkIcon } from 'tabler-icons-react';
+import useStore from '../../services/stores/videos';
+import { GLOBAL_TIME_CHANGE } from '../../services/bus';
+import { truncateString } from '../../services/text';
 
 import type { Video } from '../../services/models/Video';
 import type { VideoBookmark } from '../../services/models/VideoBookmark';
@@ -21,6 +21,7 @@ export default function VideoBookmarkTimeline({
   bookmark,
   size = 'medium',
 }: Props) {
+  const bus = useBus();
   const [isOpen, setIsOpen] = React.useState(false);
   const setCurrentTime = useStore((state) => state.setCurrentTime);
   const setActiveVideoId = useStore((state) => state.setActiveVideoId);
@@ -28,12 +29,13 @@ export default function VideoBookmarkTimeline({
   function handleGoto() {
     setActiveVideoId(video.id);
     setCurrentTime(bookmark.time);
+    bus.emit(GLOBAL_TIME_CHANGE, { time: bookmark.time });
     setIsOpen(false);
   }
 
   return (
     <Tooltip label={`${video.name}: ${truncateString(bookmark.content, 50)}`}>
-      <Box onClick={handleGoto} cursor="pointer">
+      <Box onClick={() => handleGoto()} cursor="pointer">
         <BookmarkIcon
           size={size === 'medium' ? 25 : 20}
           color={size === 'medium' ? '#eee' : '#999'}

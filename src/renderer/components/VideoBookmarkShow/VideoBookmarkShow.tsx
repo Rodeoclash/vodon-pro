@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { useBus } from 'react-bus';
 
 import {
   Box,
@@ -14,6 +15,7 @@ import {
   CaretLeft as CaretLeftIcon,
   CaretRight as CaretRightIcon,
 } from 'tabler-icons-react';
+import { GLOBAL_TIME_CHANGE } from '../../services/bus';
 import useVideoStore from '../../services/stores/videos';
 
 import VideoBookmarkForm from '../VideoBookmarkForm/VideoBookmarkForm';
@@ -44,6 +46,7 @@ const dragHandleStyles = css`
 `;
 
 export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
+  const bus = useBus();
   const playing = useVideoStore((state) => state.playing);
   const editingBookmark = useVideoStore((state) => state.editingBookmark);
   const videos = useVideoStore((state) => state.videos);
@@ -114,6 +117,7 @@ export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
   ]: [Video, VideoBookmark]) => {
     setActiveVideoId(bookmarkNavigationVideo.id);
     setCurrentTime(bookmarkNavigationBookmark.time);
+    bus.emit(GLOBAL_TIME_CHANGE, { time: bookmarkNavigationBookmark.time });
   };
 
   const renderedPreviousBookmarkLink = (() => {

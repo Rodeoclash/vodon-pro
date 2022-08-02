@@ -1,5 +1,7 @@
-import { useEffect, useRef, useLayoutEffect, useState } from 'react';
+import { useEffect, useRef, useLayoutEffect, useState, useCallback } from 'react';
+import { useListener } from 'react-bus';
 import { css } from '@emotion/react';
+import { GLOBAL_TIME_CHANGE } from '../../services/bus';
 
 import { Box, Heading, Flex, Text } from '@chakra-ui/react';
 import useVideoStore from '../../services/stores/videos';
@@ -48,6 +50,7 @@ export default function VideoThumbnail({ video }: Props) {
         return;
       }
 
+      video.el.currentTime = video.offset * -1;
       window.dispatchEvent(new Event('resize'));
     };
 
@@ -108,19 +111,19 @@ export default function VideoThumbnail({ video }: Props) {
     }
   }, [playing]);
 
-  // watch current time and update as needed
-  useEffect(() => {
-    if (
-      playing === false ||
-      (playing === true && currentActive === false && slowCPUMode === true)
-    ) {
-      if (video.el.seeking === true) {
-        return;
-      }
-
-      video.el.currentTime = currentTime - video.offset;
+  /**
+   * When global time updates are broadcast, listen to them here and set the
+   * current time of the video as needed.
+   */
+  const handleGlobalTimeUpdate = useCallback(({ time }) => {
+    if (video.el.seeking === true) {
+      return;
     }
-  }, [playing, currentTime, currentActive]);
+
+    video.el.currentTime = time - video.offset;
+  }, [video]);
+
+  useListener(GLOBAL_TIME_CHANGE, handleGlobalTimeUpdate)
 
   /**
    * As the video moves in and out of being active, we need to trigger resize
