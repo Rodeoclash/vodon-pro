@@ -17,10 +17,6 @@ import useSettingsStore from '../services/stores/settings';
 import NoSidebar from '../layouts/NoSidebar';
 
 export default function Settings() {
-  const toggleSlowCPUMode = useSettingsStore(
-    (state) => state.toggleSlowCPUMode
-  );
-
   const setArrowKeyJumpDistance = useSettingsStore(
     (state) => state.setArrowKeyJumpDistance
   );
@@ -36,8 +32,6 @@ export default function Settings() {
   const clearDrawingsOnPlay = useSettingsStore(
     (state) => state.clearDrawingsOnPlay
   );
-
-  const slowCPUMode = useSettingsStore((state) => state.slowCPUMode);
 
   function handleArrowKeyJumpDistanceChange(value: string) {
     if (value) {
@@ -55,19 +49,6 @@ export default function Settings() {
         <Heading as="h1" fontSize="3xl" mt="8" mb="4">
           General
         </Heading>
-
-        <FormControl my={4} width="container.sm">
-          <FormLabel htmlFor="slow-cpu-setting">Slow CPU mode</FormLabel>
-          <Switch
-            id="slow-cpu-setting"
-            isChecked={slowCPUMode}
-            onChange={toggleSlowCPUMode}
-          />
-          <FormHelperText>
-            If you are experiencing choppy playback, enabling this option to
-            reduce CPU load by disabling smooth playback of thumbnail videos.
-          </FormHelperText>
-        </FormControl>
 
         <FormControl my={4} width="container.sm">
           <FormLabel htmlFor="clear-drawings-on-play">

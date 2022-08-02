@@ -5,7 +5,6 @@ import { GLOBAL_TIME_CHANGE } from '../../services/bus';
 
 import { Box, Heading, Flex, Text } from '@chakra-ui/react';
 import useVideoStore from '../../services/stores/videos';
-import useSettingsStore from '../../services/stores/settings';
 import { getRatioDimensions } from '../../services/layout';
 
 import type { Video } from '../../services/models/Video';
@@ -25,8 +24,6 @@ export default function VideoThumbnail({ video }: Props) {
   const currentTime = useVideoStore((state) => state.currentTime);
   const playbackSpeed = useVideoStore((state) => state.playbackSpeed);
   const playing = useVideoStore((state) => state.playing);
-
-  const slowCPUMode = useSettingsStore((state) => state.slowCPUMode);
 
   const [videoDimensions, setVideoDimensions] = useState(null);
 
@@ -104,7 +101,7 @@ export default function VideoThumbnail({ video }: Props) {
 
   // watch playing state and play / pause as needed
   useEffect(() => {
-    if (playing === true && (currentActive === true || slowCPUMode === false)) {
+    if (playing === true) {
       video.el.play();
     } else {
       video.el.pause();
@@ -119,8 +116,6 @@ export default function VideoThumbnail({ video }: Props) {
     if (video.el.seeking === true) {
       return;
     }
-
-    console.log('Going to', time - video.offset);
 
     video.el.currentTime = time - video.offset;
   }, [video]);
