@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { useBus } from 'react-bus';
 import { Box, Tooltip } from '@chakra-ui/react';
 import { Bookmark as BookmarkIcon } from 'tabler-icons-react';
@@ -22,7 +20,6 @@ export default function VideoBookmarkTimeline({
   size = 'medium',
 }: Props) {
   const bus = useBus();
-  const [isOpen, setIsOpen] = React.useState(false);
   const setCurrentTime = useStore((state) => state.setCurrentTime);
   const setActiveVideoId = useStore((state) => state.setActiveVideoId);
 
@@ -30,7 +27,6 @@ export default function VideoBookmarkTimeline({
     setActiveVideoId(video.id);
     setCurrentTime(bookmark.time);
     bus.emit(GLOBAL_TIME_CHANGE, { time: bookmark.time });
-    setIsOpen(false);
   }
 
   return (
