@@ -21,6 +21,7 @@ export default function VideoAdd() {
 
   return (
     <Flex
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...getRootProps()}
       position="absolute"
       top="0"
@@ -31,7 +32,10 @@ export default function VideoAdd() {
       justifyContent="center"
     >
       <Box>
-        <input {...getInputProps()} />
+        <input
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...getInputProps()}
+        />
         <Center>
           <PlusIcon size={48} />
         </Center>

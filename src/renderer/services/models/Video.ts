@@ -22,6 +22,7 @@ export type Video = {
 
   /** Base duration of the video */
   duration: number | null;
+
   /** Offset + duration */
   durationNormalised: number | null;
 

@@ -1,4 +1,5 @@
-import React, { useRef, useLayoutEffect, useState, useEffect } from 'react';
+/* eslint-disable jsx-a11y/media-has-caption */
+import React, { useRef, useState, useEffect } from 'react';
 
 import {
   Box,
@@ -53,40 +54,37 @@ export default function VideoAligner({ video }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [seeking, setSeeking] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    const videoEl = videoRef.current;
+
     function handleSeeking() {
       setSeeking(true);
     }
 
     function handleSeeked() {
       setSeeking(false);
-      if (videoRef.current !== null)
-        setVideoSyncTime(video, videoRef.current.currentTime);
+      if (videoEl !== null) setVideoSyncTime(video, videoEl.currentTime);
       recalculateOffsets();
     }
 
     function handleLoadedMetaData() {
-      if (videoRef.current === null) return;
-      setVideoDuration(video, videoRef.current.duration);
-      videoRef.current.currentTime = video.syncTime;
-      videoRef.current.volume = 0;
+      if (videoEl === null) return;
+      setVideoDuration(video, videoEl.duration);
+      videoEl.currentTime = video.syncTime;
+      videoEl.volume = 0;
     }
 
-    if (videoRef.current !== null) {
-      videoRef.current.addEventListener('loadedmetadata', handleLoadedMetaData);
-      videoRef.current.addEventListener('seeking', handleSeeking);
-      videoRef.current.addEventListener('seeked', handleSeeked);
+    if (videoEl !== null) {
+      videoEl.addEventListener('loadedmetadata', handleLoadedMetaData);
+      videoEl.addEventListener('seeking', handleSeeking);
+      videoEl.addEventListener('seeked', handleSeeked);
     }
 
     return () => {
-      if (videoRef.current === null) return;
-      videoRef.current.removeEventListener(
-        'loadedmetadata',
-        handleLoadedMetaData
-      );
-
-      videoRef.current.removeEventListener('seeking', handleSeeking);
-      videoRef.current.removeEventListener('seeked', handleSeeked);
+      if (videoEl === null) return;
+      videoEl.removeEventListener('loadedmetadata', handleLoadedMetaData);
+      videoEl.removeEventListener('seeking', handleSeeking);
+      videoEl.removeEventListener('seeked', handleSeeked);
     };
     // eslint-disable-next-line
   }, []);
@@ -185,7 +183,9 @@ export default function VideoAligner({ video }: Props) {
           mx={2}
           min={0}
           max={video.duration}
-          onChange={handleSliderChange}
+          onChange={(newTime: number) => {
+            handleSliderChange(newTime);
+          }}
           step={1 / video.frameRate}
         >
           <SliderTrack>
@@ -210,7 +210,9 @@ export default function VideoAligner({ video }: Props) {
       <Box position="relative">
         <Tooltip label="Edit player name">
           <Flex
-            onClick={handleClickName}
+            onClick={() => {
+              handleClickName();
+            }}
             align="center"
             position="absolute"
             top="0"
@@ -235,7 +237,9 @@ export default function VideoAligner({ video }: Props) {
 
         <Tooltip label="Remove this video">
           <Flex
-            onClick={handleRemove}
+            onClick={() => {
+              handleRemove();
+            }}
             align="center"
             position="absolute"
             top="0"
@@ -257,7 +261,12 @@ export default function VideoAligner({ video }: Props) {
 
         {renderedControls}
       </Box>
-      <Modal isOpen={isOpen} onClose={handleClose}>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          handleClose();
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Edit video details</ModalHeader>
@@ -266,20 +275,28 @@ export default function VideoAligner({ video }: Props) {
             <FormControl>
               <FormLabel>Name</FormLabel>
               <Input
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                onKeyDown={(event: React.KeyboardEvent<HTMLElement>) => {
+                  if (event.key === 'Enter') {
                     handleClose();
                   }
                 }}
                 value={video.name}
-                onChange={handleChangeVideoName}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  handleChangeVideoName(event);
+                }}
                 autoFocus
               />
             </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={handleClose}>Done</Button>
+            <Button
+              onClick={() => {
+                handleClose();
+              }}
+            >
+              Done
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

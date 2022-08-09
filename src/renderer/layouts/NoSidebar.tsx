@@ -7,7 +7,7 @@ interface Props {
 export default function NoSidebar({ children }: Props) {
   return (
     <Flex>
-      <Box width={'100vw'} bgColor={'black'}>
+      <Box width="100vw" bgColor="black">
         {children}
       </Box>
     </Flex>

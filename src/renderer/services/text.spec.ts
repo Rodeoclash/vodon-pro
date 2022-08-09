@@ -5,7 +5,7 @@ describe('truncateString', () => {
     expect(truncateString('short', 50)).toBe('short');
   });
 
-  describe('with truncation', () => {
+  test('with truncation', () => {
     expect(truncateString('short', 2)).toBe('sh...');
   });
 });

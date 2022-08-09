@@ -1,9 +1,15 @@
-import { useEffect, useRef, useLayoutEffect, useState, useCallback } from 'react';
+import {
+  useEffect,
+  useRef,
+  useLayoutEffect,
+  useState,
+  useCallback,
+} from 'react';
 import { useListener } from 'react-bus';
 import { css } from '@emotion/react';
+import { Box, Heading, Flex, Text } from '@chakra-ui/react';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
 
-import { Box, Heading, Flex, Text } from '@chakra-ui/react';
 import useVideoStore from '../../services/stores/videos';
 import { getRatioDimensions } from '../../services/layout';
 
@@ -14,7 +20,7 @@ interface Props {
 }
 
 export default function VideoThumbnail({ video }: Props) {
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef(null);
 
   const setActiveVideoId = useVideoStore((state) => state.setActiveVideoId);
@@ -25,9 +31,14 @@ export default function VideoThumbnail({ video }: Props) {
   const playbackSpeed = useVideoStore((state) => state.playbackSpeed);
   const playing = useVideoStore((state) => state.playing);
 
-  const [videoDimensions, setVideoDimensions] = useState(null);
+  const [videoDimensions, setVideoDimensions] = useState<
+    [number, number] | null
+  >(null);
 
-  const isAfterRange = currentTime >= video.durationNormalised;
+  const isAfterRange =
+    video.durationNormalised === null
+      ? false
+      : currentTime >= video.durationNormalised;
 
   const currentActive = activeVideoId === video.id;
 
@@ -42,12 +53,16 @@ export default function VideoThumbnail({ video }: Props) {
    * Actions that run once when the video is loaded. This is useful for setting event listeners on the video object.
    */
   useEffect(() => {
+    if (video.el === null) {
+      return undefined;
+    }
+
     const handleLoadedMetaData = () => {
-      if (containerRef.current === null) {
+      if (containerRef.current === null || video.el === null) {
         return;
       }
 
-      video.el.currentTime = currentTime - video.offset || video.offset * -1;
+      video.el.currentTime = currentTime - (video.offset || 0);
       window.dispatchEvent(new Event('resize'));
     };
 
@@ -72,15 +87,19 @@ export default function VideoThumbnail({ video }: Props) {
     video.el.addEventListener('seeked', handleSeeked);
 
     return () => {
+      if (video.el === null) {
+        return;
+      }
+
       video.el.removeEventListener('loadedmetadata', handleLoadedMetaData);
       video.el.removeEventListener('seeking', handleSeeking);
       video.el.removeEventListener('seeked', handleSeeked);
     };
-  }, [video.el, currentTime]);
+  }, [video, currentTime, setSeeking]);
 
   // when this video becomes inactive, replace it in the list
   useEffect(() => {
-    if (videoRef.current === null) {
+    if (videoRef.current === null || video.el === null) {
       return;
     }
 
@@ -88,11 +107,11 @@ export default function VideoThumbnail({ video }: Props) {
       videoRef.current.appendChild(video.el);
       video.el.volume = 0;
     }
-  }, [currentActive]);
+  }, [video, currentActive]);
 
   // set volume on the active video
   useEffect(() => {
-    if (currentActive === false) {
+    if (currentActive === false || video.el === null) {
       return;
     }
 
@@ -101,26 +120,33 @@ export default function VideoThumbnail({ video }: Props) {
 
   // watch playing state and play / pause as needed
   useEffect(() => {
+    if (video.el === null) {
+      return;
+    }
+
     if (playing === true) {
       video.el.play();
     } else {
       video.el.pause();
     }
-  }, [playing]);
+  }, [video, playing]);
 
   /**
    * When global time updates are broadcast, listen to them here and set the
    * current time of the video as needed.
    */
-  const handleGlobalTimeUpdate = useCallback(({ time }) => {
-    if (video.el.seeking === true) {
-      return;
-    }
+  const handleGlobalTimeUpdate = useCallback(
+    ({ time }) => {
+      if (video.el === null || video.el.seeking === true) {
+        return;
+      }
 
-    video.el.currentTime = time - video.offset;
-  }, [video]);
+      video.el.currentTime = time - (video.offset || 0);
+    },
+    [video]
+  );
 
-  useListener(GLOBAL_TIME_CHANGE, handleGlobalTimeUpdate)
+  useListener(GLOBAL_TIME_CHANGE, handleGlobalTimeUpdate);
 
   /**
    * As the video moves in and out of being active, we need to trigger resize
@@ -163,7 +189,7 @@ export default function VideoThumbnail({ video }: Props) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [currentActive]);
+  }, [video, currentActive]);
 
   const innerStyles = css`
     width: ${videoDimensions ? videoDimensions[0] : ''}px;
@@ -191,6 +217,10 @@ export default function VideoThumbnail({ video }: Props) {
     aspect-ratio: ${video.displayAspectRatio.replace(':', '/')};
   `;
 
+  if (!video || !video.durationNormalised) {
+    return null;
+  }
+
   return (
     <>
       <Flex
@@ -213,10 +243,15 @@ export default function VideoThumbnail({ video }: Props) {
           >
             {video.name}
           </Heading>
-          <Box onClick={handleClickVideo} ref={videoRef} />
+          <Box onClick={() => handleClickVideo()} ref={videoRef} />
         </Box>
       </Flex>
-      <Flex css={afterRangeStyles} height="100%" align="center" justifyContent="center">
+      <Flex
+        css={afterRangeStyles}
+        height="100%"
+        align="center"
+        justifyContent="center"
+      >
         <Flex
           css={afterRangeInnerStyles}
           bgColor="gray.700"

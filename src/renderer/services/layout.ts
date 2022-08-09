@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 export function getRatioDimensions(
   displayAspectRatio: string,
   element: HTMLElement
@@ -14,7 +16,7 @@ export function getRatioDimensions(
 
   if (containerHeight * ratioWidthHeight <= containerWidth) {
     return [containerHeight * ratioWidthHeight, containerHeight];
-  } else {
-    return [containerWidth, containerWidth * ratioHeightWidth];
   }
+
+  return [containerWidth, containerWidth * ratioHeightWidth];
 }

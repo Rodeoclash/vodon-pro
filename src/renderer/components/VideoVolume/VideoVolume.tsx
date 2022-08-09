@@ -1,5 +1,3 @@
-import useStore from '../../services/stores/videos';
-
 import {
   Flex,
   SliderTrack,
@@ -9,6 +7,7 @@ import {
 } from '@chakra-ui/react';
 
 import { Volume as VolumeIcon } from 'tabler-icons-react';
+import useStore from '../../services/stores/videos';
 
 import type { Video } from '../../services/models/Video';
 
@@ -24,7 +23,7 @@ export default function VideoVolume({ video }: PropsType) {
   }
 
   return (
-    <Flex align={'center'} width={'7rem'}>
+    <Flex align="center" width="7rem">
       <VolumeIcon />
       <Slider
         key="playing"
@@ -32,7 +31,7 @@ export default function VideoVolume({ video }: PropsType) {
         value={video.volume}
         min={0}
         max={1}
-        onChange={handleSliderChange}
+        onChange={(value: number) => handleSliderChange(value)}
         step={0.01}
         focusThumbOnChange={false}
         ml={2}
