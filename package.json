@@ -119,7 +119,6 @@
   ],
   "homepage": "https://github.com/Rodeoclash/vodon-pro/blob/main/README.md",
   "jest": {
-    "testURL": "http://localhost/",
     "testEnvironment": "jsdom",
     "testEnvironmentOptions": {
       "url": "http://localhost/"
