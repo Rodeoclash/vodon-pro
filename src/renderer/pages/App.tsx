@@ -23,6 +23,7 @@ import {
   Table,
   TableCaption,
   TableContainer,
+  Tag,
   Tbody,
   Td,
   Text,
@@ -268,10 +269,13 @@ export default function App() {
                   v{version}
                 </Text>
               </Box>
-              <Flex as="nav" ml="4">
+              <Flex as="nav" ml="4" alignItems="center">
                 <NavLink to="/">Setup</NavLink>
                 <NavLink to="/review">Review</NavLink>
                 <NavLink to="/settings">Settings</NavLink>
+                <NavLink to="/received_vods">
+                  Received VODs <Tag ml={1}>Coming soon</Tag>
+                </NavLink>
                 <NavLink to="/about">About</NavLink>
               </Flex>
               <Spacer />

@@ -218,6 +218,13 @@ ipcMain.handle(
 );
 
 /**
+ * Saves the given project (string'd json) to the supplied filePath
+ */
+ipcMain.handle('app:openBrowser', async (_event, url: string) => {
+  shell.openExternal(url);
+});
+
+/**
  * Use ffprobe to find information about the given video
  */
 ipcMain.handle('video:getMetadata', async (_event, filePath: string) => {

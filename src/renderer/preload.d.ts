@@ -5,6 +5,7 @@ declare global {
     app: {
       getVersion: () => Promise<string>;
       getArgv: () => Promise<Array<string>>;
+      openBrowser: (url: string) => void;
       onLoadAdditionalVideos: (
         cb: (event: any, paths: Array<string>) => void
       ) => void;

@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('app', {
   getArgv: () => ipcRenderer.invoke('app:getArgv'),
   saveProject: (filePath: string, project: string) =>
     ipcRenderer.invoke('app:saveProject', filePath, project),
+  openBrowser: (url: string) => ipcRenderer.invoke('app:openBrowser', url),
   onNewProjectRequest: (callback: () => void) =>
     ipcRenderer.on('onNewProjectRequest', callback),
   onSaveProjectRequest: (callback: (event: any, filePath: string) => void) =>
