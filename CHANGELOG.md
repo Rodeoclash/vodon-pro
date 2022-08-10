@@ -1,3 +1,9 @@
+### 1.9.3
+
+- Bumped dependencies for npm. Upgrade to latest Electron version.
+- Build releases for Linux + OSX alongside windows
+- Placeholder page for FileYeet integration
+
 ### 1.9.2
 
 - Removed slow cpu mode, incompatible with the way the current synced time system now works.
