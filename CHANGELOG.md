@@ -1,3 +1,7 @@
+### 1.9.4
+
+- When using the drawing tools, keep the tool selected after drawing with it.
+
 ### 1.9.3
 
 - Bumped dependencies for npm. Upgrade to latest Electron version.
