@@ -35,6 +35,7 @@ export default function DrawingControls({ app }: PropsType) {
   const selectTool = React.useCallback(
     (type: TDToolType) => {
       app.selectTool(type);
+      app.toggleToolLock();
     },
     [app]
   );
