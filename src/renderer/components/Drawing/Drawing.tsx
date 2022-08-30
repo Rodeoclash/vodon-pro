@@ -57,6 +57,7 @@ export default function Drawing({
     const tool = tlDrawRef.current.useStore.getState().appState.activeTool;
     tlDrawRef.current.deleteAll();
     tlDrawRef.current.selectTool(tool);
+    tlDrawRef.current.toggleToolLock();
   }, []);
 
   const rescaleDrawing = useCallback(() => {
