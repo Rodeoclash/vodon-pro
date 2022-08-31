@@ -1,3 +1,8 @@
+### 1.9.5
+
+- Playback will now pause when encountering a bookmark.
+- Tool selection will stay after playback resumes.
+
 ### 1.9.4
 
 - When using the drawing tools, keep the tool selected after drawing with it.
