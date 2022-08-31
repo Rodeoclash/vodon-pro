@@ -52,7 +52,7 @@ import WithSidebar from '../layouts/WithSidebar';
 
 import type { Video } from '../services/models/Video';
 
-type PreciseVideoTimes = {
+export type PreciseVideoTimes = {
   [id: string]: number;
 };
 
@@ -138,8 +138,8 @@ export default function ReviewVideos() {
       activeVideo.el.currentTime +
       distance +
       (activeVideo.offset ? activeVideo.offset : 0);
-
     bus.emit(GLOBAL_TIME_CHANGE, { time });
+    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME CALCULATED FROM CURRENT VIDEO
   }
 
   /**
@@ -161,10 +161,20 @@ export default function ReviewVideos() {
   );
 
   /**
-   * Used to update the current time, used by the progress bar, setting
-   * bookmarks. Sourced from frame callbacks on the videos themselves.
+   * `currentTime` is a bit of a weird concept in the system. It's used mainly
+   * to drive the UI elments (like the global progress bar) but also as the
+   * value which is used to restore the position of the videos after the app
+   * has been loaded again.
+   *
+   * Where possible, we use one of the values in `videoTimes` directly (which
+   * are high resolution representations of the current time) - i.e. when
+   * setting bookmarks etc.
+   *
+   * currentTime is set directly when doing things that need to feel responsive
+   * (like clicking on the global progress bar).
    */
   const updateCurrentTime = useCallback(() => {
+    // Bail out if it's too early to have an active video to update the time on
     if (!activeVideo || !activeVideo.el || activeVideo.el.paused === true) {
       return;
     }
@@ -589,10 +599,12 @@ export default function ReviewVideos() {
             {app && (
               <Box mx="2">
                 <VideoBookmarkAdd
+                  key={activeVideo.id}
                   app={app}
                   disabled={!!activeBookmark || editingBookmark || isAfterRange}
                   scale={scale}
                   video={activeVideo}
+                  videoTimes={videoTimes.current}
                 />
               </Box>
             )}

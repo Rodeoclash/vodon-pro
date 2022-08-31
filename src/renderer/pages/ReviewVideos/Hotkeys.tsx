@@ -56,7 +56,7 @@ export default function HotKeys({
     const time = video.el.currentTime - 1 / video.frameRate + videoOffset;
 
     bus.emit(GLOBAL_TIME_CHANGE, { time });
-    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME UPDATED
+    setCurrentTime(time);
   }, [setCurrentTime, video, stopPlaying, bus, videoOffset]);
 
   /**
@@ -73,7 +73,7 @@ export default function HotKeys({
       video.el.currentTime - parsedArrowKeyJumpDistance + videoOffset;
 
     bus.emit(GLOBAL_TIME_CHANGE, { time });
-    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME UPDATED
+    setCurrentTime(time);
   }, [
     setCurrentTime,
     video,
@@ -96,7 +96,7 @@ export default function HotKeys({
     const time = video.el.currentTime + 1 / video.frameRate + videoOffset;
 
     bus.emit(GLOBAL_TIME_CHANGE, { time });
-    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME UPDATED
+    setCurrentTime(time);
   }, [setCurrentTime, video, stopPlaying, bus, videoOffset]);
 
   /**
@@ -113,7 +113,7 @@ export default function HotKeys({
       video.el.currentTime + parsedArrowKeyJumpDistance + videoOffset;
 
     bus.emit(GLOBAL_TIME_CHANGE, { time });
-    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME UPDATED
+    setCurrentTime(time);
   }, [
     setCurrentTime,
     video,

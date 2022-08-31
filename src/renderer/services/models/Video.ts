@@ -27,7 +27,7 @@ export type Video = {
   durationNormalised: number | null;
 
   /** Video element used for playback */
-  el: HTMLVideoElement | null;
+  el: HTMLVideoElement;
 
   /** Path to the file on disk */
   filePath: string;
