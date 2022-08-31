@@ -31,6 +31,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import usePanZoom from 'use-pan-and-zoom';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { isEqual } from 'lodash';
 import { GLOBAL_TIME_CHANGE } from '../services/bus';
 import { getRatioDimensions } from '../services/layout';
 import useVideoStore from '../services/stores/videos';
@@ -56,7 +57,11 @@ export type PreciseVideoTimes = {
   [id: string]: number;
 };
 
-const UI_REFRESH_RATE = 500;
+export type SeenBookmarks = {
+  [id: string]: boolean;
+};
+
+const UI_REFRESH_RATE = 100;
 
 export default function ReviewVideos() {
   const bus = useBus();
@@ -88,6 +93,8 @@ export default function ReviewVideos() {
   );
   const [controlsOn, setControlsOn] = useState<boolean>(false);
   const [playerHeaderOn, setPlayerHeaderOn] = useState<boolean>(false);
+  const [seenBookmarks, setSeenBookmarks] = useState<SeenBookmarks>({});
+
   const [app, setApp] = useState<TldrawApp>();
 
   const startPlaying = useVideoStore((state) => state.startPlaying);
@@ -97,6 +104,7 @@ export default function ReviewVideos() {
   const activeVideoId = useVideoStore((state) => state.activeVideoId);
   const currentTime = useVideoStore((state) => state.currentTime);
   const editingBookmark = useVideoStore((state) => state.editingBookmark);
+  const seeking = useVideoStore((state) => state.seeking);
   const overrideHideControls = useVideoStore(
     (state) => state.overrideHideControls
   );
@@ -174,8 +182,7 @@ export default function ReviewVideos() {
    * (like clicking on the global progress bar).
    */
   const updateCurrentTime = useCallback(() => {
-    // Bail out if it's too early to have an active video to update the time on
-    if (!activeVideo || !activeVideo.el || activeVideo.el.paused === true) {
+    if (!activeVideo || activeVideo.el.paused === true) {
       return;
     }
 
@@ -183,6 +190,11 @@ export default function ReviewVideos() {
     setCurrentTime(firstVideoTime);
   }, [activeVideo, setCurrentTime]);
 
+  /**
+   * Tracks the high precision location of each of the videos. When refreshing
+   * time dependent items in the UI we pull from the first record here,
+   * likewise when setting bookmark times, we also use this value.
+   */
   const handleVideoTimeChanged = useCallback((video: Video, time: number) => {
     videoTimes.current[video.id] = time;
   }, []);
@@ -202,13 +214,85 @@ export default function ReviewVideos() {
   }, [updateCurrentTime]);
 
   /**
-   * Stop the video playing when leaving
+   * Stop the video playing when the component is unmounted. Triggered when
+   * going between main navigation items.
    */
   useEffect(() => {
     return () => {
       stopPlaying();
     };
   }, [stopPlaying]);
+
+  /**
+   * Watch the current videos bookmarks and populate which have changed.
+   */
+  useEffect(() => {
+    if (!activeVideo) {
+      return;
+    }
+
+    // mark all bookmarks before current time as seen
+    const newSeenBoomarks = activeVideo.bookmarks.reduce(
+      (acc: SeenBookmarks, bookmark) => {
+        /**
+         * We need to check if we're within a certain margin of error when
+         * checking if the bookmark is active. This can occur when we
+         * navigate or run into a bookmark and the "real" video time does
+         * not line up with the currentTime.
+         * */
+        const withinFudgeWindow =
+          seenBookmarks[bookmark.id] === true &&
+          bookmark.time - currentTime < 0.05;
+
+        acc[bookmark.id] = bookmark.time <= currentTime || withinFudgeWindow;
+        return acc;
+      },
+      {}
+    );
+
+    if (isEqual(newSeenBoomarks, seenBookmarks) === false) {
+      setSeenBookmarks(newSeenBoomarks);
+    }
+  }, [seenBookmarks, currentTime, activeVideo, setSeenBookmarks]);
+
+  /**
+   * Watch the current time and find bookmarks that haven't been seen, if we
+   * encounter one, pause the video.
+   */
+  useEffect(() => {
+    if (!activeVideo || !currentTime || playing === false || seeking === true) {
+      return;
+    }
+
+    // find any bookmarks in the past that might not have been seen
+    const unseenPastBookmark = activeVideo.bookmarks.find((bookmark) => {
+      return (
+        bookmark.time <= currentTime && seenBookmarks[bookmark.id] === false
+      );
+    });
+
+    if (unseenPastBookmark !== undefined) {
+      const { time } = unseenPastBookmark;
+
+      stopPlaying();
+      setCurrentTime(time);
+      // bus.emit(GLOBAL_TIME_CHANGE, { time }); // enable this to go to the exact bookmark frame
+      setSeenBookmarks({
+        ...seenBookmarks,
+        [unseenPastBookmark.id]: true,
+      });
+    }
+  }, [
+    activeVideo,
+    bus,
+    currentTime,
+    playing,
+    seeking,
+    seenBookmarks,
+    setCurrentTime,
+    setSeenBookmarks,
+    stopPlaying,
+  ]);
 
   /**
    * Handles mounting the videos into the main playing area.

@@ -54,10 +54,6 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
    * When the video has loaded, we need to update the current time of it to match the global current time.
    */
   useEffect(() => {
-    if (video.el === null) {
-      return undefined;
-    }
-
     const handleLoadedMetaData = () => {
       if (containerRef.current === null || video.el === null) {
         return;
