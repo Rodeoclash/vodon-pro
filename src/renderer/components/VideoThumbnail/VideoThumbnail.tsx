@@ -16,10 +16,11 @@ import { getRatioDimensions } from '../../services/layout';
 import type { Video } from '../../services/models/Video';
 
 interface Props {
+  onVideoTimeChanged: (video: Video, time: number) => void;
   video: Video;
 }
 
-export default function VideoThumbnail({ video }: Props) {
+export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
   const videoRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef(null);
 
@@ -50,7 +51,7 @@ export default function VideoThumbnail({ video }: Props) {
   }
 
   /**
-   * Actions that run once when the video is loaded. This is useful for setting event listeners on the video object.
+   * When the video has loaded, we need to update the current time of it to match the global current time.
    */
   useEffect(() => {
     if (video.el === null) {
@@ -65,6 +66,49 @@ export default function VideoThumbnail({ video }: Props) {
       video.el.currentTime = currentTime - (video.offset || 0);
       window.dispatchEvent(new Event('resize'));
     };
+
+    video.el.addEventListener('loadedmetadata', handleLoadedMetaData);
+
+    return () => {
+      if (video.el === null) {
+        return;
+      }
+
+      video.el.removeEventListener('loadedmetadata', handleLoadedMetaData);
+    };
+  }, [video, currentTime]);
+
+  /**
+   * Handle tracking frames on the current video
+   */
+  useEffect(() => {
+    if (video.el === null) {
+      return;
+    }
+
+    const handleRequestVideoFrameCallback = (
+      _now: DOMHighResTimeStamp,
+      metadata: VideoFrameMetadata
+    ) => {
+      if (video.el === null) {
+        return;
+      }
+
+      onVideoTimeChanged(video, metadata.mediaTime + (video.offset || 0));
+
+      video.el.requestVideoFrameCallback(handleRequestVideoFrameCallback);
+    };
+
+    video.el.requestVideoFrameCallback(handleRequestVideoFrameCallback);
+  }, [video, onVideoTimeChanged]);
+
+  /**
+   * Handle watching seek events on video
+   */
+  useEffect(() => {
+    if (video.el === null) {
+      return undefined;
+    }
 
     const handleSeeking = () => {
       if (containerRef.current === null) {
@@ -82,7 +126,6 @@ export default function VideoThumbnail({ video }: Props) {
       setSeeking(video, false);
     };
 
-    video.el.addEventListener('loadedmetadata', handleLoadedMetaData);
     video.el.addEventListener('seeking', handleSeeking);
     video.el.addEventListener('seeked', handleSeeked);
 
@@ -91,11 +134,10 @@ export default function VideoThumbnail({ video }: Props) {
         return;
       }
 
-      video.el.removeEventListener('loadedmetadata', handleLoadedMetaData);
       video.el.removeEventListener('seeking', handleSeeking);
       video.el.removeEventListener('seeked', handleSeeked);
     };
-  }, [video, currentTime, setSeeking]);
+  }, [video, setSeeking]);
 
   // when this video becomes inactive, replace it in the list
   useEffect(() => {

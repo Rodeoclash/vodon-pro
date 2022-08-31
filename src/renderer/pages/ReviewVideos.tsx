@@ -50,9 +50,29 @@ import VideoThumbnail from '../components/VideoThumbnail/VideoThumbnail';
 import VideoVolume from '../components/VideoVolume/VideoVolume';
 import WithSidebar from '../layouts/WithSidebar';
 
+import type { Video } from '../services/models/Video';
+
+type PreciseVideoTimes = {
+  [id: string]: number;
+};
+
+const UI_REFRESH_RATE = 500;
+
 export default function ReviewVideos() {
   const bus = useBus();
-  const overlayRef = useRef(null);
+
+  /**
+   * Stores the current time of each of the videos. This is updated very
+   * quickly so we don't want to store in a React state otherwise we will
+   * trigger a huge number of repaints.
+   *
+   * For UI elements that depend on showing the current time, we use a
+   * timer instead which refreshes at a slower rate (see constant
+   * UI_REFRESH_RATE)
+   */
+  const videoTimes = useRef<PreciseVideoTimes>({});
+
+  const overlayRef = useRef<HTMLDivElement | null>(null);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
   const fullscreenTargetRef = useRef<HTMLDivElement | null>(null);
   const fullscreenTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -118,8 +138,8 @@ export default function ReviewVideos() {
       activeVideo.el.currentTime +
       distance +
       (activeVideo.offset ? activeVideo.offset : 0);
+
     bus.emit(GLOBAL_TIME_CHANGE, { time });
-    setCurrentTime(time); // REMOVE ONCE GLOBAL TIME CALCULATED FROM CURRENT VIDEO
   }
 
   /**
@@ -141,18 +161,35 @@ export default function ReviewVideos() {
   );
 
   /**
-   * Used to update the current time, only used by the progress bar.
+   * Used to update the current time, used by the progress bar, setting
+   * bookmarks. Sourced from frame callbacks on the videos themselves.
    */
   const updateCurrentTime = useCallback(() => {
     if (!activeVideo || !activeVideo.el || activeVideo.el.paused === true) {
       return;
     }
 
-    const offset = activeVideo.offset ? activeVideo.offset : 0;
-    const time = Math.round(activeVideo.el.currentTime + offset);
-
-    setCurrentTime(time);
+    const firstVideoTime = Object.values(videoTimes.current)[0];
+    setCurrentTime(firstVideoTime);
   }, [activeVideo, setCurrentTime]);
+
+  const handleVideoTimeChanged = useCallback((video: Video, time: number) => {
+    videoTimes.current[video.id] = time;
+  }, []);
+
+  /**
+   * Used to drive UI elements that need to show the current time (i.e progress
+   * bar, progress timer). This is a low resolution representation of the
+   * current time and should only be used for UI elements.
+   */
+  useEffect(() => {
+    const timer = setInterval(updateCurrentTime, UI_REFRESH_RATE);
+
+    return () => {
+      updateCurrentTime();
+      clearInterval(timer);
+    };
+  }, [updateCurrentTime]);
 
   /**
    * Stop the video playing when leaving
@@ -180,16 +217,6 @@ export default function ReviewVideos() {
 
     activeVideo.el.volume = activeVideo.volume;
   }, [activeVideo]);
-
-  // when we have a time we started playing at, start a click to update the current time
-  useEffect(() => {
-    const timer = setInterval(updateCurrentTime, 500);
-
-    return () => {
-      updateCurrentTime();
-      clearInterval(timer);
-    };
-  }, [updateCurrentTime]);
 
   // watch for fullscreen being set and trigger
   useEffect(() => {
@@ -326,7 +353,13 @@ export default function ReviewVideos() {
    * Selectable videos used in the sidebar
    */
   const renderedSidebarVideos = videos.map((video) => {
-    return <VideoThumbnail key={video.id} video={video} />;
+    return (
+      <VideoThumbnail
+        key={video.id}
+        video={video}
+        onVideoTimeChanged={handleVideoTimeChanged}
+      />
+    );
   });
 
   const renderedSidebar = (
