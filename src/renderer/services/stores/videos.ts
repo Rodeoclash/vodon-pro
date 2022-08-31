@@ -94,7 +94,8 @@ const emptyState: StateData = {
 // remove video elements
 const serialize = (state: any) => {
   const updatedState = produce(state.state, (innerState: State) => {
-    innerState.videos = innerState.videos.map((video) => {
+    // We cannot persist the el to storage so we need to null it here before saving.
+    innerState.videos = innerState.videos.map((video: any) => {
       return {
         ...video,
         el: null,

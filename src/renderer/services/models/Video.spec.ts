@@ -15,7 +15,7 @@ const baseVideo: Video = {
   displayAspectRatio: '16/9',
   duration: null,
   durationNormalised: null,
-  el: null,
+  el: document.createElement('video'),
   filePath: 'c:\\video.mp4',
   frameRate: 60,
   id: '1',

@@ -22,8 +22,10 @@ export default function VideoBookmarkTimeline({
   const bus = useBus();
   const setCurrentTime = useStore((state) => state.setCurrentTime);
   const setActiveVideoId = useStore((state) => state.setActiveVideoId);
+  const stopPlaying = useStore((state) => state.stopPlaying);
 
   function handleGoto() {
+    stopPlaying();
     setActiveVideoId(video.id);
     setCurrentTime(bookmark.time);
     bus.emit(GLOBAL_TIME_CHANGE, { time: bookmark.time });

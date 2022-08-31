@@ -31,6 +31,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import usePanZoom from 'use-pan-and-zoom';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { isEqual } from 'lodash';
 import { GLOBAL_TIME_CHANGE } from '../services/bus';
 import { getRatioDimensions } from '../services/layout';
 import useVideoStore from '../services/stores/videos';
@@ -50,9 +51,33 @@ import VideoThumbnail from '../components/VideoThumbnail/VideoThumbnail';
 import VideoVolume from '../components/VideoVolume/VideoVolume';
 import WithSidebar from '../layouts/WithSidebar';
 
+import type { Video } from '../services/models/Video';
+
+export type PreciseVideoTimes = {
+  [id: string]: number;
+};
+
+export type SeenBookmarks = {
+  [id: string]: boolean;
+};
+
+const UI_REFRESH_RATE = 100;
+
 export default function ReviewVideos() {
   const bus = useBus();
-  const overlayRef = useRef(null);
+
+  /**
+   * Stores the current time of each of the videos. This is updated very
+   * quickly so we don't want to store in a React state otherwise we will
+   * trigger a huge number of repaints.
+   *
+   * For UI elements that depend on showing the current time, we use a
+   * timer instead which refreshes at a slower rate (see constant
+   * UI_REFRESH_RATE)
+   */
+  const videoTimes = useRef<PreciseVideoTimes>({});
+
+  const overlayRef = useRef<HTMLDivElement | null>(null);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
   const fullscreenTargetRef = useRef<HTMLDivElement | null>(null);
   const fullscreenTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -68,6 +93,8 @@ export default function ReviewVideos() {
   );
   const [controlsOn, setControlsOn] = useState<boolean>(false);
   const [playerHeaderOn, setPlayerHeaderOn] = useState<boolean>(false);
+  const [seenBookmarks, setSeenBookmarks] = useState<SeenBookmarks>({});
+
   const [app, setApp] = useState<TldrawApp>();
 
   const startPlaying = useVideoStore((state) => state.startPlaying);
@@ -77,6 +104,7 @@ export default function ReviewVideos() {
   const activeVideoId = useVideoStore((state) => state.activeVideoId);
   const currentTime = useVideoStore((state) => state.currentTime);
   const editingBookmark = useVideoStore((state) => state.editingBookmark);
+  const seeking = useVideoStore((state) => state.seeking);
   const overrideHideControls = useVideoStore(
     (state) => state.overrideHideControls
   );
@@ -141,27 +169,130 @@ export default function ReviewVideos() {
   );
 
   /**
-   * Used to update the current time, only used by the progress bar.
+   * `currentTime` is a bit of a weird concept in the system. It's used mainly
+   * to drive the UI elments (like the global progress bar) but also as the
+   * value which is used to restore the position of the videos after the app
+   * has been loaded again.
+   *
+   * Where possible, we use one of the values in `videoTimes` directly (which
+   * are high resolution representations of the current time) - i.e. when
+   * setting bookmarks etc.
+   *
+   * currentTime is set directly when doing things that need to feel responsive
+   * (like clicking on the global progress bar).
    */
   const updateCurrentTime = useCallback(() => {
-    if (!activeVideo || !activeVideo.el || activeVideo.el.paused === true) {
+    if (!activeVideo || activeVideo.el.paused === true) {
       return;
     }
 
-    const offset = activeVideo.offset ? activeVideo.offset : 0;
-    const time = Math.round(activeVideo.el.currentTime + offset);
-
-    setCurrentTime(time);
+    const firstVideoTime = Object.values(videoTimes.current)[0];
+    setCurrentTime(firstVideoTime);
   }, [activeVideo, setCurrentTime]);
 
   /**
-   * Stop the video playing when leaving
+   * Tracks the high precision location of each of the videos. When refreshing
+   * time dependent items in the UI we pull from the first record here,
+   * likewise when setting bookmark times, we also use this value.
+   */
+  const handleVideoTimeChanged = useCallback((video: Video, time: number) => {
+    videoTimes.current[video.id] = time;
+  }, []);
+
+  /**
+   * Used to drive UI elements that need to show the current time (i.e progress
+   * bar, progress timer). This is a low resolution representation of the
+   * current time and should only be used for UI elements.
+   */
+  useEffect(() => {
+    const timer = setInterval(updateCurrentTime, UI_REFRESH_RATE);
+
+    return () => {
+      updateCurrentTime();
+      clearInterval(timer);
+    };
+  }, [updateCurrentTime]);
+
+  /**
+   * Stop the video playing when the component is unmounted. Triggered when
+   * going between main navigation items.
    */
   useEffect(() => {
     return () => {
       stopPlaying();
     };
   }, [stopPlaying]);
+
+  /**
+   * Watch the current videos bookmarks and populate which have changed.
+   */
+  useEffect(() => {
+    if (!activeVideo) {
+      return;
+    }
+
+    // mark all bookmarks before current time as seen
+    const newSeenBoomarks = activeVideo.bookmarks.reduce(
+      (acc: SeenBookmarks, bookmark) => {
+        /**
+         * We need to check if we're within a certain margin of error when
+         * checking if the bookmark is active. This can occur when we
+         * navigate or run into a bookmark and the "real" video time does
+         * not line up with the currentTime.
+         * */
+        const withinFudgeWindow =
+          seenBookmarks[bookmark.id] === true &&
+          bookmark.time - currentTime < 0.05;
+
+        acc[bookmark.id] = bookmark.time <= currentTime || withinFudgeWindow;
+        return acc;
+      },
+      {}
+    );
+
+    if (isEqual(newSeenBoomarks, seenBookmarks) === false) {
+      setSeenBookmarks(newSeenBoomarks);
+    }
+  }, [seenBookmarks, currentTime, activeVideo, setSeenBookmarks]);
+
+  /**
+   * Watch the current time and find bookmarks that haven't been seen, if we
+   * encounter one, pause the video.
+   */
+  useEffect(() => {
+    if (!activeVideo || !currentTime || playing === false || seeking === true) {
+      return;
+    }
+
+    // find any bookmarks in the past that might not have been seen
+    const unseenPastBookmark = activeVideo.bookmarks.find((bookmark) => {
+      return (
+        bookmark.time <= currentTime && seenBookmarks[bookmark.id] === false
+      );
+    });
+
+    if (unseenPastBookmark !== undefined) {
+      const { time } = unseenPastBookmark;
+
+      stopPlaying();
+      setCurrentTime(time);
+      // bus.emit(GLOBAL_TIME_CHANGE, { time }); // enable this to go to the exact bookmark frame
+      setSeenBookmarks({
+        ...seenBookmarks,
+        [unseenPastBookmark.id]: true,
+      });
+    }
+  }, [
+    activeVideo,
+    bus,
+    currentTime,
+    playing,
+    seeking,
+    seenBookmarks,
+    setCurrentTime,
+    setSeenBookmarks,
+    stopPlaying,
+  ]);
 
   /**
    * Handles mounting the videos into the main playing area.
@@ -180,16 +311,6 @@ export default function ReviewVideos() {
 
     activeVideo.el.volume = activeVideo.volume;
   }, [activeVideo]);
-
-  // when we have a time we started playing at, start a click to update the current time
-  useEffect(() => {
-    const timer = setInterval(updateCurrentTime, 500);
-
-    return () => {
-      updateCurrentTime();
-      clearInterval(timer);
-    };
-  }, [updateCurrentTime]);
 
   // watch for fullscreen being set and trigger
   useEffect(() => {
@@ -326,7 +447,13 @@ export default function ReviewVideos() {
    * Selectable videos used in the sidebar
    */
   const renderedSidebarVideos = videos.map((video) => {
-    return <VideoThumbnail key={video.id} video={video} />;
+    return (
+      <VideoThumbnail
+        key={video.id}
+        video={video}
+        onVideoTimeChanged={handleVideoTimeChanged}
+      />
+    );
   });
 
   const renderedSidebar = (
@@ -556,10 +683,12 @@ export default function ReviewVideos() {
             {app && (
               <Box mx="2">
                 <VideoBookmarkAdd
+                  key={activeVideo.id}
                   app={app}
                   disabled={!!activeBookmark || editingBookmark || isAfterRange}
                   scale={scale}
                   video={activeVideo}
+                  videoTimes={videoTimes.current}
                 />
               </Box>
             )}
