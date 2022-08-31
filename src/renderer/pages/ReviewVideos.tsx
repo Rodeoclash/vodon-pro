@@ -44,7 +44,7 @@ import GlobalTimeDisplay from '../components/GlobalTimeDisplay/GlobalTimeDisplay
 import Hotkeys from './ReviewVideos/Hotkeys';
 import PlaybackSpeed from '../components/PlaybackSpeed/PlaybackSpeed';
 import ReviewVideosBanner from '../components/ReviewVideosBanner/ReviewVideosBanner';
-import VideoBookmark from '../components/VideoBookmarkShow/VideoBookmarkShow';
+import VideoBookmarkShow from '../components/VideoBookmarkShow/VideoBookmarkShow';
 import VideoBookmarkAdd from '../components/VideoBookmarkAdd/VideoBookmarkAdd';
 import VideoStepControl from '../components/VideoStepControl/VideoStepControl';
 import VideoThumbnail from '../components/VideoThumbnail/VideoThumbnail';
@@ -572,7 +572,7 @@ export default function ReviewVideos() {
     );
 
     const renderedActiveBookmark = activeBookmark !== undefined && (
-      <VideoBookmark
+      <VideoBookmarkShow
         video={activeVideo}
         bookmark={activeBookmark}
         scale={scale}
