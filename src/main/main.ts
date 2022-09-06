@@ -115,6 +115,7 @@ const createWindow = async () => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
+      mainWindow.maximize();
     }
   });
 
