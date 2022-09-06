@@ -399,7 +399,9 @@ export default function ReviewVideos() {
     };
   }, [mouseLastActive, setMouseLastActive]);
 
-  // When changing between active videos, show the controls for some time
+  /**
+   * When changing between active videos, show the controls for some time
+   */
   useEffect(() => {
     setPlayerHeaderOn(true);
 
@@ -413,6 +415,16 @@ export default function ReviewVideos() {
       clearInterval(timer);
     };
   }, [activeVideoId, setPlayerHeaderOn]);
+
+  /**
+   * When toggling the override hide off, set the mouse being active to toggle
+   * on the controls.
+   */
+  useEffect(() => {
+    if (overrideHideControls === false) {
+      setMouseLastActive(Date.now());
+    }
+  }, [overrideHideControls, setMouseLastActive]);
 
   /**
    * The scale of how much the current video has been reduced in size. If no

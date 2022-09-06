@@ -30,6 +30,9 @@ export default function HotKeys({
   const currentTime = useVideoStore((state) => state.currentTime);
   const playing = useVideoStore((state) => state.playing);
   const videos = useVideoStore((state) => state.videos);
+  const overrideHideControls = useVideoStore(
+    (state) => state.overrideHideControls
+  );
 
   const arrowKeyJumpDistance = useSettingsStore(
     (state) => state.arrowKeyJumpDistance
@@ -312,31 +315,19 @@ export default function HotKeys({
   );
 
   /**
-   * Holding H
+   * Press H
    */
   useHotkeys(
     'h',
     () => {
-      setOverrideHideControls(true);
+      if (overrideHideControls === true) {
+        setOverrideHideControls(false);
+      } else {
+        setOverrideHideControls(true);
+      }
     },
-    {
-      keydown: true,
-    },
-    [previousFrameHeld, currentTime]
-  );
-
-  /**
-   * Let go of H
-   */
-  useHotkeys(
-    'h',
-    () => {
-      setOverrideHideControls(false);
-    },
-    {
-      keyup: true,
-    },
-    [previousFrameHeld, currentTime]
+    {},
+    [overrideHideControls]
   );
 
   return <></>;
