@@ -28,7 +28,6 @@ import {
 
 import { TldrawApp } from '@tldraw/tldraw';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import usePanZoom from 'use-pan-and-zoom';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { isEqual } from 'lodash';
@@ -493,25 +492,19 @@ export default function ReviewVideos() {
         top={0}
         zIndex={2}
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <Box
+          background="gray.900"
+          borderColor="whiteAlpha.500"
+          borderLeft="none"
+          borderWidth="1px"
+          boxSizing="border-box"
+          onMouseEnter={() => setControlsOn(true)}
+          onMouseLeave={() => setControlsOn(false)}
+          padding={4}
+          pointerEvents="all"
         >
-          <Box
-            background="gray.900"
-            borderColor="whiteAlpha.500"
-            borderLeft="none"
-            borderWidth="1px"
-            boxSizing="border-box"
-            onMouseEnter={() => setControlsOn(true)}
-            onMouseLeave={() => setControlsOn(false)}
-            padding={4}
-            pointerEvents="all"
-          >
-            <DrawingControls app={app} />
-          </Box>
-        </motion.div>
+          <DrawingControls app={app} />
+        </Box>
       </Flex>
     );
 
@@ -541,7 +534,7 @@ export default function ReviewVideos() {
      * Header used at the top of the screen. Contains the players name.
      */
     const renderedHeader = videoDimensions !== null &&
-      (showControls === true || playerHeaderOn) && (
+      (showControls === true || playerHeaderOn === true) && (
         <Flex
           alignItems="center"
           boxSizing="border-box"
@@ -553,24 +546,18 @@ export default function ReviewVideos() {
           top={0}
           zIndex={2}
         >
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <Box
+            background="gray.900"
+            borderColor="whiteAlpha.500"
+            borderTop="none"
+            borderWidth="1px"
+            onMouseEnter={() => setControlsOn(true)}
+            onMouseLeave={() => setControlsOn(false)}
+            p={4}
+            pointerEvents="all"
           >
-            <Box
-              background="gray.900"
-              borderColor="whiteAlpha.500"
-              borderTop="none"
-              borderWidth="1px"
-              onMouseEnter={() => setControlsOn(true)}
-              onMouseLeave={() => setControlsOn(false)}
-              p={4}
-              pointerEvents="all"
-            >
-              <Heading fontSize="xl">{activeVideo.name}</Heading>
-            </Box>
-          </motion.div>
+            <Heading fontSize="xl">{activeVideo.name}</Heading>
+          </Box>
         </Flex>
       );
 
@@ -583,13 +570,14 @@ export default function ReviewVideos() {
       />
     );
 
-    const renderedActiveBookmark = activeBookmark !== undefined && (
-      <VideoBookmarkShow
-        video={activeVideo}
-        bookmark={activeBookmark}
-        scale={scale}
-      />
-    );
+    const renderedActiveBookmark = activeBookmark !== undefined &&
+      showControls === true && (
+        <VideoBookmarkShow
+          video={activeVideo}
+          bookmark={activeBookmark}
+          scale={scale}
+        />
+      );
 
     const renderedVideoEnded = isAfterRange &&
       activeVideo.durationNormalised && (
@@ -623,101 +611,95 @@ export default function ReviewVideos() {
         right={0}
         zIndex={2}
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <Flex
+          align="center"
+          background="gray.900"
+          borderBottom="none"
+          borderColor="whiteAlpha.500"
+          borderWidth="1px"
+          minWidth="50vw"
+          p={4}
+          pointerEvents="all"
         >
-          <Flex
-            align="center"
-            background="gray.900"
-            borderBottom="none"
-            borderColor="whiteAlpha.500"
-            borderWidth="1px"
-            minWidth="50vw"
-            p={4}
-            pointerEvents="all"
-          >
-            <Tooltip label={playing ? 'Pause' : 'Play'}>
-              <Box mr="2">
-                {!playing && (
-                  <IconButton
-                    onClick={startPlaying}
-                    icon={<PlayerPlayIcon />}
-                    aria-label="Play"
-                    disabled={isAfterRange}
-                  />
-                )}
-                {playing && (
-                  <IconButton
-                    onClick={stopPlaying}
-                    icon={<PlayerPauseIcon />}
-                    aria-label="Pause"
-                  />
-                )}
-              </Box>
-            </Tooltip>
-
-            <Box mx={2}>
-              <PlaybackSpeed disabled={playing} />
-            </Box>
-
-            <Box mx="2">
-              <VideoStepControl
-                direction="backwards"
-                frameRate={activeVideo.frameRate}
-                onClick={(value) => handleClickStep(value)}
-                pause={activeVideo.seeking}
-              />
-            </Box>
-
-            <Box mx="2">
-              <GlobalTimeDisplay />
-            </Box>
-
-            <Box flexGrow={1} mx="2" minW="25vw">
-              <GlobalTimeControl video={activeVideo} />
-            </Box>
-
-            <Box mx="2">
-              <VideoVolume video={activeVideo} />
-            </Box>
-
-            <Box mx="2">
-              <VideoStepControl
-                direction="forwards"
-                frameRate={activeVideo.frameRate}
-                onClick={(value) => handleClickStep(value)}
-                pause={activeVideo.seeking}
-              />
-            </Box>
-
-            {app && (
-              <Box mx="2">
-                <VideoBookmarkAdd
-                  key={activeVideo.id}
-                  app={app}
-                  disabled={!!activeBookmark || editingBookmark || isAfterRange}
-                  scale={scale}
-                  video={activeVideo}
-                  videoTimes={videoTimes.current}
-                />
-              </Box>
-            )}
-
-            <Tooltip label="Presentation mode">
-              <Box ml="2">
+          <Tooltip label={playing ? 'Pause' : 'Play'}>
+            <Box mr="2">
+              {!playing && (
                 <IconButton
-                  onClick={() => setFullscreen(!fullscreen)}
-                  icon={<MaximizeIcon />}
-                  aria-label="Fullscreen video"
+                  onClick={startPlaying}
+                  icon={<PlayerPlayIcon />}
+                  aria-label="Play"
                   disabled={isAfterRange}
-                  ref={fullscreenTriggerRef}
                 />
-              </Box>
-            </Tooltip>
-          </Flex>
-        </motion.div>
+              )}
+              {playing && (
+                <IconButton
+                  onClick={stopPlaying}
+                  icon={<PlayerPauseIcon />}
+                  aria-label="Pause"
+                />
+              )}
+            </Box>
+          </Tooltip>
+
+          <Box mx={2}>
+            <PlaybackSpeed disabled={playing} />
+          </Box>
+
+          <Box mx="2">
+            <VideoStepControl
+              direction="backwards"
+              frameRate={activeVideo.frameRate}
+              onClick={(value) => handleClickStep(value)}
+              pause={activeVideo.seeking}
+            />
+          </Box>
+
+          <Box mx="2">
+            <GlobalTimeDisplay />
+          </Box>
+
+          <Box flexGrow={1} mx="2" minW="25vw">
+            <GlobalTimeControl video={activeVideo} />
+          </Box>
+
+          <Box mx="2">
+            <VideoVolume video={activeVideo} />
+          </Box>
+
+          <Box mx="2">
+            <VideoStepControl
+              direction="forwards"
+              frameRate={activeVideo.frameRate}
+              onClick={(value) => handleClickStep(value)}
+              pause={activeVideo.seeking}
+            />
+          </Box>
+
+          {app && (
+            <Box mx="2">
+              <VideoBookmarkAdd
+                key={activeVideo.id}
+                app={app}
+                disabled={!!activeBookmark || editingBookmark || isAfterRange}
+                scale={scale}
+                video={activeVideo}
+                videoTimes={videoTimes.current}
+              />
+            </Box>
+          )}
+
+          <Tooltip label="Presentation mode">
+            <Box ml="2">
+              <IconButton
+                onClick={() => setFullscreen(!fullscreen)}
+                icon={<MaximizeIcon />}
+                aria-label="Fullscreen video"
+                disabled={isAfterRange}
+                ref={fullscreenTriggerRef}
+              />
+            </Box>
+          </Tooltip>
+        </Flex>
       </Flex>
     );
 
@@ -743,9 +725,9 @@ export default function ReviewVideos() {
         onMouseMove={() => setMouseLastActive(Date.now())}
       >
         <Flex flexGrow={1} flexShrink={1} overflow="hidden" position="relative">
-          <AnimatePresence>{renderedHeader}</AnimatePresence>
-          <AnimatePresence>{renderedDrawingControls}</AnimatePresence>
-          <AnimatePresence>{renderedNavigationControls}</AnimatePresence>
+          {renderedHeader}
+          {renderedDrawingControls}
+          {renderedNavigationControls}
           <Flex
             align="center"
             flexGrow={1}

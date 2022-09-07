@@ -1,6 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Video } from './Video';
 
+export type VideoBookmarkIcon = {
+  native: string;
+};
+
 export type VideoBookmarkCoordinates = {
   x: number;
   y: number;
@@ -9,6 +13,9 @@ export type VideoBookmarkCoordinates = {
 export type VideoBookmark = {
   /** Unique id for this bookmark */
   id: string;
+
+  /** The icon of this bookmark */
+  icon: VideoBookmarkIcon;
 
   /** Content about what the bookmark is */
   content: string;
@@ -40,6 +47,9 @@ export function create(
     content,
     drawing: JSON.parse(JSON.stringify(drawing)),
     id: uuidv4(),
+    icon: {
+      native: '🔖',
+    },
     position: null,
     scale,
     time,

@@ -30,6 +30,9 @@ const baseVideoBookmark: VideoBookmark = {
   content: '',
   drawing: null,
   id: '1',
+  icon: {
+    native: '🔖',
+  },
   position: {
     x: 0,
     y: 0,
