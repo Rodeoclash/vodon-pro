@@ -84,7 +84,7 @@ export default function VideoBookmarkEditor({
             setShowEmojiPicker(!showEmojiPicker);
           }}
         >
-          {bookmark.icon.native}
+          {bookmark.icon?.native}
         </Flex>
         {showEmojiPicker && (
           <Box

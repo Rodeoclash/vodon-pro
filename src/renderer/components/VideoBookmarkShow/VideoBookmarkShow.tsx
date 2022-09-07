@@ -117,7 +117,7 @@ export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
 
     return (
       <Text style={{ whiteSpace: 'pre-wrap' }}>
-        {bookmark.icon.native} {bookmark.content}
+        {bookmark.icon?.native} {bookmark.content}
       </Text>
     );
   })();
