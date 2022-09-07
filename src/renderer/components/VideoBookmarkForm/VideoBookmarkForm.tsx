@@ -39,7 +39,7 @@ export default function VideoBookmarkEditor({
       {
         name: 'flip',
         options: {
-          fallbackPlacements: ['top', 'left'],
+          fallbackPlacements: ['top', 'left', 'bottom', 'right'],
         },
       },
     ],
@@ -89,6 +89,7 @@ export default function VideoBookmarkEditor({
         {showEmojiPicker && (
           <Box
             ref={setPopperElement}
+            zIndex="1"
             style={styles.popper}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...attributes.popper}
