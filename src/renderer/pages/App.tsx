@@ -49,6 +49,9 @@ import NavLink from '../components/NavLink/NavLink';
 export default function App() {
   const addVideo = useVideoStore((state) => state.addVideo);
   const clearVideos = useVideoStore((state) => state.clearVideos);
+  const overrideHideControls = useVideoStore(
+    (state) => state.overrideHideControls
+  );
 
   const setShownFirstHelpReview = useSettingsStore(
     (state) => state.setShownFirstHelpReview
@@ -198,7 +201,7 @@ export default function App() {
                 <Td>
                   <Kbd>H</Kbd>
                 </Td>
-                <Td>Hold to hide controls</Td>
+                <Td>Toggles the video overlay on and off</Td>
               </Tr>
               <Tr>
                 <Td>
@@ -279,11 +282,18 @@ export default function App() {
                 <NavLink to="/about">About</NavLink>
               </Flex>
               <Spacer />
-              {showHelpButton === true && (
-                <Button leftIcon={<HelpIcon />} onClick={() => onOpen()}>
-                  Help
-                </Button>
-              )}
+              <Flex align="center">
+                {overrideHideControls === true && (
+                  <Text fontSize="sm" mr={4}>
+                    Video overlays hidden
+                  </Text>
+                )}
+                {showHelpButton === true && (
+                  <Button leftIcon={<HelpIcon />} onClick={() => onOpen()}>
+                    Help
+                  </Button>
+                )}
+              </Flex>
             </Flex>
             <Flex as="main" height="calc(100vh - 5rem)" overflow="hidden">
               <Outlet />
