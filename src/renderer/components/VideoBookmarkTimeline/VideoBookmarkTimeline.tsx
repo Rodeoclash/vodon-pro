@@ -31,13 +31,23 @@ export default function VideoBookmarkTimeline({
     bus.emit(GLOBAL_TIME_CHANGE, { time: bookmark.time });
   }
 
+  const renderedIcon = (() => {
+    if (bookmark.icon) {
+      return bookmark.icon.native;
+    }
+
+    return (
+      <BookmarkIcon
+        size={size === 'medium' ? 25 : 20}
+        color={size === 'medium' ? '#eee' : '#999'}
+      />
+    );
+  })();
+
   return (
     <Tooltip label={`${video.name}: ${truncateString(bookmark.content, 50)}`}>
       <Box onClick={() => handleGoto()} cursor="pointer">
-        <BookmarkIcon
-          size={size === 'medium' ? 25 : 20}
-          color={size === 'medium' ? '#eee' : '#999'}
-        />
+        {renderedIcon}
       </Box>
     </Tooltip>
   );

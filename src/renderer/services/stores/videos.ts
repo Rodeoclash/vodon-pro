@@ -11,6 +11,7 @@ import type { Video } from '../models/Video';
 import type {
   VideoBookmark,
   VideoBookmarkCoordinates,
+  VideoBookmarkIcon,
 } from '../models/VideoBookmark';
 
 const CURRENT_PERSIST_VERSION = 0;
@@ -71,6 +72,11 @@ interface State extends StateData {
     video: Video,
     bookmark: VideoBookmark,
     content: string
+  ) => void;
+  setVideoBookmarkIcon: (
+    video: Video,
+    bookmark: VideoBookmark,
+    icon: VideoBookmarkIcon
   ) => void;
   setVideoBookmarkDrawing: (
     video: Video,
@@ -381,6 +387,34 @@ const useStore = createStore<State>(
             );
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].content = content;
+          })
+        ),
+
+      /**
+       * Sets the icon of a bookmark
+       * @param video Video Video that contains the bookmark
+       * @param bookmark VideoBookmark The video bookmark to be updated
+       * @param coords Content to update to
+       * @returns void
+       */
+      setVideoBookmarkIcon: (
+        video: Video,
+        bookmark: VideoBookmark,
+        icon: VideoBookmarkIcon
+      ) =>
+        set(
+          produce((state: State) => {
+            const videoIndex = state.videos.findIndex((innerVideo) => {
+              return innerVideo.id === video.id;
+            });
+
+            const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
+              (innerBookmark) => {
+                return innerBookmark.id === bookmark.id;
+              }
+            );
+
+            state.videos[videoIndex].bookmarks[bookmarkIndex].icon = icon;
           })
         ),
 

@@ -74,6 +74,10 @@ export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
     (state) => state.setVideoBookmarkContent
   );
 
+  const setVideoBookmarkIcon = useVideoStore(
+    (state) => state.setVideoBookmarkIcon
+  );
+
   if (playing === true) {
     return null;
   }
@@ -93,14 +97,30 @@ export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
     ? { x: bookmark.position.x * offset, y: bookmark.position.y * offset }
     : undefined;
 
-  const renderedContent = editingBookmark ? (
-    <VideoBookmarkForm
-      onChange={(content) => setVideoBookmarkContent(video, bookmark, content)}
-      bookmark={bookmark}
-    />
-  ) : (
-    <Text style={{ whiteSpace: 'pre-wrap' }}>{bookmark.content}</Text>
-  );
+  const renderedContent = (() => {
+    if (editingBookmark === true) {
+      return (
+        <VideoBookmarkForm
+          onChangeContent={(content) =>
+            setVideoBookmarkContent(video, bookmark, content)
+          }
+          onChangeIcon={(details) =>
+            setVideoBookmarkIcon(video, bookmark, details)
+          }
+          bookmark={bookmark}
+        />
+      );
+    }
+    if (!bookmark.content) {
+      return null;
+    }
+
+    return (
+      <Text style={{ whiteSpace: 'pre-wrap' }}>
+        {bookmark.icon.native} {bookmark.content}
+      </Text>
+    );
+  })();
 
   const renderedPositiveAction = editingBookmark ? (
     <Button onClick={() => stopEditingBookmark()}>Done</Button>
@@ -177,9 +197,12 @@ export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
       >
         <Box pointerEvents="all" background="blackAlpha.900" width="md">
           <Box id="dragHandle" css={dragHandleStyles} />
-          <Box padding="4" borderBottom="1px" borderColor="whiteAlpha.500">
-            {renderedContent}
-          </Box>
+          {renderedContent && (
+            <Box padding="4" borderBottom="1px" borderColor="whiteAlpha.500">
+              {renderedContent}
+            </Box>
+          )}
+
           <Flex padding="4">
             {renderedPreviousBookmarkLink}
             <Spacer />
