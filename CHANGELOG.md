@@ -1,3 +1,10 @@
+### 1.9.6
+
+- Bookmarks hidden when video UI overlay hidden
+- Bookmarks support emoji icons
+- H now toggles video UI on and off instead of needing to be held
+- App starts full screen by default
+
 ### 1.9.5
 
 - Playback will now pause when encountering a bookmark.
