@@ -1,7 +1,7 @@
 import { Select } from '@chakra-ui/react';
 import useStore from '../../services/stores/videos';
 
-const availableSpeeds = [0.1, 0.25, 0.5, 0.75, 1, 1.5, 2];
+const availableSpeeds = [0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 4, 6, 8];
 
 type Props = {
   disabled: boolean;
