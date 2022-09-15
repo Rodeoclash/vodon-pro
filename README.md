@@ -37,7 +37,7 @@ Vodon Pro works on video so it can be used with any game that you record. It wor
 
 ## Tested with
 
-- MP4 and WebM video formats.
+- MP4, MKV and WebM video formats.
 - 60fps / 30fps videos.
 - 16:9 and 4:3 aspect ratios.
 - Windows, Linux and OSX
