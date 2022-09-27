@@ -1,9 +1,15 @@
+### 1.9.7
+
+- When in presentation mode with controls hidden, mouse pointer is now visible.
+- Added line tool.
+- Added additional playback speeds.
+
 ### 1.9.6
 
-- Bookmarks hidden when video UI overlay hidden
-- Bookmarks support emoji icons
-- H now toggles video UI on and off instead of needing to be held
-- App starts full screen by default
+- Bookmarks hidden when video UI overlay hidden.
+- Bookmarks support emoji icons.
+- H now toggles video UI on and off instead of needing to be held.
+- App starts full screen by default.
 
 ### 1.9.5
 
@@ -17,8 +23,8 @@
 ### 1.9.3
 
 - Bumped dependencies for npm. Upgrade to latest Electron version.
-- Build releases for Linux + OSX alongside windows
-- Placeholder page for FileYeet integration
+- Build releases for Linux + OSX alongside windows.
+- Placeholder page for FileYeet integration.
 
 ### 1.9.2
 
@@ -26,11 +32,11 @@
 
 ### 1.9.1
 
-- Ensure videos start from the last place they were saved at
+- Ensure videos start from the last place they were saved at.
 
 ### 1.9.0
 
-- Reworked the way video times are synchronised to avoid hitching
+- Reworked the way video times are synchronised to avoid hitching.
 
 ### 1.8.3
 
@@ -38,12 +44,12 @@
 
 ### 1.8.2
 
-- Improved performance of frame navigation
-- Clear drawings when resetting zoom / pan
+- Improved performance of frame navigation.
+- Clear drawings when resetting zoom / pan.
 
 ### 1.8.1
 
-- Fixed bug when nudging videos in setup
+- Fixed bug when nudging videos in setup.
 
 ### 1.8.0
 
@@ -52,7 +58,7 @@
 
 ### 1.7.16
 
-- Show help pages on first load of setup and review
+- Show help pages on first load of setup and review.
 - Close video name editor on enter (thanks https://github.com/Assain2)
 
 ### 1.7.15
@@ -71,7 +77,7 @@
 
 - Greatly improved the way the app works when you've associated video files with it.
 - Save sidebar width when navigating between pages and restoring app.
-- Reduce padding of remove videos button in header
+- Reduce padding of remove videos button in header.
 - Fixed bug with thumbnail size when coming back to the review tab.
 - Improved speed of frame advance / rewind when using keyboard controls.
 
@@ -91,8 +97,8 @@
 
 ### 1.7.9
 
-- Introduces new floating controls
-- Hold H to hide controls
+- Introduces new floating controls.
+- Hold H to hide controls.
 - Slow audio down rather than trying to pitch shift it.
 - Added 1.5x and 2x speed controls for video.
 - Removed preview thumbnail images from seek bar as they were too slow to generate.
@@ -151,7 +157,7 @@
 
 ### 1.6.9
 
-- No release
+- No release.
 
 ### 1.6.8
 
@@ -159,18 +165,18 @@
 
 ### 1.6.7
 
-- Added loading screen
-- Reworked bookmarks to show all at once
+- Added loading screen.
+- Reworked bookmarks to show all at once.
 
 ### 1.6.6
 
 - Added "New Project" in file dropdown which resets state.
-- Prompt user on loading if they want to restore the last project
+- Prompt user on loading if they want to restore the last project.
 - Fixed ordering of videos to preserve the order they're added in (was being reordered by duration)
 
 ### 1.6.5
 
-- Fixed bugs with video alignment (now just uses the "overlapping" area).
+- Fixed bugs with video alignment (now just uses the "overlapping" area)
 - Fixed bugs with trying to draw on moving video.
 
 ### 1.5.7
