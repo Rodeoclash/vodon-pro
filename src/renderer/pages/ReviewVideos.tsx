@@ -444,7 +444,6 @@ export default function ReviewVideos() {
   const overlayStyle = css`
     width: ${videoDimensions ? videoDimensions[0] : ''}px;
     height: ${videoDimensions ? videoDimensions[1] : ''}px;
-    cursor: ${playing === true && showControls === false ? 'none' : 'auto'};
   `;
 
   const videoStyle = css`
