@@ -5,11 +5,12 @@ import { css } from '@emotion/react';
 import { Flex, Box, VStack, IconButton, Tooltip } from '@chakra-ui/react';
 import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
 import {
-  Click as ClickIcon,
-  Pencil as PencilIcon,
   ArrowUpRight as ArrowUpRightIcon,
-  Rectangle as RectangleIcon,
   Circle as CircleIcon,
+  Click as ClickIcon,
+  Line as LineIcon,
+  Pencil as PencilIcon,
+  Rectangle as RectangleIcon,
   Trash as TrashIcon,
 } from 'tabler-icons-react';
 
@@ -72,6 +73,16 @@ export default function DrawingControls({ app }: PropsType) {
                   : unSlectedStyle
               }
               onClick={() => selectTool(TDShapeType.Arrow)}
+            />
+          </Tooltip>
+          <Tooltip label="Line" aria-label="Line">
+            <IconButton
+              icon={<LineIcon />}
+              aria-label="Line"
+              css={
+                activeTool === TDShapeType.Line ? selectedStyle : unSlectedStyle
+              }
+              onClick={() => selectTool(TDShapeType.Line)}
             />
           </Tooltip>
           <Tooltip label="Rectangle" aria-label="Rectangle">
