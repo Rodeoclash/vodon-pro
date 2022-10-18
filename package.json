@@ -228,7 +228,7 @@
     "@emotion/styled": "^11.8.1",
     "@popperjs/core": "^2.11.5",
     "@react-hook/throttle": "^2.2.0",
-    "@tldraw/tldraw": "^1.10.0",
+    "@tldraw/tldraw": "1.20.0",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.6",
     "electron-updater": "^5.2.1",
