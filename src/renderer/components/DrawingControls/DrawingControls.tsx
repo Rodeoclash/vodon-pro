@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { css } from '@emotion/react';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Flex, Box, VStack, IconButton, Tooltip } from '@chakra-ui/react';
 import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
@@ -41,6 +42,72 @@ export default function DrawingControls({ app }: PropsType) {
     [app]
   );
 
+  useHotkeys(
+    'p',
+    () => {
+      selectTool(TDShapeType.Draw);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    'r',
+    () => {
+      selectTool(TDShapeType.Arrow);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    'l',
+    () => {
+      selectTool(TDShapeType.Line);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    'b',
+    () => {
+      selectTool(TDShapeType.Rectangle);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    'c',
+    () => {
+      selectTool(TDShapeType.Ellipse);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    't',
+    () => {
+      app.deleteAll();
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
   return (
     <>
       <Box>
@@ -53,7 +120,7 @@ export default function DrawingControls({ app }: PropsType) {
               onClick={() => selectTool('select')}
             />
           </Tooltip>
-          <Tooltip label="Pencil" aria-label="Pencil">
+          <Tooltip label="Pencil (P)" aria-label="Pencil (P)">
             <IconButton
               icon={<PencilIcon />}
               aria-label="Pencil"
@@ -63,7 +130,7 @@ export default function DrawingControls({ app }: PropsType) {
               onClick={() => selectTool(TDShapeType.Draw)}
             />
           </Tooltip>
-          <Tooltip label="Arrow" aria-label="Arrow">
+          <Tooltip label="Arrow (R)" aria-label="Arrow (R)">
             <IconButton
               icon={<ArrowUpRightIcon />}
               aria-label="Arrow"
@@ -75,7 +142,7 @@ export default function DrawingControls({ app }: PropsType) {
               onClick={() => selectTool(TDShapeType.Arrow)}
             />
           </Tooltip>
-          <Tooltip label="Line" aria-label="Line">
+          <Tooltip label="Line (L)" aria-label="Line (L)">
             <IconButton
               icon={<LineIcon />}
               aria-label="Line"
@@ -85,10 +152,10 @@ export default function DrawingControls({ app }: PropsType) {
               onClick={() => selectTool(TDShapeType.Line)}
             />
           </Tooltip>
-          <Tooltip label="Rectangle" aria-label="Rectangle">
+          <Tooltip label="Box (B)" aria-label="Box (B)">
             <IconButton
               icon={<RectangleIcon />}
-              aria-label="Rectangle"
+              aria-label="Box"
               css={
                 activeTool === TDShapeType.Rectangle
                   ? selectedStyle
@@ -97,10 +164,10 @@ export default function DrawingControls({ app }: PropsType) {
               onClick={() => selectTool(TDShapeType.Rectangle)}
             />
           </Tooltip>
-          <Tooltip label="Ellipse" aria-label="Ellipse">
+          <Tooltip label="Circle (C)" aria-label="Circle (C)">
             <IconButton
               icon={<CircleIcon />}
-              aria-label="Ellipse"
+              aria-label="Circle"
               css={
                 activeTool === TDShapeType.Ellipse
                   ? selectedStyle
@@ -137,14 +204,16 @@ export default function DrawingControls({ app }: PropsType) {
         borderColor="whiteAlpha.300"
         justify="center"
       >
-        <Box>
-          <IconButton
-            icon={<TrashIcon />}
-            aria-label="Arrow"
-            css={selectedStyle}
-            onClick={() => app.deleteAll()}
-          />
-        </Box>
+        <Tooltip label="Trash drawing (T)" aria-label="Trash drawing (T)">
+          <Box>
+            <IconButton
+              icon={<TrashIcon />}
+              aria-label="Arrow"
+              css={selectedStyle}
+              onClick={() => app.deleteAll()}
+            />
+          </Box>
+        </Tooltip>
       </Flex>
     </>
   );

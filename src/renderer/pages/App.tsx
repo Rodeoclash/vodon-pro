@@ -227,6 +227,36 @@ export default function App() {
                 </Td>
                 <Td>To reset pan and zoom</Td>
               </Tr>
+              <Tr>
+                <Td>
+                  <Kbd>P</Kbd>
+                </Td>
+                <Td>Select drawing pencil</Td>
+              </Tr>
+              <Tr>
+                <Td>
+                  <Kbd>R</Kbd>
+                </Td>
+                <Td>Select drawing arrow</Td>
+              </Tr>
+              <Tr>
+                <Td>
+                  <Kbd>L</Kbd>
+                </Td>
+                <Td>Select drawing line</Td>
+              </Tr>
+              <Tr>
+                <Td>
+                  <Kbd>B</Kbd>
+                </Td>
+                <Td>Select drawing box</Td>
+              </Tr>
+              <Tr>
+                <Td>
+                  <Kbd>C</Kbd>
+                </Td>
+                <Td>Select drawing circle</Td>
+              </Tr>
             </Tbody>
           </Table>
         </TableContainer>

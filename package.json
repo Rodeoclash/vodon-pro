@@ -221,7 +221,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@chakra-ui/react": "^1.8.7",
+    "@chakra-ui/react": "^1.8.9",
     "@emoji-mart/data": "^1.0.5",
     "@emoji-mart/react": "^1.0.1",
     "@emotion/react": "^11.9.0",

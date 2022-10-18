@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { useListener } from 'react-bus';
 import { css } from '@emotion/react';
-import { Box, Heading, Flex, Text } from '@chakra-ui/react';
+import { Box, Heading, Flex, Text, Kbd } from '@chakra-ui/react';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
 
 import useVideoStore from '../../services/stores/videos';
@@ -31,6 +31,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
   const currentTime = useVideoStore((state) => state.currentTime);
   const playbackSpeed = useVideoStore((state) => state.playbackSpeed);
   const playing = useVideoStore((state) => state.playing);
+  const videos = useVideoStore((state) => state.videos);
 
   const [videoDimensions, setVideoDimensions] = useState<
     [number, number] | null
@@ -42,6 +43,10 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
       : currentTime >= video.durationNormalised;
 
   const currentActive = activeVideoId === video.id;
+
+  const videoIndex = videos.findIndex((innerVideo) => {
+    return video.id === innerVideo.id;
+  });
 
   /**
    * Clicking the video makes it active.
@@ -270,17 +275,19 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
         ref={containerRef}
       >
         <Box position="relative" cursor="pointer" css={innerStyles}>
-          <Heading
+          <Flex
             position="absolute"
             top="0"
             left="0"
             bgColor="blackAlpha.800"
             padding="2"
-            fontSize="md"
-            fontWeight="normal"
           >
-            {video.name}
-          </Heading>
+            <Kbd mr="2">{videoIndex + 1}</Kbd>
+            <Heading fontSize="md" fontWeight="normal">
+              {video.name}
+            </Heading>
+          </Flex>
+
           <Box onClick={() => handleClickVideo()} ref={videoRef} />
         </Box>
       </Flex>

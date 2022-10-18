@@ -1,3 +1,10 @@
+### 1.9.8
+
+- Display the keyboard shortcut on the thumbnail videos to jump to them.
+- Drawing controls can be selected using keyboard shortcuts.
+- Fixed a bug where loading Vodon when it had previously been closed on a bookmark, would erase the bookmark.
+- Navigating into bookmarks which don't have drawings will no longer wipe out the current drawing.
+
 ### 1.9.7
 
 - When in presentation mode with controls hidden, mouse pointer is now visible.

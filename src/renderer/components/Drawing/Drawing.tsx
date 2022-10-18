@@ -1,5 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { Tldraw, TldrawApp, ColorStyle } from '@tldraw/tldraw';
+import { isEmpty } from 'lodash/fp';
 
 import { Box } from '@chakra-ui/react';
 import useVideoStore from '../../services/stores/videos';
@@ -34,10 +35,32 @@ export default function Drawing({
     (state) => state.clearDrawingsOnPlay
   );
 
+  const rescaleDrawing = useCallback(() => {
+    if (tlDrawRef.current === null) {
+      return;
+    }
+
+    tlDrawRef.current.setCamera([0, 0], scale, 'layout_resized');
+  }, [scale]);
+
+  const loadCurrentDrawing = useCallback(() => {
+    if (tlDrawRef.current === null || videoBookmark === undefined) {
+      return;
+    }
+
+    tlDrawRef.current.loadDocument(
+      JSON.parse(JSON.stringify(videoBookmark.drawing)) // we need to load a copy of the document
+    );
+
+    tlDrawRef.current.selectNone();
+    rescaleDrawing();
+  }, [rescaleDrawing, videoBookmark]);
+
   function handleMount(app: TldrawApp) {
     tlDrawRef.current = app;
     tlDrawRef.current.setCamera([0, 0], scale, 'layout_mounted');
     tlDrawRef.current.style({ color: ColorStyle.Red });
+    loadCurrentDrawing();
     onMount(app);
   }
 
@@ -60,14 +83,6 @@ export default function Drawing({
     tlDrawRef.current.toggleToolLock();
   }, []);
 
-  const rescaleDrawing = useCallback(() => {
-    if (tlDrawRef.current === null) {
-      return;
-    }
-
-    tlDrawRef.current.setCamera([0, 0], scale, 'layout_resized');
-  }, [scale]);
-
   /**
    * Rescale drawing as parent scales
    */
@@ -84,16 +99,16 @@ export default function Drawing({
     }
 
     if (videoBookmark?.drawing) {
-      tlDrawRef.current.loadDocument(
-        JSON.parse(JSON.stringify(videoBookmark.drawing)) // we need to load a copy of the document
-      );
+      // "Page" does exist on the object, however it's dynamically created
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const emptyDrawing = isEmpty(videoBookmark.drawing.pages.page.shapes);
 
-      tlDrawRef.current.selectNone();
-      rescaleDrawing();
-    } else {
-      clearDrawing();
+      if (emptyDrawing === false) {
+        loadCurrentDrawing();
+      }
     }
-  }, [clearDrawing, rescaleDrawing, videoBookmark]);
+  }, [clearDrawing, rescaleDrawing, loadCurrentDrawing, videoBookmark]);
 
   /**
    * Clear drawings between time changes if enabled

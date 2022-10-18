@@ -16,6 +16,7 @@ import {
   Flex,
   Heading,
   IconButton,
+  Kbd,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
@@ -119,6 +120,10 @@ export default function ReviewVideos() {
     });
 
   const activeVideo = videos.find((video) => {
+    return activeVideoId === video.id;
+  });
+
+  const activeVideoIndex = videos.findIndex((video) => {
     return activeVideoId === video.id;
   });
 
@@ -545,7 +550,7 @@ export default function ReviewVideos() {
           top={0}
           zIndex={2}
         >
-          <Box
+          <Flex
             background="gray.900"
             borderColor="whiteAlpha.500"
             borderTop="none"
@@ -554,9 +559,13 @@ export default function ReviewVideos() {
             onMouseLeave={() => setControlsOn(false)}
             p={4}
             pointerEvents="all"
+            alignItems="center"
           >
+            <Box mr="4" fontSize="xl">
+              <Kbd>{activeVideoIndex + 1}</Kbd>
+            </Box>
             <Heading fontSize="xl">{activeVideo.name}</Heading>
-          </Box>
+          </Flex>
         </Flex>
       );
 
