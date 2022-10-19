@@ -257,6 +257,12 @@ export default function App() {
                 </Td>
                 <Td>Select drawing circle</Td>
               </Tr>
+              <Tr>
+                <Td>
+                  <Kbd>T</Kbd>
+                </Td>
+                <Td>Trash current drawing</Td>
+              </Tr>
             </Tbody>
           </Table>
         </TableContainer>
