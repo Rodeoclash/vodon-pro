@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useBus } from 'react-bus';
+import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
 
 import useVideoStore from '../../services/stores/videos';
@@ -10,11 +11,13 @@ import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
 import type { Video } from '../../services/models/Video';
 
 type Props = {
+  app: TldrawApp;
   onEscape: () => void;
   video: Video;
 };
 
 export default function HotKeys({
+  app,
   onEscape,
   video,
 }: Props): React.ReactElement {
@@ -45,6 +48,14 @@ export default function HotKeys({
   const [nextFrameHeld, setNextFrameHeld] = useState(false);
 
   const videoOffset = video.offset ? video.offset : 0;
+
+  const selectTool = useCallback(
+    (type: TDToolType) => {
+      app.selectTool(type);
+      app.toggleToolLock();
+    },
+    [app]
+  );
 
   /**
    * Handle going back by a frame
@@ -152,6 +163,72 @@ export default function HotKeys({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, previousFrameHeld, nextFrameHeld]);
+
+  useHotkeys(
+    'p',
+    () => {
+      selectTool(TDShapeType.Draw);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    'r',
+    () => {
+      selectTool(TDShapeType.Arrow);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    'l',
+    () => {
+      selectTool(TDShapeType.Line);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    'b',
+    () => {
+      selectTool(TDShapeType.Rectangle);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    'c',
+    () => {
+      selectTool(TDShapeType.Ellipse);
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
+
+  useHotkeys(
+    't',
+    () => {
+      app.deleteAll();
+    },
+    {
+      keydown: true,
+    },
+    [selectTool]
+  );
 
   /**
    * Previous frame held down

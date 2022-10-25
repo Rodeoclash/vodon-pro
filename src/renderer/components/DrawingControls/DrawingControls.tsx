@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { css } from '@emotion/react';
-import { useHotkeys } from 'react-hotkeys-hook';
 
 import { Flex, Box, VStack, IconButton, Tooltip } from '@chakra-ui/react';
 import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
@@ -40,72 +39,6 @@ export default function DrawingControls({ app }: PropsType) {
       app.toggleToolLock();
     },
     [app]
-  );
-
-  useHotkeys(
-    'p',
-    () => {
-      selectTool(TDShapeType.Draw);
-    },
-    {
-      keydown: true,
-    },
-    [selectTool]
-  );
-
-  useHotkeys(
-    'r',
-    () => {
-      selectTool(TDShapeType.Arrow);
-    },
-    {
-      keydown: true,
-    },
-    [selectTool]
-  );
-
-  useHotkeys(
-    'l',
-    () => {
-      selectTool(TDShapeType.Line);
-    },
-    {
-      keydown: true,
-    },
-    [selectTool]
-  );
-
-  useHotkeys(
-    'b',
-    () => {
-      selectTool(TDShapeType.Rectangle);
-    },
-    {
-      keydown: true,
-    },
-    [selectTool]
-  );
-
-  useHotkeys(
-    'c',
-    () => {
-      selectTool(TDShapeType.Ellipse);
-    },
-    {
-      keydown: true,
-    },
-    [selectTool]
-  );
-
-  useHotkeys(
-    't',
-    () => {
-      app.deleteAll();
-    },
-    {
-      keydown: true,
-    },
-    [selectTool]
   );
 
   return (

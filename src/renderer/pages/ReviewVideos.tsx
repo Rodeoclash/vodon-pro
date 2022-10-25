@@ -770,8 +770,12 @@ export default function ReviewVideos() {
 
   return (
     <>
-      {activeVideo !== undefined && (
-        <Hotkeys onEscape={() => setFullscreen(false)} video={activeVideo} />
+      {activeVideo !== undefined && app !== undefined && (
+        <Hotkeys
+          onEscape={() => setFullscreen(false)}
+          video={activeVideo}
+          app={app}
+        />
       )}
       <WithSidebar sidebar={renderedSidebar} disableSidebar={videos.length < 2}>
         {renderedContent}
