@@ -1,3 +1,10 @@
+### 1.9.9
+
+- Upgraded to Node 18.
+- Updated a bunch of dependencies, including moving to latest Electron version.
+- Fixed drawing hotkeys to work correctly in presentation mode.
+- Added Kilk to the credits and updated other users contributions.
+
 ### 1.9.8
 
 - Display the keyboard shortcut on the thumbnail videos to jump to them.
