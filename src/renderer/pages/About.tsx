@@ -1,10 +1,11 @@
 import {
-  Heading,
-  Text,
   Box,
+  Code,
+  Heading,
   Link,
-  UnorderedList,
   ListItem,
+  Text,
+  UnorderedList,
 } from '@chakra-ui/react';
 
 import NoSidebar from '../layouts/NoSidebar';
@@ -66,8 +67,14 @@ export default function About() {
             >
               Apex Fundamentalists
             </Link>
+            : Feedback and bug reports. Check out the Apex Fundamentalists for
+            Apex Legends training material and guides.
           </ListItem>
-          <ListItem>Assian</ListItem>
+          <ListItem>Assian: For contributions to the app</ListItem>
+          <ListItem>
+            Kilk <Code>(kilk#8133)</Code>: For feedback and bug reports. Check
+            him out for Valorant coaching.
+          </ListItem>
         </UnorderedList>
       </Box>
     </NoSidebar>
