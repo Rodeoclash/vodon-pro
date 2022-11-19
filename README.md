@@ -8,7 +8,7 @@
 
 **Vodon Pro is a video player designed for esports coaches to review gameplay**. The main unique feature that it has is the ability for you to load multiple viewpoints of your team into the player, synchronise them, then watch the videos with the ability to instantly jump to any of the viewpoints of your players.
 
-**[View homepage to Download](https://vodon.gg/)**
+**[View homepage to download](https://vodon.gg/)**
 
 </div>
 
