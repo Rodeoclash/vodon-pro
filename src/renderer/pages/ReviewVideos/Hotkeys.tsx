@@ -40,7 +40,8 @@ export default function HotKeys({
   const arrowKeyJumpDistance = useSettingsStore(
     (state) => state.arrowKeyJumpDistance
   );
-  const setZoomPan = useSettingsStore((state) => state.setZoomPan);
+
+  const setZoomPan = useVideoStore((state) => state.setZoomPan);
 
   const parsedArrowKeyJumpDistance = parseFloat(arrowKeyJumpDistance);
 

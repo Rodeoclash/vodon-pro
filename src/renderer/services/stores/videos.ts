@@ -26,6 +26,7 @@ interface StateData {
   playbackSpeed: number;
   playing: boolean;
   videos: Video[];
+  zoomPanEnabled: boolean;
 }
 
 interface State extends StateData {
@@ -83,6 +84,8 @@ interface State extends StateData {
     bookmark: VideoBookmark,
     drawing: object
   ) => void;
+
+  setZoomPan: (value: boolean) => void;
 }
 
 const emptyState: StateData = {
@@ -95,6 +98,7 @@ const emptyState: StateData = {
   playing: false,
   seeking: false,
   videos: [],
+  zoomPanEnabled: false,
 };
 
 // remove video elements
@@ -470,6 +474,8 @@ const useStore = createStore<State>(
 
       setOverrideHideControls: (value: boolean) =>
         set(() => ({ overrideHideControls: value })),
+
+      setZoomPan: (value) => set(() => ({ zoomPanEnabled: value })),
 
       ...emptyState,
     }),

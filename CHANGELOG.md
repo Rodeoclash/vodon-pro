@@ -1,3 +1,10 @@
+### 1.9.10
+
+- Changed the way zoom/pan is tracked so that removing videos or creating a new project will reset it.
+- Added a way of resetting all settings from the settings page.
+- Made it possible to access developer tools when running in production mode.
+- Upgraded dependencies.
+
 ### 1.9.9
 
 - Upgraded to Node 18.

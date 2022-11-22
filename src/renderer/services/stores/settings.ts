@@ -11,16 +11,15 @@ interface StateData {
   shownFirstHelpSetup: boolean;
   showSetupInstructions: boolean;
   sidebarWidth: number;
-  zoomPanEnabled: boolean;
 }
 
 interface State extends StateData {
+  resetSettings: () => void;
   setArrowKeyJumpDistance: (seconds: string) => void;
   setShownFirstHelpReview: (value: boolean) => void;
   setShownFirstHelpSetup: (value: boolean) => void;
   setShowSetupInstructions: (value: boolean) => void;
   setSidebarWidth: (value: number) => void;
-  setZoomPan: (value: boolean) => void;
   toggleClearDrawingsOnPlay: () => void;
 }
 
@@ -31,7 +30,6 @@ const emptyState: StateData = {
   shownFirstHelpSetup: false,
   showSetupInstructions: true,
   sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
-  zoomPanEnabled: false,
 };
 
 const serialize = (state: object) => {
@@ -51,6 +49,11 @@ const deserialize = (str: string) => {
 const useStore = createStore<State>(
   persist(
     (set) => ({
+      resetSettings: () =>
+        set((state) => ({
+          ...state,
+          ...emptyState,
+        })),
       setArrowKeyJumpDistance: (seconds) =>
         set(() => ({ arrowKeyJumpDistance: seconds })),
       setShownFirstHelpReview: (shownFirstHelpReview) =>
@@ -60,7 +63,6 @@ const useStore = createStore<State>(
       setShowSetupInstructions: (value) =>
         set(() => ({ showSetupInstructions: value })),
       setSidebarWidth: (sidebarWidth) => set(() => ({ sidebarWidth })),
-      setZoomPan: (value) => set(() => ({ zoomPanEnabled: value })),
       toggleClearDrawingsOnPlay: () =>
         set((state) => ({ clearDrawingsOnPlay: !state.clearDrawingsOnPlay })),
       ...emptyState,
