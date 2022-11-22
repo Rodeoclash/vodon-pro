@@ -15,6 +15,19 @@ import { getRatioDimensions } from '../../services/layout';
 
 import type { Video } from '../../services/models/Video';
 
+interface VideoFrameMetadata {
+  presentationTime: DOMHighResTimeStamp;
+  expectedDisplayTime: DOMHighResTimeStamp;
+  width: number;
+  height: number;
+  mediaTime: number;
+  presentedFrames: number;
+  processingDuration?: number;
+  captureTime?: DOMHighResTimeStamp;
+  receiveTime?: DOMHighResTimeStamp;
+  rtpTimestamp?: number;
+}
+
 interface Props {
   onVideoTimeChanged: (video: Video, time: number) => void;
   video: Video;
