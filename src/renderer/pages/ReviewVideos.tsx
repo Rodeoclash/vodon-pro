@@ -35,7 +35,6 @@ import { isEqual } from 'lodash';
 import { GLOBAL_TIME_CHANGE } from '../services/bus';
 import { getRatioDimensions } from '../services/layout';
 import useVideoStore from '../services/stores/videos';
-import useSettingsStore from '../services/stores/settings';
 
 import Drawing from '../components/Drawing/Drawing';
 import DrawingControls from '../components/DrawingControls/DrawingControls';
@@ -111,7 +110,7 @@ export default function ReviewVideos() {
   const playing = useVideoStore((state) => state.playing);
   const videos = useVideoStore((state) => state.videos);
 
-  const zoomPanEnabled = useSettingsStore((state) => state.zoomPanEnabled);
+  const zoomPanEnabled = useVideoStore((state) => state.zoomPanEnabled);
 
   const { panZoomHandlers, setContainer, setPan, setZoom, transform, zoom } =
     usePanZoom({
@@ -158,7 +157,7 @@ export default function ReviewVideos() {
    * Reset zoom / pan bounds
    */
   useHotkeys(
-    'x',
+    'x, X',
     () => {
       setZoom(0);
       setPan({ x: 0, y: 0 });

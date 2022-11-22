@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   FormControl,
   FormLabel,
   Heading,
@@ -17,6 +18,8 @@ import useSettingsStore from '../services/stores/settings';
 import NoSidebar from '../layouts/NoSidebar';
 
 export default function Settings() {
+  const resetSettings = useSettingsStore((state) => state.resetSettings);
+
   const setArrowKeyJumpDistance = useSettingsStore(
     (state) => state.setArrowKeyJumpDistance
   );
@@ -39,12 +42,25 @@ export default function Settings() {
     }
   }
 
+  function handleResetSettings() {
+    // eslint-disable-next-line no-alert
+    if (window.confirm('This will reset all your settings, are you sure?')) {
+      resetSettings();
+    }
+  }
+
   return (
     <NoSidebar>
       <Box p="8" overflow="auto" height="100%" width="100%">
         <Heading as="h1" fontSize="5xl">
           Settings
         </Heading>
+
+        <Box my={8}>
+          <Button onClick={() => handleResetSettings()} bgColor="red.500">
+            Reset all
+          </Button>
+        </Box>
 
         <Heading as="h1" fontSize="3xl" mt="8" mb="4">
           General
