@@ -152,6 +152,7 @@ const deserialize = async (str: string) => {
     version: parsedStr.version,
     state: {
       ...parsedStr.state,
+      zoomPanEnabled: false,
       videos,
     },
   };
