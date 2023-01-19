@@ -87,6 +87,54 @@ export default class MenuBuilder {
         },
       ],
     };
+    const subMenuFile: DarwinMenuItemConstructorOptions = {
+      label: 'File',
+      submenu: [
+        {
+          label: 'New project',
+          accelerator: 'Command+N',
+          click: () => {
+            this.mainWindow.webContents.send('onNewProjectRequest');
+          },
+        },
+        {
+          label: 'Open project...',
+          accelerator: 'Command+O',
+          click: async () => {
+            const result = await dialog.showOpenDialog(this.mainWindow, {
+              properties: ['openFile'],
+              filters: [{ name: 'JSON', extensions: ['json'] }],
+            });
+
+            if (result.canceled === false) {
+              const contents = await fs.readFile(result.filePaths[0]);
+              this.mainWindow.webContents.send(
+                'onLoadProjectRequest',
+                contents.toString()
+              );
+            }
+          },
+        },
+        {
+          label: 'Save project as...',
+          accelerator: 'Command+Shift+S',
+          click: async () => {
+            const result = await dialog.showSaveDialog(this.mainWindow, {
+              properties: ['createDirectory', 'showOverwriteConfirmation'],
+              filters: [{ name: 'JSON', extensions: ['json'] }],
+            });
+
+            if (result.canceled === false) {
+              this.mainWindow.webContents.send(
+                'onSaveProjectRequest',
+                result.filePaths[0]
+              );
+            }
+          },
+        },
+      ],
+    };
+
     const subMenuEdit: DarwinMenuItemConstructorOptions = {
       label: 'Edit',
       submenu: [
@@ -188,7 +236,7 @@ export default class MenuBuilder {
         ? subMenuViewDev
         : subMenuViewProd;
 
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return [subMenuAbout, subMenuFile, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
 
   buildDefaultTemplate() {
@@ -222,8 +270,8 @@ export default class MenuBuilder {
           {
             label: 'Save project as...',
             click: async () => {
-              const result = await dialog.showOpenDialog(this.mainWindow, {
-                properties: ['openFile', 'promptToCreate'],
+              const result = await dialog.showSaveDialog(this.mainWindow, {
+                properties: ['showOverwriteConfirmation'],
                 filters: [{ name: 'JSON', extensions: ['json'] }],
               });
 
