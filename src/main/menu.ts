@@ -127,7 +127,7 @@ export default class MenuBuilder {
             if (result.canceled === false) {
               this.mainWindow.webContents.send(
                 'onSaveProjectRequest',
-                result.filePaths[0]
+                result.filePath
               );
             }
           },
@@ -236,7 +236,14 @@ export default class MenuBuilder {
         ? subMenuViewDev
         : subMenuViewProd;
 
-    return [subMenuAbout, subMenuFile, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return [
+      subMenuAbout,
+      subMenuFile,
+      subMenuEdit,
+      subMenuView,
+      subMenuWindow,
+      subMenuHelp,
+    ];
   }
 
   buildDefaultTemplate() {
@@ -278,7 +285,7 @@ export default class MenuBuilder {
               if (result.canceled === false) {
                 this.mainWindow.webContents.send(
                   'onSaveProjectRequest',
-                  result.filePaths[0]
+                  result.filePath
                 );
               }
             },
