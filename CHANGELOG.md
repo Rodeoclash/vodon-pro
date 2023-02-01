@@ -1,3 +1,7 @@
+### 1.9.11
+
+- Improved dropdown menus on OSX (thanks to @devernay)
+
 ### 1.9.10
 
 - Changed the way zoom/pan is tracked so that removing videos or creating a new project will reset it.
