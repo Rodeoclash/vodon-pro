@@ -1,3 +1,7 @@
+### 1.9.12
+
+- Upgraded some out of date libs, including Chrome to try and address an issue with slow video playback.
+
 ### 1.9.11
 
 - Improved dropdown menus on OSX (thanks to @devernay)
