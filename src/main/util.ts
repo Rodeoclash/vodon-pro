@@ -5,7 +5,7 @@ import path from 'path';
 export let resolveHtmlPath: (htmlFileName: string) => string;
 
 if (process.env.NODE_ENV === 'development') {
-  const port = process.env.PORT || 1212;
+  const port = process.env.PORT || 2212;
   resolveHtmlPath = (htmlFileName: string) => {
     const url = new URL(`http://localhost:${port}`);
     url.pathname = htmlFileName;

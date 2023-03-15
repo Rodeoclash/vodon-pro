@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === 'production') {
   checkNodeEnv('development');
 }
 
-const port = process.env.PORT || 1212;
+const port = process.env.PORT || 2212;
 const manifest = path.resolve(webpackPaths.dllPath, 'renderer.json');
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const requiredByDLLConfig = module.parent!.filename.includes(
