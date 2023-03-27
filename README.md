@@ -11,6 +11,10 @@
 
 </div>
 
+# Vodon Online
+
+I now have a beta version of Vodon Pro which can be used online. If you're interested in trying it out, please go to: https://player.vodon.gg/
+
 ## Features
 
 - 🎥 Watch multiple videos at once, perfectly synchronised together.
