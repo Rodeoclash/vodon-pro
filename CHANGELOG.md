@@ -1,3 +1,7 @@
+### 1.9.13
+
+- Upgraded electron (and by proxy, Chrome) to the latest version.
+
 ### 1.9.12
 
 - Upgraded some out of date libs, including Chrome to try and address an issue with slow video playback.
