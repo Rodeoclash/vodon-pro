@@ -1,8 +1,8 @@
-<div align="center">
-
 # Notice
 
 Unfortunately the build framework that powers Vodon Pro, electron-react-boilerplate, is now no longer compatable with the latest versions of Electron. I don't have time to go through the project and make the changes required to the build process to upgrade it to use the new Electron. Additionally, it looks like the old version of Chrome that is powering Vodon Pro is having issues with some of the current video formats. I'm not going to take the repo down but I cannot work on it at the moment.
+
+<div align="center">
 
 # Vodon Pro
 
