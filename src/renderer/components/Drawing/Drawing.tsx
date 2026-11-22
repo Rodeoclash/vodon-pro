@@ -1,5 +1,10 @@
 import { Box } from '@chakra-ui/react';
-import { ColorStyle, Tldraw, type TldrawApp } from '@tldraw/tldraw';
+import {
+  ColorStyle,
+  type TDDocument,
+  Tldraw,
+  type TldrawApp,
+} from '@tldraw/tldraw';
 import { isEmpty } from 'lodash/fp';
 import { useCallback, useEffect, useRef } from 'react';
 import type { Video } from '../../services/models/Video';
@@ -97,10 +102,9 @@ export default function Drawing({
     }
 
     if (videoBookmark?.drawing) {
-      // "Page" does exist on the object, however it's dynamically created
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const emptyDrawing = isEmpty(videoBookmark.drawing.pages.page.shapes);
+      // Bookmarks store the tldraw document as a plain object.
+      const drawing = videoBookmark.drawing as TDDocument;
+      const emptyDrawing = isEmpty(drawing.pages.page?.shapes);
 
       if (emptyDrawing === false) {
         loadCurrentDrawing();
