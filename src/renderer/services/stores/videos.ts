@@ -508,7 +508,7 @@ export async function createVideosFromPaths(paths: Array<string>) {
  * Handle the save request from the main thread. Calculate the current state
  * then pass it back to the main thread along with the filepath to persist.
  */
-window.app.onSaveProjectRequest((_event: any, filePath: string) => {
+window.app.onSaveProjectRequest((filePath: string) => {
   const serializedState = serialize({
     version: CURRENT_PERSIST_VERSION,
     state: useStore.getState(),
@@ -521,7 +521,7 @@ window.app.onSaveProjectRequest((_event: any, filePath: string) => {
  * Handle the save request from the main thread. Calculate the current state
  * then pass it back to the main thread along with the filepath to persist.
  */
-window.app.onLoadProjectRequest(async (_event: any, project: string) => {
+window.app.onLoadProjectRequest(async (project: string) => {
   const unserializedState = await deserialize(project);
   useStore.setState(unserializedState.state);
 });
@@ -543,7 +543,7 @@ window.app.onNewProjectRequest(async () => {
 /**
  * Handle additional incoming videos.
  */
-window.app.onLoadAdditionalVideos(async (_event: any, argV: Array<string>) => {
+window.app.onLoadAdditionalVideos(async (argV: Array<string>) => {
   const paths = getPossibleArgVMoviePaths(argV);
 
   if (paths.length > 0) {
