@@ -176,7 +176,7 @@ export async function createFromFile(filePath: string): Promise<Video> {
 
   // determine framerate
   const [ratio1, ratio2] = videoStream.avg_frame_rate.split('/');
-  const frameRate = Math.round(parseInt(ratio1, 10) / parseInt(ratio2, 10));
+  const frameRate = Math.round(Number.parseInt(ratio1, 10) / Number.parseInt(ratio2, 10));
 
   // video element
   const el = document.createElement('video');

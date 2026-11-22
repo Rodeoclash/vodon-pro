@@ -22,7 +22,7 @@ export default function PlaybackSpeed({ disabled }: Props) {
   return (
     <Select
       onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-        setPlaybackSpeed(parseFloat(event.target.value));
+        setPlaybackSpeed(Number.parseFloat(event.target.value));
       }}
       disabled={disabled}
       value={playbackSpeed}

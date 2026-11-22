@@ -41,7 +41,7 @@ export default function HotKeys({
 
   const setZoomPan = useVideoStore((state) => state.setZoomPan);
 
-  const parsedArrowKeyJumpDistance = parseFloat(arrowKeyJumpDistance);
+  const parsedArrowKeyJumpDistance = Number.parseFloat(arrowKeyJumpDistance);
 
   const [previousFrameHeld, setPreviousFrameHeld] = useState(false);
   const [nextFrameHeld, setNextFrameHeld] = useState(false);
@@ -352,7 +352,7 @@ export default function HotKeys({
   useHotkeys(
     '1,2,3,4,5,6,7,8,9',
     (arg1) => {
-      const index = parseInt(arg1.key, 10) - 1;
+      const index = Number.parseInt(arg1.key, 10) - 1;
       if (videos[index] !== undefined) {
         setActiveVideoId(videos[index].id);
       }
