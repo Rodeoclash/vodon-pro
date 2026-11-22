@@ -2,13 +2,12 @@ import { Box, Center, Flex, Text } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Plus as PlusIcon } from 'tabler-icons-react';
+import { getDiskPaths } from '../../services/file';
 import { createVideosFromPaths } from '../../services/stores/videos';
 
 export default function VideoAdd() {
   const handleDrop = useCallback((files: File[]) => {
-    const paths = files.map((file) => {
-      return file.path;
-    });
+    const paths = getDiskPaths(files, window.video.getPathForFile);
 
     createVideosFromPaths(paths).catch(console.error);
   }, []);

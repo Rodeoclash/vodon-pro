@@ -28,3 +28,15 @@ export const getPossibleArgVMoviePaths = (
     return acc;
   }, []);
 };
+
+/**
+ * Paths on disk for dropped or picked files. Electron gives no path for a
+ * File that isn't backed by a file on disk (an empty string), so those are
+ * skipped.
+ */
+export const getDiskPaths = (
+  files: Array<File>,
+  getPathForFile: (file: File) => string,
+): Array<string> => {
+  return files.map(getPathForFile).filter((filePath) => filePath !== '');
+};

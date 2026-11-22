@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer, webUtils } from 'electron';
 
 contextBridge.exposeInMainWorld('app', {
   getVersion: () => ipcRenderer.invoke('app:getVersion'),
@@ -29,4 +29,6 @@ contextBridge.exposeInMainWorld('video', {
     ipcRenderer.invoke('video:screenshot', filePath, second),
   getMetadata: (filePath: string) =>
     ipcRenderer.invoke('video:getMetadata', filePath),
+  // File.path was removed in Electron 32; this is its replacement.
+  getPathForFile: (file: File) => webUtils.getPathForFile(file),
 });
