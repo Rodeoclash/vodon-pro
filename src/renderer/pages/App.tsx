@@ -1,7 +1,3 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Global, css } from '@emotion/react';
-import { Provider as BusProvider } from 'react-bus';
-
 import {
   Box,
   Button,
@@ -32,45 +28,45 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
+import { css, Global } from '@emotion/react';
+import { useCallback, useEffect, useState } from 'react';
+import { Provider as BusProvider } from 'react-bus';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { Help as HelpIcon } from 'tabler-icons-react';
+import garet from '../assets/fonts/Garet-Heavy.otf';
+import NavLink from '../components/NavLink/NavLink';
 import { getPossibleArgVMoviePaths } from '../services/file';
-
 import useSettingsStore from '../services/stores/settings';
 import useVideoStore, {
   createVideosFromPaths,
 } from '../services/stores/videos';
 import theme from '../services/theme';
-import garet from '../assets/fonts/Garet-Heavy.otf';
-
-import NavLink from '../components/NavLink/NavLink';
 
 export default function App() {
-  const addVideo = useVideoStore((state) => state.addVideo);
   const clearVideos = useVideoStore((state) => state.clearVideos);
   const overrideHideControls = useVideoStore(
-    (state) => state.overrideHideControls
+    (state) => state.overrideHideControls,
   );
 
   const setShownFirstHelpReview = useSettingsStore(
-    (state) => state.setShownFirstHelpReview
+    (state) => state.setShownFirstHelpReview,
   );
 
   const setShownFirstHelpSetup = useSettingsStore(
-    (state) => state.setShownFirstHelpSetup
+    (state) => state.setShownFirstHelpSetup,
   );
 
   const showFirstHelpReview = useSettingsStore(
-    (state) => state.shownFirstHelpReview
+    (state) => state.shownFirstHelpReview,
   );
 
   const showFirstHelpSetup = useSettingsStore(
-    (state) => state.shownFirstHelpSetup
+    (state) => state.shownFirstHelpSetup,
   );
 
   const arrowKeyJumpDistance = useSettingsStore(
-    (state) => state.arrowKeyJumpDistance
+    (state) => state.arrowKeyJumpDistance,
   );
 
   const [version, setVersion] = useState<string | null>(null);
@@ -97,7 +93,7 @@ export default function App() {
 
         if (paths.length > 0) {
           clearVideos();
-          createVideosFromPaths(paths);
+          createVideosFromPaths(paths).catch(console.error);
         }
 
         return undefined;
@@ -105,7 +101,7 @@ export default function App() {
       .catch((e) => {
         throw e;
       });
-  }, [addVideo, clearVideos]);
+  }, [clearVideos]);
 
   const showHelpButton = pathname === '/' || pathname === '/review';
 

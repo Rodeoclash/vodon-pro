@@ -1,10 +1,9 @@
-import * as React from 'react';
-import { usePopper } from 'react-popper';
-import { useHotkeys } from 'react-hotkeys-hook';
-
 import { Box, Flex, FormControl, FormLabel, Textarea } from '@chakra-ui/react';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import * as React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { usePopper } from 'react-popper';
 
 import type {
   VideoBookmark,
@@ -50,7 +49,7 @@ export default function VideoBookmarkEditor({
       setShowEmojiPicker(false);
       onChangeIcon(details);
     },
-    [onChangeIcon]
+    [onChangeIcon],
   );
 
   /**
@@ -62,7 +61,7 @@ export default function VideoBookmarkEditor({
       setShowEmojiPicker(false);
     },
     {},
-    [setShowEmojiPicker]
+    [setShowEmojiPicker],
   );
 
   return (
@@ -91,7 +90,6 @@ export default function VideoBookmarkEditor({
             ref={setPopperElement}
             zIndex="1"
             style={styles.popper}
-            // eslint-disable-next-line react/jsx-props-no-spreading
             {...attributes.popper}
           >
             <Picker

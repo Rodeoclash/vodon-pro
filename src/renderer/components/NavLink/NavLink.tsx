@@ -1,11 +1,10 @@
+import { Link } from '@chakra-ui/react';
+import type { LinkProps } from 'react-router-dom';
 import {
+  Link as RouterLink,
   useMatch,
   useResolvedPath,
-  Link as RouterLink,
 } from 'react-router-dom';
-import type { LinkProps } from 'react-router-dom';
-
-import { Link } from '@chakra-ui/react';
 
 export default function NavLink({ children, to, ...props }: LinkProps) {
   const resolved = useResolvedPath(to);
@@ -22,7 +21,6 @@ export default function NavLink({ children, to, ...props }: LinkProps) {
         borderRadius="2xl"
         ml="4"
         _focus={{ boxShadow: 'none' }}
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
       >
         {children}

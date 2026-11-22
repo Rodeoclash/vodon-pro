@@ -6,15 +6,21 @@ contextBridge.exposeInMainWorld('app', {
   saveProject: (filePath: string, project: string) =>
     ipcRenderer.invoke('app:saveProject', filePath, project),
   openBrowser: (url: string) => ipcRenderer.invoke('app:openBrowser', url),
+  // Callbacks get the payload only: the IPC event (and its sender) stays here.
   onNewProjectRequest: (callback: () => void) =>
-    ipcRenderer.on('onNewProjectRequest', callback),
-  onSaveProjectRequest: (callback: (event: any, filePath: string) => void) =>
-    ipcRenderer.on('onSaveProjectRequest', callback),
-  onLoadProjectRequest: (callback: (event: any, project: string) => void) =>
-    ipcRenderer.on('onLoadProjectRequest', callback),
-  onLoadAdditionalVideos: (
-    callback: (event: any, argV: Array<string>) => void
-  ) => ipcRenderer.on('onLoadAdditionalVideos', callback),
+    ipcRenderer.on('onNewProjectRequest', () => callback()),
+  onSaveProjectRequest: (callback: (filePath: string) => void) =>
+    ipcRenderer.on('onSaveProjectRequest', (_event, filePath: string) =>
+      callback(filePath),
+    ),
+  onLoadProjectRequest: (callback: (project: string) => void) =>
+    ipcRenderer.on('onLoadProjectRequest', (_event, project: string) =>
+      callback(project),
+    ),
+  onLoadAdditionalVideos: (callback: (argV: Array<string>) => void) =>
+    ipcRenderer.on('onLoadAdditionalVideos', (_event, argV: Array<string>) =>
+      callback(argV),
+    ),
 });
 
 contextBridge.exposeInMainWorld('video', {

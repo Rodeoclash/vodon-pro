@@ -72,8 +72,8 @@ const useStore = createStore<State>(
       version: CURRENT_PERSIST_VERSION,
       serialize,
       deserialize,
-    }
-  )
+    },
+  ),
 );
 
 export default useStore;

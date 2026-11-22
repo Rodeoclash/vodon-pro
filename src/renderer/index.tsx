@@ -1,12 +1,11 @@
 import { render } from 'react-dom';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-
-import App from './pages/App';
-import ReviewVideos from './pages/ReviewVideos';
-import SetupVideos from './pages/SetupVideos';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import About from './pages/About';
-import Settings from './pages/Settings';
+import App from './pages/App';
 import ReceivedVODs from './pages/ReceivedVODs';
+import ReviewVideos from './pages/ReviewVideos';
+import Settings from './pages/Settings';
+import SetupVideos from './pages/SetupVideos';
 
 render(
   <HashRouter>
@@ -20,5 +19,5 @@ render(
       </Route>
     </Routes>
   </HashRouter>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );

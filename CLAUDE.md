@@ -8,16 +8,17 @@ Vodon Pro is an Electron + React desktop app for esports coaches to review multi
 
 ## Commands
 
+- `mise install` then `lefthook install` — tool versions (Node, Biome, lefthook, gitleaks) are pinned in `mise.toml`. Git hooks: pre-commit runs gitleaks and `biome check --write` on staged files; pre-push runs gitleaks, Biome, typecheck and tests.
 - `npm install` — also runs a postinstall that rebuilds native deps (`release/app`) and builds the renderer DLL bundle.
 - `npm start` — dev mode. Starts the webpack dev server for the renderer, which in turn spawns `start:preload` and `start:main` (electronmon) — see `.erb/configs/webpack.config.renderer.dev.ts`.
 - `npm run build` — production build of main and renderer into `release/app/dist`.
 - `npm run package` — build plus electron-builder packaging into `release/build`.
-- `npm run lint` — ESLint (airbnb + erb config). Pre-commit runs lint-staged via husky.
-- `npx tsc` — typecheck (CI runs this).
-- `npm test` — Jest (jsdom + ts-jest). **Tests require a prior build**: `.erb/scripts/check-build-exists.ts` is a Jest setup file that throws unless `release/app/dist/main/main.js` and `release/app/dist/renderer/renderer.js` exist. Run `npm run build` first.
-- Single test: `npx jest src/renderer/services/time.spec.ts` (or `npx jest -t "name"`).
+- `npm run lint` — Biome (lint + format check, config in `biome.json`); `npm run format` applies fixes. `.erb/` is excluded as it is slated for replacement.
+- `npm run typecheck` — `tsc --noEmit`.
+- `npm test` — Vitest (jsdom), specs are `src/**/*.spec.ts(x)`. `npm run test:watch` for watch mode.
+- Single test: `npx vitest run src/renderer/services/time.spec.ts` (or `npx vitest run -t "name"`).
 
-CI (`.github/workflows/test.yml`) runs `npm run package && npx tsc && npm test` on macOS, Ubuntu and Windows with Node 18.
+CI (`.github/workflows/test.yml`): one Ubuntu job runs gitleaks, `biome ci`, typecheck and tests; a matrix job runs `npm run package` on macOS, Ubuntu and Windows. Tool versions come from `mise.toml` via `jdx/mise-action`; actions are pinned to commit SHAs.
 
 ## Architecture
 

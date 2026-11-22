@@ -2,38 +2,36 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
   Heading,
-  FormHelperText,
-  Switch,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  Switch,
 } from '@chakra-ui/react';
-
-import useSettingsStore from '../services/stores/settings';
-
 import NoSidebar from '../layouts/NoSidebar';
+import useSettingsStore from '../services/stores/settings';
 
 export default function Settings() {
   const resetSettings = useSettingsStore((state) => state.resetSettings);
 
   const setArrowKeyJumpDistance = useSettingsStore(
-    (state) => state.setArrowKeyJumpDistance
+    (state) => state.setArrowKeyJumpDistance,
   );
 
   const toggleClearDrawingsOnPlay = useSettingsStore(
-    (state) => state.toggleClearDrawingsOnPlay
+    (state) => state.toggleClearDrawingsOnPlay,
   );
 
   const arrowKeyJumpDistance = useSettingsStore(
-    (state) => state.arrowKeyJumpDistance
+    (state) => state.arrowKeyJumpDistance,
   );
 
   const clearDrawingsOnPlay = useSettingsStore(
-    (state) => state.clearDrawingsOnPlay
+    (state) => state.clearDrawingsOnPlay,
   );
 
   function handleArrowKeyJumpDistanceChange(value: string) {
@@ -43,7 +41,6 @@ export default function Settings() {
   }
 
   function handleResetSettings() {
-    // eslint-disable-next-line no-alert
     if (window.confirm('This will reset all your settings, are you sure?')) {
       resetSettings();
     }

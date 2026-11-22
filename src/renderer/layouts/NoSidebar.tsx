@@ -1,4 +1,4 @@
-import { Flex, Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 
 interface Props {
   children: React.ReactNode;

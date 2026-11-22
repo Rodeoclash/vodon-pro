@@ -1,14 +1,11 @@
-import { useEffect } from 'react';
-
-import { TldrawApp } from '@tldraw/tldraw';
-
 import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 
-import { Bookmark as BookmarkIcon } from 'tabler-icons-react';
+import type { TldrawApp } from '@tldraw/tldraw';
+import { useEffect, useRef } from 'react';
 import type { PreciseVideoTimes } from 'renderer/pages/ReviewVideos';
-import useStore from '../../services/stores/videos';
-
+import { Bookmark as BookmarkIcon } from 'tabler-icons-react';
 import type { Video } from '../../services/models/Video';
+import useStore from '../../services/stores/videos';
 
 type Props = {
   app: TldrawApp;
@@ -41,11 +38,16 @@ export default function VideoBookmark({
   }
 
   /**
-   * When the current time changes, stop editing any open bookmarks.
+   * When the video has moved since the last render, stop editing any open
+   * bookmarks. The element's time isn't React state, so compare it by hand.
    */
+  const lastTime = useRef<number>();
   useEffect(() => {
+    const time = video.el.currentTime;
+    if (time === lastTime.current) return;
+    lastTime.current = time;
     stopEditingBookmark();
-  }, [video.el.currentTime, stopEditingBookmark]);
+  });
 
   return (
     <Tooltip label="Bookmark this moment">

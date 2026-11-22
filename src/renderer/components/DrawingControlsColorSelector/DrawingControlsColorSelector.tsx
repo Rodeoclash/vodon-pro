@@ -1,16 +1,14 @@
-import * as React from 'react';
-
 import {
-  Flex,
   Box,
+  Flex,
   Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
   PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
 } from '@chakra-ui/react';
-
-import { TldrawApp, ColorStyle } from '@tldraw/tldraw';
+import { ColorStyle, type TldrawApp } from '@tldraw/tldraw';
+import * as React from 'react';
 
 type PropsType = {
   app: TldrawApp;
@@ -41,7 +39,7 @@ export default function DrawingControlsColorSelector({ app }: PropsType) {
       app.style({ color });
       setIsOpen(false);
     },
-    [app]
+    [app],
   );
 
   const handleOpen = () => {

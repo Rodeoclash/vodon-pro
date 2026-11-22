@@ -1,14 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { TDShapeType, type TDToolType, type TldrawApp } from '@tldraw/tldraw';
+import { useCallback, useEffect, useState } from 'react';
 import { useBus } from 'react-bus';
-import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
-
-import useVideoStore from '../../services/stores/videos';
-import useSettingsStore from '../../services/stores/settings';
-import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
-
 import type { Video } from '../../services/models/Video';
+import useSettingsStore from '../../services/stores/settings';
+import useVideoStore from '../../services/stores/videos';
+import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
 
 type Props = {
   app: TldrawApp;
@@ -16,34 +14,30 @@ type Props = {
   video: Video;
 };
 
-export default function HotKeys({
-  app,
-  onEscape,
-  video,
-}: Props): React.ReactElement {
+export default function HotKeys({ app, onEscape, video }: Props): null {
   const bus = useBus();
   const setActiveVideoId = useVideoStore((state) => state.setActiveVideoId);
   const startPlaying = useVideoStore((state) => state.startPlaying);
   const stopPlaying = useVideoStore((state) => state.stopPlaying);
   const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
   const setOverrideHideControls = useVideoStore(
-    (state) => state.setOverrideHideControls
+    (state) => state.setOverrideHideControls,
   );
 
   const currentTime = useVideoStore((state) => state.currentTime);
   const playing = useVideoStore((state) => state.playing);
   const videos = useVideoStore((state) => state.videos);
   const overrideHideControls = useVideoStore(
-    (state) => state.overrideHideControls
+    (state) => state.overrideHideControls,
   );
 
   const arrowKeyJumpDistance = useSettingsStore(
-    (state) => state.arrowKeyJumpDistance
+    (state) => state.arrowKeyJumpDistance,
   );
 
   const setZoomPan = useVideoStore((state) => state.setZoomPan);
 
-  const parsedArrowKeyJumpDistance = parseFloat(arrowKeyJumpDistance);
+  const parsedArrowKeyJumpDistance = Number.parseFloat(arrowKeyJumpDistance);
 
   const [previousFrameHeld, setPreviousFrameHeld] = useState(false);
   const [nextFrameHeld, setNextFrameHeld] = useState(false);
@@ -55,7 +49,7 @@ export default function HotKeys({
       app.selectTool(type);
       app.toggleToolLock();
     },
-    [app]
+    [app],
   );
 
   /**
@@ -159,11 +153,15 @@ export default function HotKeys({
     }, STEP_ADVANCE_INTERVAL);
 
     return () => {
-      clearTimeout(interval);
+      clearInterval(interval);
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, previousFrameHeld, nextFrameHeld]);
+  }, [
+    playing,
+    previousFrameHeld,
+    nextFrameHeld,
+    handlePreviousFrame,
+    handleNextFrame,
+  ]);
 
   useHotkeys(
     'p',
@@ -173,7 +171,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -184,7 +182,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -195,7 +193,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -206,7 +204,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -217,7 +215,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -228,7 +226,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   /**
@@ -246,7 +244,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [previousFrameHeld, currentTime]
+    [previousFrameHeld, currentTime],
   );
 
   /**
@@ -260,7 +258,7 @@ export default function HotKeys({
     {
       keyup: true,
     },
-    []
+    [],
   );
 
   /**
@@ -279,7 +277,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [nextFrameHeld, currentTime]
+    [nextFrameHeld, currentTime],
   );
 
   /**
@@ -293,7 +291,7 @@ export default function HotKeys({
     {
       keyup: true,
     },
-    []
+    [],
   );
 
   /**
@@ -307,7 +305,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [nextFrameHeld, currentTime]
+    [nextFrameHeld, currentTime],
   );
 
   /**
@@ -321,7 +319,7 @@ export default function HotKeys({
     {
       keyup: true,
     },
-    []
+    [],
   );
 
   /**
@@ -333,7 +331,7 @@ export default function HotKeys({
       handlePreviousJump();
     },
     {},
-    []
+    [],
   );
 
   /**
@@ -345,7 +343,7 @@ export default function HotKeys({
       handleNextJump();
     },
     {},
-    []
+    [],
   );
 
   /**
@@ -354,13 +352,13 @@ export default function HotKeys({
   useHotkeys(
     '1,2,3,4,5,6,7,8,9',
     (arg1) => {
-      const index = parseInt(arg1.key, 10) - 1;
+      const index = Number.parseInt(arg1.key, 10) - 1;
       if (videos[index] !== undefined) {
         setActiveVideoId(videos[index].id);
       }
     },
     {},
-    []
+    [],
   );
 
   /**
@@ -373,7 +371,7 @@ export default function HotKeys({
       onEscape();
     },
     {},
-    []
+    [],
   );
 
   /**
@@ -389,7 +387,7 @@ export default function HotKeys({
       }
     },
     {},
-    [playing]
+    [playing],
   );
 
   /**
@@ -405,8 +403,8 @@ export default function HotKeys({
       }
     },
     {},
-    [overrideHideControls]
+    [overrideHideControls],
   );
 
-  return <></>;
+  return null;
 }

@@ -2,32 +2,55 @@ name: Test
 
 on: [push]
 
-jobs:
-  test:
-    runs-on: ${{ matrix.os }}
+permissions:
+  contents: read
 
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Node, Biome and gitleaks at the versions in mise.toml
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          version: 2026.11.4
+
+      - name: Secrets
+        run: gitleaks git --redact --no-banner --verbose
+
+      - name: Biome
+        run: biome ci
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+  package:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-
-      - name: Install Node.js and NPM
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 18
-          cache: npm
+          persist-credentials: false
 
-      - name: npm install
-        run: |
-          npm install
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          version: 2026.11.4
+          install_args: node
 
-      - name: npm test
+      - run: npm ci
+
+      - name: Package
+        run: npm run package
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npm run package
-          npm exec tsc
-          npm test

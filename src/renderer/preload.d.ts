@@ -6,14 +6,10 @@ declare global {
       getVersion: () => Promise<string>;
       getArgv: () => Promise<Array<string>>;
       openBrowser: (url: string) => void;
-      onLoadAdditionalVideos: (
-        cb: (event: any, paths: Array<string>) => void
-      ) => void;
-      onNewProjectRequest: (cb: (event: any) => void) => void;
-      onLoadProjectRequest: (cb: (event: any, project: string) => void) => void;
-      onSaveProjectRequest: (
-        cb: (event: any, filePath: string) => void
-      ) => void;
+      onLoadAdditionalVideos: (cb: (paths: Array<string>) => void) => void;
+      onNewProjectRequest: (cb: () => void) => void;
+      onLoadProjectRequest: (cb: (project: string) => void) => void;
+      onSaveProjectRequest: (cb: (filePath: string) => void) => void;
       saveProject: (filePath: string, project: string) => Promise<string>;
     };
 
@@ -24,5 +20,3 @@ declare global {
     };
   }
 }
-
-export {};

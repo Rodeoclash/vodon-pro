@@ -1,12 +1,10 @@
-/* eslint-disable import/prefer-default-export */
-
 export function getRatioDimensions(
   displayAspectRatio: string,
-  element: HTMLElement
+  element: HTMLElement,
 ): [number, number] {
   const [widthSplit, heightSplit] = displayAspectRatio.split(':');
-  const width = parseInt(widthSplit, 10);
-  const height = parseInt(heightSplit, 10);
+  const width = Number.parseInt(widthSplit, 10);
+  const height = Number.parseInt(heightSplit, 10);
 
   const ratioWidthHeight = width / height;
   const ratioHeightWidth = height / width;

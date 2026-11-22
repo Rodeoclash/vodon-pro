@@ -1,0 +1,25 @@
+pre-commit:
+  jobs:
+    - name: gitleaks
+      run: gitleaks git --staged --redact --no-banner --verbose
+
+    - name: biome
+      glob: "*.{js,jsx,ts,tsx,json,css}"
+      run: biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  jobs:
+    # The commits on no remote yet: the ones this push sends
+    - name: gitleaks
+      run: gitleaks git --redact --no-banner --verbose --log-opts="--branches --not --remotes"
+
+    - name: biome
+      run: biome check
+
+    - name: typecheck
+      run: npx tsc --noEmit
+
+    - name: test
+      run: npm test

@@ -1,12 +1,11 @@
-import { useBus } from 'react-bus';
 import { Box, Tooltip } from '@chakra-ui/react';
+import { useBus } from 'react-bus';
 import { Bookmark as BookmarkIcon } from 'tabler-icons-react';
-import useStore from '../../services/stores/videos';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
-import { truncateString } from '../../services/text';
-
 import type { Video } from '../../services/models/Video';
 import type { VideoBookmark } from '../../services/models/VideoBookmark';
+import useStore from '../../services/stores/videos';
+import { truncateString } from '../../services/text';
 
 type Props = {
   bookmark: VideoBookmark;

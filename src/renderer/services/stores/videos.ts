@@ -1,18 +1,17 @@
+import { produce } from 'immer';
 import createStore from 'zustand';
 import { persist } from 'zustand/middleware';
-import { produce } from 'immer';
-import superjson from 'superjson';
 
 import { getPossibleArgVMoviePaths } from '../file';
-import { createFromFile, findMaxNormalisedDuration } from '../models/Video';
-import { create as createVideoBookmark } from '../models/VideoBookmark';
-
 import type { Video } from '../models/Video';
+import { createFromFile, findMaxNormalisedDuration } from '../models/Video';
 import type {
   VideoBookmark,
   VideoBookmarkCoordinates,
   VideoBookmarkIcon,
 } from '../models/VideoBookmark';
+import { create as createVideoBookmark } from '../models/VideoBookmark';
+import { deserialize, type Persisted, serialize } from './videosPersistence';
 
 const CURRENT_PERSIST_VERSION = 0;
 
@@ -58,7 +57,7 @@ interface State extends StateData {
     content: string,
     time: number,
     scale: number,
-    drawing: object
+    drawing: object,
   ) => void;
   deleteVideoBookmark: (video: Video, bookmark: VideoBookmark) => void;
   startEditingBookmark: () => void;
@@ -67,22 +66,22 @@ interface State extends StateData {
     video: Video,
     bookmark: VideoBookmark,
     coords: VideoBookmarkCoordinates,
-    scale: number
+    scale: number,
   ) => void;
   setVideoBookmarkContent: (
     video: Video,
     bookmark: VideoBookmark,
-    content: string
+    content: string,
   ) => void;
   setVideoBookmarkIcon: (
     video: Video,
     bookmark: VideoBookmark,
-    icon: VideoBookmarkIcon
+    icon: VideoBookmarkIcon,
   ) => void;
   setVideoBookmarkDrawing: (
     video: Video,
     bookmark: VideoBookmark,
-    drawing: object
+    drawing: object,
   ) => void;
 
   setZoomPan: (value: boolean) => void;
@@ -101,62 +100,12 @@ const emptyState: StateData = {
   zoomPanEnabled: false,
 };
 
-// remove video elements
-const serialize = (state: any) => {
-  const updatedState = produce(state.state, (innerState: State) => {
-    // We cannot persist the el to storage so we need to null it here before saving.
-    innerState.videos = innerState.videos.map((video: any) => {
-      return {
-        ...video,
-        el: null,
-      };
-    });
-  });
-
-  return superjson.stringify({ ...state, state: updatedState });
-};
-
-// When restoring state, we need to handle videos that might have been moved
-// TODO: This should register an error or similar that the video was removed
-const deserialize = async (str: string) => {
-  const parsedStr: any = superjson.parse(str);
-
-  const videos = [];
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const video of parsedStr.state.videos) {
-    // handle missing videos
-    // eslint-disable-next-line no-await-in-loop
-    const exists = await window.video.exists(video.filePath);
-
-    if (exists === false) {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-
-    // populate bookmarks onto videos if needed
-    if (!video.bookmarks) {
-      video.bookmarks = [];
-    }
-
-    const el = document.createElement('video');
-    el.src = video.filePath;
-
-    videos.push({
-      ...video,
-      el,
-    });
-  }
-
-  return {
-    version: parsedStr.version,
-    state: {
-      ...parsedStr.state,
-      zoomPanEnabled: false,
-      videos,
-    },
-  };
-};
+// zustand v3 types the stored value as a deep partial of State, which TypeScript
+// can't expand (State holds HTMLVideoElements), so these stay opaque to it.
+const persistSerialize = (value: unknown) =>
+  serialize(value as Persisted<State>);
+const persistDeserialize = (str: string) =>
+  deserialize<State>(str) as Promise<never>;
 
 const useStore = createStore<State>(
   persist(
@@ -184,7 +133,7 @@ const useStore = createStore<State>(
               state.videos.length === 1
                 ? state.videos[0].id
                 : state.activeVideoId;
-          })
+          }),
         ),
 
       clearVideos: () =>
@@ -208,7 +157,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].duration = duration;
-          })
+          }),
         ),
 
       // TODO: Combine with duration update
@@ -220,7 +169,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].name = name;
-          })
+          }),
         ),
 
       // TODO: Combine with duration update
@@ -232,7 +181,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].volume = volume;
-          })
+          }),
         ),
 
       // TODO: Combine with duration update
@@ -244,7 +193,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].seeking = value;
-          })
+          }),
         ),
 
       setVideoSyncTime: (video: Video, syncTime: number) =>
@@ -255,7 +204,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].syncTime = syncTime;
-          })
+          }),
         ),
 
       /**
@@ -280,11 +229,11 @@ const useStore = createStore<State>(
               });
 
             state.videos.sort(
-              (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+              (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
             );
 
             state.fullDuration = findMaxNormalisedDuration(state.videos);
-          })
+          }),
         ),
 
       createVideoBookmark: (
@@ -292,7 +241,7 @@ const useStore = createStore<State>(
         content: string,
         time: number,
         scale: number,
-        drawing: object
+        drawing: object,
       ) =>
         set(
           produce((state: State) => {
@@ -305,11 +254,11 @@ const useStore = createStore<State>(
               content,
               time,
               scale,
-              drawing
+              drawing,
             );
 
             state.videos[index].bookmarks.push(bookmark);
-          })
+          }),
         ),
 
       /**
@@ -330,7 +279,7 @@ const useStore = createStore<State>(
             ].bookmarks.filter((innerBookmark) => {
               return bookmark.id !== innerBookmark.id;
             });
-          })
+          }),
         ),
 
       /**
@@ -344,7 +293,7 @@ const useStore = createStore<State>(
         video: Video,
         bookmark: VideoBookmark,
         coords: VideoBookmarkCoordinates,
-        scale: number
+        scale: number,
       ) =>
         set(
           produce((state: State) => {
@@ -355,7 +304,7 @@ const useStore = createStore<State>(
             const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
               (innerBookmark) => {
                 return innerBookmark.id === bookmark.id;
-              }
+              },
             );
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].position = {
@@ -364,7 +313,7 @@ const useStore = createStore<State>(
             };
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].scale = scale;
-          })
+          }),
         ),
 
       /**
@@ -377,7 +326,7 @@ const useStore = createStore<State>(
       setVideoBookmarkContent: (
         video: Video,
         bookmark: VideoBookmark,
-        content: string
+        content: string,
       ) =>
         set(
           produce((state: State) => {
@@ -388,11 +337,11 @@ const useStore = createStore<State>(
             const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
               (innerBookmark) => {
                 return innerBookmark.id === bookmark.id;
-              }
+              },
             );
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].content = content;
-          })
+          }),
         ),
 
       /**
@@ -405,7 +354,7 @@ const useStore = createStore<State>(
       setVideoBookmarkIcon: (
         video: Video,
         bookmark: VideoBookmark,
-        icon: VideoBookmarkIcon
+        icon: VideoBookmarkIcon,
       ) =>
         set(
           produce((state: State) => {
@@ -416,11 +365,11 @@ const useStore = createStore<State>(
             const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
               (innerBookmark) => {
                 return innerBookmark.id === bookmark.id;
-              }
+              },
             );
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].icon = icon;
-          })
+          }),
         ),
 
       /**
@@ -433,7 +382,7 @@ const useStore = createStore<State>(
       setVideoBookmarkDrawing: (
         video: Video,
         bookmark: VideoBookmark,
-        drawing: object
+        drawing: object,
       ) =>
         set(
           produce((state: State) => {
@@ -444,11 +393,11 @@ const useStore = createStore<State>(
             const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
               (innerBookmark) => {
                 return innerBookmark.id === bookmark.id;
-              }
+              },
             );
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].drawing = drawing;
-          })
+          }),
         ),
 
       setActiveVideoId: (id: string | null) =>
@@ -483,10 +432,10 @@ const useStore = createStore<State>(
     {
       name: 'vodon-store-videos-v2',
       version: CURRENT_PERSIST_VERSION,
-      serialize,
-      deserialize,
-    }
-  )
+      serialize: persistSerialize,
+      deserialize: persistDeserialize,
+    },
+  ),
 );
 
 export default useStore;
@@ -497,9 +446,7 @@ export default useStore;
  * is launched.
  */
 export async function createVideosFromPaths(paths: Array<string>) {
-  // eslint-disable-next-line no-restricted-syntax
   for (const path of paths) {
-    // eslint-disable-next-line no-await-in-loop
     const video = await createFromFile(path);
     useStore.getState().addVideo(video);
   }
@@ -509,8 +456,8 @@ export async function createVideosFromPaths(paths: Array<string>) {
  * Handle the save request from the main thread. Calculate the current state
  * then pass it back to the main thread along with the filepath to persist.
  */
-window.app.onSaveProjectRequest((_event: any, filePath: string) => {
-  const serializedState = serialize({
+window.app.onSaveProjectRequest((filePath: string) => {
+  const serializedState = serialize<State>({
     version: CURRENT_PERSIST_VERSION,
     state: useStore.getState(),
   });
@@ -522,8 +469,8 @@ window.app.onSaveProjectRequest((_event: any, filePath: string) => {
  * Handle the save request from the main thread. Calculate the current state
  * then pass it back to the main thread along with the filepath to persist.
  */
-window.app.onLoadProjectRequest(async (_event: any, project: string) => {
-  const unserializedState = await deserialize(project);
+window.app.onLoadProjectRequest(async (project: string) => {
+  const unserializedState = await deserialize<State>(project);
   useStore.setState(unserializedState.state);
 });
 
@@ -532,7 +479,6 @@ window.app.onLoadProjectRequest(async (_event: any, project: string) => {
  * back to new.
  */
 window.app.onNewProjectRequest(async () => {
-  // eslint-disable-next-line no-alert
   if (window.confirm('This will remove all videos and bookmarks, continue?')) {
     useStore.setState({
       ...useStore.getState(),
@@ -544,10 +490,10 @@ window.app.onNewProjectRequest(async () => {
 /**
  * Handle additional incoming videos.
  */
-window.app.onLoadAdditionalVideos(async (_event: any, argV: Array<string>) => {
+window.app.onLoadAdditionalVideos(async (argV: Array<string>) => {
   const paths = getPossibleArgVMoviePaths(argV);
 
   if (paths.length > 0) {
-    createVideosFromPaths(paths);
+    createVideosFromPaths(paths).catch(console.error);
   }
 });

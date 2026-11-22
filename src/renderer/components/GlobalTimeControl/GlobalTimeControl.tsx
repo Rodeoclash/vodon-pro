@@ -1,5 +1,3 @@
-import { useRef, useState, useLayoutEffect } from 'react';
-import { useBus } from 'react-bus';
 import {
   Box,
   Flex,
@@ -8,13 +6,12 @@ import {
   SliderThumb,
   SliderTrack,
 } from '@chakra-ui/react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { useBus } from 'react-bus';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
-
-import useStore from '../../services/stores/videos';
-
-import VideoBookmarkTimeline from '../VideoBookmarkTimeline/VideoBookmarkTimeline';
-
 import type { Video } from '../../services/models/Video';
+import useStore from '../../services/stores/videos';
+import VideoBookmarkTimeline from '../VideoBookmarkTimeline/VideoBookmarkTimeline';
 
 type Props = {
   video: Video;

@@ -1,6 +1,3 @@
-/* eslint-disable jsx-a11y/media-has-caption */
-import React, { useRef, useState, useEffect } from 'react';
-
 import {
   Box,
   Button,
@@ -8,6 +5,7 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -20,22 +18,21 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
-  IconButton,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+  PlayerPause as PlayerPauseIcon,
+  PlayerPlay as PlayerPlayIcon,
   Settings as SettingsIcon,
   X as XIcon,
-  PlayerPlay as PlayerPlayIcon,
-  PlayerPause as PlayerPauseIcon,
 } from 'tabler-icons-react';
-import { secondsToHms } from '../../services/time';
-import useStore from '../../services/stores/videos';
-
-import VideoStepControl from '../VideoStepControl/VideoStepControl';
-
 import type { Video } from '../../services/models/Video';
+import useStore from '../../services/stores/videos';
+import { secondsToHms } from '../../services/time';
+import VideoStepControl from '../VideoStepControl/VideoStepControl';
 
 interface Props {
   video: Video;
@@ -71,7 +68,6 @@ export default function VideoAligner({ video }: Props) {
       if (videoEl === null) return;
       setVideoDuration(video, videoEl.duration);
       videoEl.currentTime = video.syncTime;
-      videoEl.volume = 0;
     }
 
     if (videoEl !== null) {
@@ -86,25 +82,20 @@ export default function VideoAligner({ video }: Props) {
       videoEl.removeEventListener('seeking', handleSeeking);
       videoEl.removeEventListener('seeked', handleSeeked);
     };
-    // eslint-disable-next-line
-  }, []);
+  }, [video, setVideoDuration, setVideoSyncTime, recalculateOffsets]);
 
-  useEffect(() => {
-    if (videoRef.current === null || playing === null) {
-      return;
-    }
+  function handlePlay() {
+    if (videoRef.current === null) return;
+    setPlaying(true);
+    videoRef.current.play().catch(console.error);
+  }
 
-    if (playing === true) {
-      videoRef.current.play();
-    }
-
-    if (playing === false) {
-      videoRef.current.pause();
-      setVideoSyncTime(video, videoRef.current.currentTime);
-    }
-
-    // eslint-disable-next-line
-  }, [playing]);
+  function handlePause() {
+    if (videoRef.current === null) return;
+    setPlaying(false);
+    videoRef.current.pause();
+    setVideoSyncTime(video, videoRef.current.currentTime);
+  }
 
   function handleSliderChange(newTime: number) {
     if (videoRef.current === null) return;
@@ -147,14 +138,14 @@ export default function VideoAligner({ video }: Props) {
         <Box mr="2">
           {!playing && (
             <IconButton
-              onClick={() => setPlaying(true)}
+              onClick={handlePlay}
               icon={<PlayerPlayIcon />}
               aria-label="Play"
             />
           )}
           {playing && (
             <IconButton
-              onClick={() => setPlaying(false)}
+              onClick={handlePause}
               icon={<PlayerPauseIcon />}
               aria-label="Pause"
             />
@@ -256,7 +247,7 @@ export default function VideoAligner({ video }: Props) {
         </Tooltip>
 
         <Flex align="center" justifyContent="center">
-          <video src={video.filePath} ref={videoRef} />
+          <video src={video.filePath} ref={videoRef} muted />
         </Flex>
 
         {renderedControls}

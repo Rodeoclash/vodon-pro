@@ -1,19 +1,17 @@
+import { Box, Flex, Heading, Kbd, Text } from '@chakra-ui/react';
+import { css } from '@emotion/react';
 import {
-  useEffect,
-  useRef,
-  useLayoutEffect,
-  useState,
   useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useListener } from 'react-bus';
-import { css } from '@emotion/react';
-import { Box, Heading, Flex, Text, Kbd } from '@chakra-ui/react';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
-
-import useVideoStore from '../../services/stores/videos';
 import { getRatioDimensions } from '../../services/layout';
-
 import type { Video } from '../../services/models/Video';
+import useVideoStore from '../../services/stores/videos';
 
 interface VideoFrameMetadata {
   presentationTime: DOMHighResTimeStamp;
@@ -56,6 +54,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
       : currentTime >= video.durationNormalised;
 
   const currentActive = activeVideoId === video.id;
+  const hidden = currentActive || isAfterRange;
 
   const videoIndex = videos.findIndex((innerVideo) => {
     return video.id === innerVideo.id;
@@ -102,7 +101,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
 
     const handleRequestVideoFrameCallback = (
       _now: DOMHighResTimeStamp,
-      metadata: VideoFrameMetadata
+      metadata: VideoFrameMetadata,
     ) => {
       if (video.el === null) {
         return;
@@ -199,22 +198,13 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
 
       video.el.currentTime = time - (video.offset || 0);
     },
-    [video]
+    [video],
   );
 
   useListener(GLOBAL_TIME_CHANGE, handleGlobalTimeUpdate);
 
   /**
-   * As the video moves in and out of being active, we need to trigger resize
-   * events to ensure it has space on the screen.
-   */
-  useLayoutEffect(() => {
-    window.dispatchEvent(new Event('resize'));
-  }, [isAfterRange]);
-
-  /**
-   * As the video moves in and out of being active, we need to trigger resize
-   * events to ensure it has space on the screen.
+   * Keep the video's playback rate in step with the chosen speed.
    */
   useLayoutEffect(() => {
     if (video.el === null) {
@@ -224,7 +214,14 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
     video.el.playbackRate = playbackSpeed;
   }, [playbackSpeed, video.el]);
 
+  /**
+   * Size the thumbnail to its container whenever it's shown and on every
+   * window resize. While hidden (it's the active video, or past the end of its
+   * range) there's nothing to measure.
+   */
   useLayoutEffect(() => {
+    if (hidden) return undefined;
+
     const handleResize = () => {
       if (containerRef.current === null) {
         return;
@@ -232,7 +229,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
 
       const dimensions = getRatioDimensions(
         video.displayAspectRatio,
-        containerRef.current
+        containerRef.current,
       );
 
       setVideoDimensions(dimensions);
@@ -245,7 +242,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [video, currentActive]);
+  }, [video, hidden]);
 
   const innerStyles = css`
     width: ${videoDimensions ? videoDimensions[0] : ''}px;
@@ -258,22 +255,20 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
   `;
 
   const containerStyles = css`
-    display: ${currentActive === true || isAfterRange === true
-      ? 'none'
-      : 'flex'};
+    display: ${hidden ? 'none' : 'flex'};
   `;
 
   const afterRangeStyles = css`
-    display: ${currentActive === false && isAfterRange === true
-      ? 'flex'
-      : 'none'};
+    display: ${
+      currentActive === false && isAfterRange === true ? 'flex' : 'none'
+    };
   `;
 
   const afterRangeInnerStyles = css`
     aspect-ratio: ${video.displayAspectRatio.replace(':', '/')};
   `;
 
-  if (!video || !video.durationNormalised) {
+  if (!video?.durationNormalised) {
     return null;
   }
 

@@ -1,56 +1,33 @@
-import {
-  useRef,
-  useEffect,
-  useState,
-  useLayoutEffect,
-  useCallback,
-} from 'react';
+import { Box, Flex, Heading, Kbd, Text } from '@chakra-ui/react';
 
 import { css } from '@emotion/react';
 
 import { useThrottle } from '@react-hook/throttle';
+import type { TldrawApp } from '@tldraw/tldraw';
+import { isEqual } from 'lodash';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useBus } from 'react-bus';
-
-import {
-  Box,
-  Flex,
-  Heading,
-  IconButton,
-  Kbd,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
-
-import {
-  PlayerPlay as PlayerPlayIcon,
-  PlayerPause as PlayerPauseIcon,
-  Maximize as MaximizeIcon,
-} from 'tabler-icons-react';
-
-import { TldrawApp } from '@tldraw/tldraw';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { Link } from 'react-router-dom';
 import usePanZoom from 'use-pan-and-zoom';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { isEqual } from 'lodash';
-import { GLOBAL_TIME_CHANGE } from '../services/bus';
-import { getRatioDimensions } from '../services/layout';
-import useVideoStore from '../services/stores/videos';
-
 import Drawing from '../components/Drawing/Drawing';
 import DrawingControls from '../components/DrawingControls/DrawingControls';
-import GlobalTimeControl from '../components/GlobalTimeControl/GlobalTimeControl';
-import GlobalTimeDisplay from '../components/GlobalTimeDisplay/GlobalTimeDisplay';
-import Hotkeys from './ReviewVideos/Hotkeys';
-import PlaybackSpeed from '../components/PlaybackSpeed/PlaybackSpeed';
 import ReviewVideosBanner from '../components/ReviewVideosBanner/ReviewVideosBanner';
 import VideoBookmarkShow from '../components/VideoBookmarkShow/VideoBookmarkShow';
-import VideoBookmarkAdd from '../components/VideoBookmarkAdd/VideoBookmarkAdd';
-import VideoStepControl from '../components/VideoStepControl/VideoStepControl';
 import VideoThumbnail from '../components/VideoThumbnail/VideoThumbnail';
-import VideoVolume from '../components/VideoVolume/VideoVolume';
 import WithSidebar from '../layouts/WithSidebar';
-
+import { GLOBAL_TIME_CHANGE } from '../services/bus';
+import { getRatioDimensions } from '../services/layout';
 import type { Video } from '../services/models/Video';
+import useVideoStore from '../services/stores/videos';
+import Hotkeys from './ReviewVideos/Hotkeys';
+import NavigationControls from './ReviewVideos/NavigationControls';
 
 export type PreciseVideoTimes = {
   [id: string]: number;
@@ -88,7 +65,7 @@ export default function ReviewVideos() {
   const [mouseLastActive, setMouseLastActive] = useThrottle<number | null>(
     null,
     10,
-    true
+    true,
   );
   const [controlsOn, setControlsOn] = useState<boolean>(false);
   const [playerHeaderOn, setPlayerHeaderOn] = useState<boolean>(false);
@@ -96,7 +73,6 @@ export default function ReviewVideos() {
 
   const [app, setApp] = useState<TldrawApp>();
 
-  const startPlaying = useVideoStore((state) => state.startPlaying);
   const stopPlaying = useVideoStore((state) => state.stopPlaying);
   const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
 
@@ -105,7 +81,7 @@ export default function ReviewVideos() {
   const editingBookmark = useVideoStore((state) => state.editingBookmark);
   const seeking = useVideoStore((state) => state.seeking);
   const overrideHideControls = useVideoStore(
-    (state) => state.overrideHideControls
+    (state) => state.overrideHideControls,
   );
   const playing = useVideoStore((state) => state.playing);
   const videos = useVideoStore((state) => state.videos);
@@ -134,13 +110,12 @@ export default function ReviewVideos() {
 
   // True when the active video has exceded its viewable range
   const isAfterRange =
-    (activeVideo &&
-      activeVideo.durationNormalised &&
+    (activeVideo?.durationNormalised &&
       currentTime >= activeVideo.durationNormalised) ||
     false;
 
   function handleClickStep(distance: number) {
-    if (!activeVideo || !activeVideo.el) {
+    if (!activeVideo?.el) {
       return;
     }
 
@@ -168,7 +143,7 @@ export default function ReviewVideos() {
     {
       keyup: true,
     },
-    [app]
+    [app],
   );
 
   /**
@@ -250,13 +225,13 @@ export default function ReviewVideos() {
         acc[bookmark.id] = bookmark.time <= currentTime || withinFudgeWindow;
         return acc;
       },
-      {}
+      {},
     );
 
     if (isEqual(newSeenBoomarks, seenBookmarks) === false) {
       setSeenBookmarks(newSeenBoomarks);
     }
-  }, [seenBookmarks, currentTime, activeVideo, setSeenBookmarks]);
+  }, [seenBookmarks, currentTime, activeVideo]);
 
   /**
    * Watch the current time and find bookmarks that haven't been seen, if we
@@ -287,13 +262,11 @@ export default function ReviewVideos() {
     }
   }, [
     activeVideo,
-    bus,
     currentTime,
     playing,
     seeking,
     seenBookmarks,
     setCurrentTime,
-    setSeenBookmarks,
     stopPlaying,
   ]);
 
@@ -334,7 +307,7 @@ export default function ReviewVideos() {
         }
 
         window.dispatchEvent(new Event('resize'));
-      })();
+      })().catch(console.error);
     } else if (document.fullscreenElement) {
       (async () => {
         await document.exitFullscreen();
@@ -344,7 +317,7 @@ export default function ReviewVideos() {
         }
 
         window.dispatchEvent(new Event('resize'));
-      })();
+      })().catch(console.error);
     }
   }, [fullscreen]);
 
@@ -357,7 +330,7 @@ export default function ReviewVideos() {
 
       const dimensions = getRatioDimensions(
         activeVideo.displayAspectRatio,
-        overlayRef.current
+        overlayRef.current,
       );
 
       setVideoDimensions(dimensions);
@@ -406,6 +379,8 @@ export default function ReviewVideos() {
    * When changing between active videos, show the controls for some time
    */
   useEffect(() => {
+    if (activeVideoId === null) return undefined;
+
     setPlayerHeaderOn(true);
 
     const timer = setTimeout(() => {
@@ -415,9 +390,9 @@ export default function ReviewVideos() {
     window.dispatchEvent(new Event('resize'));
 
     return () => {
-      clearInterval(timer);
+      clearTimeout(timer);
     };
-  }, [activeVideoId, setPlayerHeaderOn]);
+  }, [activeVideoId]);
 
   /**
    * When toggling the override hide off, set the mouse being active to toggle
@@ -606,108 +581,18 @@ export default function ReviewVideos() {
       );
 
     const renderedNavigationControls = showControls === true && (
-      <Flex
-        align="center"
-        bottom={0}
-        boxSizing="border-box"
-        justify="center"
-        left={0}
-        onMouseEnter={() => setControlsOn(true)}
-        onMouseLeave={() => setControlsOn(false)}
-        position="absolute"
-        right={0}
-        zIndex={2}
-      >
-        <Flex
-          align="center"
-          background="gray.900"
-          borderBottom="none"
-          borderColor="whiteAlpha.500"
-          borderWidth="1px"
-          minWidth="50vw"
-          p={4}
-          pointerEvents="all"
-        >
-          <Tooltip label={playing ? 'Pause' : 'Play'}>
-            <Box mr="2">
-              {!playing && (
-                <IconButton
-                  onClick={startPlaying}
-                  icon={<PlayerPlayIcon />}
-                  aria-label="Play"
-                  disabled={isAfterRange}
-                />
-              )}
-              {playing && (
-                <IconButton
-                  onClick={stopPlaying}
-                  icon={<PlayerPauseIcon />}
-                  aria-label="Pause"
-                />
-              )}
-            </Box>
-          </Tooltip>
-
-          <Box mx={2}>
-            <PlaybackSpeed disabled={playing} />
-          </Box>
-
-          <Box mx="2">
-            <VideoStepControl
-              direction="backwards"
-              frameRate={activeVideo.frameRate}
-              onClick={(value) => handleClickStep(value)}
-              pause={activeVideo.seeking}
-            />
-          </Box>
-
-          <Box mx="2">
-            <GlobalTimeDisplay />
-          </Box>
-
-          <Box flexGrow={1} mx="2" minW="25vw">
-            <GlobalTimeControl video={activeVideo} />
-          </Box>
-
-          <Box mx="2">
-            <VideoVolume video={activeVideo} />
-          </Box>
-
-          <Box mx="2">
-            <VideoStepControl
-              direction="forwards"
-              frameRate={activeVideo.frameRate}
-              onClick={(value) => handleClickStep(value)}
-              pause={activeVideo.seeking}
-            />
-          </Box>
-
-          {app && (
-            <Box mx="2">
-              <VideoBookmarkAdd
-                key={activeVideo.id}
-                app={app}
-                disabled={!!activeBookmark || editingBookmark || isAfterRange}
-                scale={scale}
-                video={activeVideo}
-                videoTimes={videoTimes.current}
-              />
-            </Box>
-          )}
-
-          <Tooltip label="Presentation mode">
-            <Box ml="2">
-              <IconButton
-                onClick={() => setFullscreen(!fullscreen)}
-                icon={<MaximizeIcon />}
-                aria-label="Fullscreen video"
-                disabled={isAfterRange}
-                ref={fullscreenTriggerRef}
-              />
-            </Box>
-          </Tooltip>
-        </Flex>
-      </Flex>
+      <NavigationControls
+        app={app}
+        hasActiveBookmark={activeBookmark !== undefined}
+        isAfterRange={isAfterRange}
+        onHoverChange={setControlsOn}
+        onStep={handleClickStep}
+        onToggleFullscreen={() => setFullscreen(!fullscreen)}
+        fullscreenTriggerRef={fullscreenTriggerRef}
+        scale={scale}
+        video={activeVideo}
+        videoTimes={videoTimes.current}
+      />
     );
 
     const updatedPanZoomHandlers = zoomPanEnabled
@@ -749,7 +634,6 @@ export default function ReviewVideos() {
               id="overlay"
               ref={setContainer}
               style={{ touchAction: 'none' }}
-              // eslint-disable-next-line react/jsx-props-no-spreading
               {...updatedPanZoomHandlers}
             >
               {zoomPanEnabled === false && renderedDrawing}

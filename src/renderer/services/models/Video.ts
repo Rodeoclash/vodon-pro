@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { v4 as uuidv4 } from 'uuid';
 import { basename } from '../file';
 
@@ -92,7 +91,7 @@ export function findMaxNormalisedDuration(videos: Video[]): number | null {
 
       return acc;
     },
-    null
+    null,
   );
 }
 
@@ -101,7 +100,7 @@ export function findMaxNormalisedDuration(videos: Video[]): number | null {
  */
 export function findNextBookmark(
   videos: Array<Video>,
-  bookmark: VideoBookmark
+  bookmark: VideoBookmark,
 ): [Video, VideoBookmark] | undefined {
   const bookmarks = videos
     .flatMap((video) => {
@@ -135,7 +134,7 @@ export function findNextBookmark(
  */
 export function findPreviousBookmark(
   videos: Array<Video>,
-  bookmark: VideoBookmark
+  bookmark: VideoBookmark,
 ): [Video, VideoBookmark] | undefined {
   const bookmarks = videos
     .flatMap((video) => {
@@ -171,20 +170,20 @@ export async function createFromFile(filePath: string): Promise<Video> {
   const videoStream = metadata.streams.find(
     (stream: VideoStreamMetadata | AudioStreamMetadata) => {
       return stream.codec_type === 'video';
-    }
+    },
   ) as VideoStreamMetadata;
 
   // determine framerate
   const [ratio1, ratio2] = videoStream.avg_frame_rate.split('/');
-  const frameRate = Math.round(parseInt(ratio1, 10) / parseInt(ratio2, 10));
+  const frameRate = Math.round(
+    Number.parseInt(ratio1, 10) / Number.parseInt(ratio2, 10),
+  );
 
   // video element
   const el = document.createElement('video');
   el.src = filePath;
 
-  // @ts-ignore-start
   el.preservesPitch = false;
-  // @ts-ignore-end
 
   return {
     bookmarks: [],

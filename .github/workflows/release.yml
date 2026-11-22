@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   release:
@@ -15,14 +15,17 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
-
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 18
+          persist-credentials: false
+
+      # Node at the version in mise.toml
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          version: 2026.11.4
+          install_args: node
 
       - name: Release
-        run: npm install && npm run publish
+        run: npm ci && npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}

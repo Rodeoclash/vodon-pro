@@ -1,31 +1,28 @@
-import { css } from '@emotion/react';
-import { useBus } from 'react-bus';
-
 import {
   Box,
-  Flex,
   Button,
   ButtonGroup,
-  Text,
-  Spacer,
+  Flex,
   IconButton,
+  Spacer,
+  Text,
 } from '@chakra-ui/react';
+import { css } from '@emotion/react';
+import { useBus } from 'react-bus';
 import Draggable from 'react-draggable'; // The default
 import {
   CaretLeft as CaretLeftIcon,
   CaretRight as CaretRightIcon,
 } from 'tabler-icons-react';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
-import useVideoStore from '../../services/stores/videos';
-
-import VideoBookmarkForm from '../VideoBookmarkForm/VideoBookmarkForm';
+import type { Video } from '../../services/models/Video';
 import {
   findNextBookmark,
   findPreviousBookmark,
 } from '../../services/models/Video';
-
-import type { Video } from '../../services/models/Video';
 import type { VideoBookmark } from '../../services/models/VideoBookmark';
+import useVideoStore from '../../services/stores/videos';
+import VideoBookmarkForm from '../VideoBookmarkForm/VideoBookmarkForm';
 
 type Props = {
   bookmark: VideoBookmark;
@@ -55,27 +52,27 @@ export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
   const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
 
   const deleteVideoBookmark = useVideoStore(
-    (state) => state.deleteVideoBookmark
+    (state) => state.deleteVideoBookmark,
   );
 
   const startEditingBookmark = useVideoStore(
-    (state) => state.startEditingBookmark
+    (state) => state.startEditingBookmark,
   );
 
   const stopEditingBookmark = useVideoStore(
-    (state) => state.stopEditingBookmark
+    (state) => state.stopEditingBookmark,
   );
 
   const setVideoBookmarkCoords = useVideoStore(
-    (state) => state.setVideoBookmarkCoords
+    (state) => state.setVideoBookmarkCoords,
   );
 
   const setVideoBookmarkContent = useVideoStore(
-    (state) => state.setVideoBookmarkContent
+    (state) => state.setVideoBookmarkContent,
   );
 
   const setVideoBookmarkIcon = useVideoStore(
-    (state) => state.setVideoBookmarkIcon
+    (state) => state.setVideoBookmarkIcon,
   );
 
   if (playing === true) {
@@ -188,7 +185,7 @@ export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
             video,
             bookmark,
             { x: data.x, y: data.y },
-            scale
+            scale,
           )
         }
         bounds="parent"

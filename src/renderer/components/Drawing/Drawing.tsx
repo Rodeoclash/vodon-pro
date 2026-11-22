@@ -1,13 +1,16 @@
-import { useRef, useEffect, useCallback } from 'react';
-import { Tldraw, TldrawApp, ColorStyle } from '@tldraw/tldraw';
-import { isEmpty } from 'lodash/fp';
-
 import { Box } from '@chakra-ui/react';
-import useVideoStore from '../../services/stores/videos';
-import useSettingsStore from '../../services/stores/settings';
-
+import {
+  ColorStyle,
+  type TDDocument,
+  Tldraw,
+  type TldrawApp,
+} from '@tldraw/tldraw';
+import { isEmpty } from 'lodash/fp';
+import { useCallback, useEffect, useRef } from 'react';
 import type { Video } from '../../services/models/Video';
 import type { VideoBookmark } from '../../services/models/VideoBookmark';
+import useSettingsStore from '../../services/stores/settings';
+import useVideoStore from '../../services/stores/videos';
 
 type Props = {
   onMount: (app: TldrawApp) => void;
@@ -28,11 +31,11 @@ export default function Drawing({
   const playing = useVideoStore((state) => state.playing);
 
   const setVideoBookmarkDrawing = useVideoStore(
-    (state) => state.setVideoBookmarkDrawing
+    (state) => state.setVideoBookmarkDrawing,
   );
 
   const clearDrawingsOnPlay = useSettingsStore(
-    (state) => state.clearDrawingsOnPlay
+    (state) => state.clearDrawingsOnPlay,
   );
 
   const rescaleDrawing = useCallback(() => {
@@ -49,7 +52,7 @@ export default function Drawing({
     }
 
     tlDrawRef.current.loadDocument(
-      JSON.parse(JSON.stringify(videoBookmark.drawing)) // we need to load a copy of the document
+      JSON.parse(JSON.stringify(videoBookmark.drawing)), // we need to load a copy of the document
     );
 
     tlDrawRef.current.selectNone();
@@ -88,7 +91,7 @@ export default function Drawing({
    */
   useEffect(() => {
     rescaleDrawing();
-  }, [scale, rescaleDrawing]);
+  }, [rescaleDrawing]);
 
   /**
    * Load video bookmarks
@@ -99,16 +102,15 @@ export default function Drawing({
     }
 
     if (videoBookmark?.drawing) {
-      // "Page" does exist on the object, however it's dynamically created
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const emptyDrawing = isEmpty(videoBookmark.drawing.pages.page.shapes);
+      // Bookmarks store the tldraw document as a plain object.
+      const drawing = videoBookmark.drawing as TDDocument;
+      const emptyDrawing = isEmpty(drawing.pages.page?.shapes);
 
       if (emptyDrawing === false) {
         loadCurrentDrawing();
       }
     }
-  }, [clearDrawing, rescaleDrawing, loadCurrentDrawing, videoBookmark]);
+  }, [loadCurrentDrawing, videoBookmark]);
 
   /**
    * Clear drawings between time changes if enabled

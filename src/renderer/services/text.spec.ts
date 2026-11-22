@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { truncateString } from './text';
 
 describe('truncateString', () => {

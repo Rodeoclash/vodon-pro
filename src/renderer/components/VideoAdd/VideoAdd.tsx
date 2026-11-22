@@ -1,7 +1,6 @@
+import { Box, Center, Flex, Text } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-
-import { Box, Center, Text, Flex } from '@chakra-ui/react';
 import { Plus as PlusIcon } from 'tabler-icons-react';
 import { createVideosFromPaths } from '../../services/stores/videos';
 
@@ -11,7 +10,7 @@ export default function VideoAdd() {
       return file.path;
     });
 
-    createVideosFromPaths(paths);
+    createVideosFromPaths(paths).catch(console.error);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -21,7 +20,6 @@ export default function VideoAdd() {
 
   return (
     <Flex
-      // eslint-disable-next-line react/jsx-props-no-spreading
       {...getRootProps()}
       position="absolute"
       top="0"
@@ -32,10 +30,7 @@ export default function VideoAdd() {
       justifyContent="center"
     >
       <Box>
-        <input
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...getInputProps()}
-        />
+        <input {...getInputProps()} />
         <Center>
           <PlusIcon size={48} />
         </Center>

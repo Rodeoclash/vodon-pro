@@ -1,5 +1,5 @@
-/* eslint global-require: off, no-console: off, promise/always-return: off */
-
+import * as fsPromise from 'node:fs/promises';
+import os from 'node:os';
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -8,14 +8,12 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, protocol } from 'electron';
-import { autoUpdater } from 'electron-updater';
+import path from 'node:path';
+import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
 import log from 'electron-log';
-import * as fsPromise from 'fs/promises';
+import { autoUpdater } from 'electron-updater';
 import ffmpegBins from 'ffmpeg-ffprobe-static';
 import ffmpeg from 'fluent-ffmpeg';
-import os from 'os';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -25,7 +23,7 @@ if (!ffmpegBins.ffprobePath) {
 
 const ffprobePath = ffmpegBins.ffprobePath.replace(
   'app.asar',
-  'app.asar.unpacked'
+  'app.asar.unpacked',
 );
 
 if (!ffmpegBins.ffmpegPath) {
@@ -34,7 +32,7 @@ if (!ffmpegBins.ffmpegPath) {
 
 const ffmpegPath = ffmpegBins.ffmpegPath.replace(
   'app.asar',
-  'app.asar.unpacked'
+  'app.asar.unpacked',
 );
 
 ffmpeg.setFfprobePath(ffprobePath);
@@ -46,7 +44,7 @@ export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdatesAndNotify().catch(log.error);
   }
 }
 
@@ -72,7 +70,7 @@ const installExtensions = async () => {
   return installer
     .default(
       extensions.map((name) => installer[name]),
-      forceDownload
+      forceDownload,
     )
     .catch(console.log);
 };
@@ -133,7 +131,6 @@ const createWindow = async () => {
   });
 
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
   // new AppUpdater();
 };
 
@@ -185,11 +182,11 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    createWindow();
+    createWindow().catch(log.error);
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
-      if (mainWindow === null) createWindow();
+      if (mainWindow === null) createWindow().catch(log.error);
     });
   })
   .catch(console.log);
@@ -215,7 +212,7 @@ ipcMain.handle(
   'app:saveProject',
   async (_event, filePath: string, project: string) => {
     return fsPromise.writeFile(filePath, project);
-  }
+  },
 );
 
 /**
@@ -261,16 +258,16 @@ ipcMain.handle(
         .on('end', () => {
           resolve(path.join(tmpDir, `${second}.png`));
         })
-        .on('error', (err: any) => {
+        .on('error', (err: Error) => {
           reject(err);
         })
         // take 2 screenshots at predefined timemarks and size
         .takeScreenshots(
           { timemarks: [second], size: '854x480', filename: '%s.png' },
-          tmpDir
+          tmpDir,
         );
     });
-  }
+  },
 );
 
 // allow local videos

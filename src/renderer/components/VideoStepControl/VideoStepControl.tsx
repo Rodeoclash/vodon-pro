@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
-
 import { IconButton, Tooltip } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 
 import {
-  PlayerTrackPrev as PlayerTrackPrevIcon,
   PlayerTrackNext as PlayerTrackNextIcon,
+  PlayerTrackPrev as PlayerTrackPrevIcon,
 } from 'tabler-icons-react';
 import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
 
@@ -26,8 +25,8 @@ export default function VideoStepControl({
 
   const [value, Icon] =
     direction === 'forwards'
-      ? [1, <PlayerTrackNextIcon />]
-      : [-1, <PlayerTrackPrevIcon />];
+      ? [1, PlayerTrackNextIcon]
+      : [-1, PlayerTrackPrevIcon];
   const frameLength = 1 / frameRate;
 
   useEffect(() => {
@@ -60,7 +59,7 @@ export default function VideoStepControl({
   return (
     <Tooltip label={label}>
       <IconButton
-        icon={Icon}
+        icon={<Icon />}
         aria-label={label}
         onMouseDown={() => setMouseDown(true)}
         onMouseUp={() => setMouseDown(false)}
