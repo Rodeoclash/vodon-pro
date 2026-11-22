@@ -3,7 +3,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import { css } from '@emotion/react';
 import { useThrottle } from '@react-hook/throttle';
 import * as React from 'react';
-import Draggable from 'react-draggable';
+import Draggable, { type DraggableEvent } from 'react-draggable';
 import useSettingsStore from '../services/stores/settings';
 
 interface Props {
@@ -28,7 +28,9 @@ export default function WithSidebar({
     display: ${disableSidebar === true ? 'none' : 'block'};
   `;
 
-  const handleDrag = (event: any) => {
+  const handleDrag = (event: DraggableEvent) => {
+    // The sidebar handle is only dragged with a mouse.
+    if (!('clientX' in event)) return;
     const newWidth = window.innerWidth - event.clientX;
     setSidebarWidth(newWidth);
     setResizeLastAt(Date.now());

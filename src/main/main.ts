@@ -261,7 +261,7 @@ ipcMain.handle(
         .on('end', () => {
           resolve(path.join(tmpDir, `${second}.png`));
         })
-        .on('error', (err: any) => {
+        .on('error', (err: Error) => {
           reject(err);
         })
         // take 2 screenshots at predefined timemarks and size
