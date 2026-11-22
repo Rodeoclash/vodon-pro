@@ -7,7 +7,7 @@ import * as fsPromise from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
-import log from 'electron-log';
+import log from 'electron-log/main';
 import { autoUpdater } from 'electron-updater';
 import ffmpegBins from 'ffmpeg-ffprobe-static';
 import ffmpeg from 'fluent-ffmpeg';
@@ -54,12 +54,14 @@ if (isDebug) {
 }
 
 const installExtensions = async () => {
-  const installer = await import('electron-devtools-installer');
+  const { installExtension, REACT_DEVELOPER_TOOLS } = await import(
+    'electron-devtools-installer'
+  );
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
 
-  return installer
-    .default(installer.REACT_DEVELOPER_TOOLS, forceDownload)
-    .catch(console.log);
+  return installExtension(REACT_DEVELOPER_TOOLS, { forceDownload }).catch(
+    console.log,
+  );
 };
 
 const createWindow = async () => {
