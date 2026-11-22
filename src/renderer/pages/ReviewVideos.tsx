@@ -398,6 +398,8 @@ export default function ReviewVideos() {
    * When changing between active videos, show the controls for some time
    */
   useEffect(() => {
+    if (activeVideoId === null) return undefined;
+
     setPlayerHeaderOn(true);
 
     const timer = setTimeout(() => {
@@ -407,9 +409,9 @@ export default function ReviewVideos() {
     window.dispatchEvent(new Event('resize'));
 
     return () => {
-      clearInterval(timer);
+      clearTimeout(timer);
     };
-  }, [activeVideoId, setPlayerHeaderOn]);
+  }, [activeVideoId]);
 
   /**
    * When toggling the override hide off, set the mouse being active to toggle
