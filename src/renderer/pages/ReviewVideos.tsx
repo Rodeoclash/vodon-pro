@@ -1,12 +1,4 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  IconButton,
-  Kbd,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Flex, Heading, Kbd, Text } from '@chakra-ui/react';
 
 import { css } from '@emotion/react';
 
@@ -23,29 +15,19 @@ import {
 import { useBus } from 'react-bus';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Link } from 'react-router-dom';
-import {
-  Maximize as MaximizeIcon,
-  PlayerPause as PlayerPauseIcon,
-  PlayerPlay as PlayerPlayIcon,
-} from 'tabler-icons-react';
 import usePanZoom from 'use-pan-and-zoom';
 import Drawing from '../components/Drawing/Drawing';
 import DrawingControls from '../components/DrawingControls/DrawingControls';
-import GlobalTimeControl from '../components/GlobalTimeControl/GlobalTimeControl';
-import GlobalTimeDisplay from '../components/GlobalTimeDisplay/GlobalTimeDisplay';
-import PlaybackSpeed from '../components/PlaybackSpeed/PlaybackSpeed';
 import ReviewVideosBanner from '../components/ReviewVideosBanner/ReviewVideosBanner';
-import VideoBookmarkAdd from '../components/VideoBookmarkAdd/VideoBookmarkAdd';
 import VideoBookmarkShow from '../components/VideoBookmarkShow/VideoBookmarkShow';
-import VideoStepControl from '../components/VideoStepControl/VideoStepControl';
 import VideoThumbnail from '../components/VideoThumbnail/VideoThumbnail';
-import VideoVolume from '../components/VideoVolume/VideoVolume';
 import WithSidebar from '../layouts/WithSidebar';
 import { GLOBAL_TIME_CHANGE } from '../services/bus';
 import { getRatioDimensions } from '../services/layout';
 import type { Video } from '../services/models/Video';
 import useVideoStore from '../services/stores/videos';
 import Hotkeys from './ReviewVideos/Hotkeys';
+import NavigationControls from './ReviewVideos/NavigationControls';
 
 export type PreciseVideoTimes = {
   [id: string]: number;
@@ -91,7 +73,6 @@ export default function ReviewVideos() {
 
   const [app, setApp] = useState<TldrawApp>();
 
-  const startPlaying = useVideoStore((state) => state.startPlaying);
   const stopPlaying = useVideoStore((state) => state.stopPlaying);
   const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
 
@@ -600,108 +581,18 @@ export default function ReviewVideos() {
       );
 
     const renderedNavigationControls = showControls === true && (
-      <Flex
-        align="center"
-        bottom={0}
-        boxSizing="border-box"
-        justify="center"
-        left={0}
-        onMouseEnter={() => setControlsOn(true)}
-        onMouseLeave={() => setControlsOn(false)}
-        position="absolute"
-        right={0}
-        zIndex={2}
-      >
-        <Flex
-          align="center"
-          background="gray.900"
-          borderBottom="none"
-          borderColor="whiteAlpha.500"
-          borderWidth="1px"
-          minWidth="50vw"
-          p={4}
-          pointerEvents="all"
-        >
-          <Tooltip label={playing ? 'Pause' : 'Play'}>
-            <Box mr="2">
-              {!playing && (
-                <IconButton
-                  onClick={startPlaying}
-                  icon={<PlayerPlayIcon />}
-                  aria-label="Play"
-                  disabled={isAfterRange}
-                />
-              )}
-              {playing && (
-                <IconButton
-                  onClick={stopPlaying}
-                  icon={<PlayerPauseIcon />}
-                  aria-label="Pause"
-                />
-              )}
-            </Box>
-          </Tooltip>
-
-          <Box mx={2}>
-            <PlaybackSpeed disabled={playing} />
-          </Box>
-
-          <Box mx="2">
-            <VideoStepControl
-              direction="backwards"
-              frameRate={activeVideo.frameRate}
-              onClick={(value) => handleClickStep(value)}
-              pause={activeVideo.seeking}
-            />
-          </Box>
-
-          <Box mx="2">
-            <GlobalTimeDisplay />
-          </Box>
-
-          <Box flexGrow={1} mx="2" minW="25vw">
-            <GlobalTimeControl video={activeVideo} />
-          </Box>
-
-          <Box mx="2">
-            <VideoVolume video={activeVideo} />
-          </Box>
-
-          <Box mx="2">
-            <VideoStepControl
-              direction="forwards"
-              frameRate={activeVideo.frameRate}
-              onClick={(value) => handleClickStep(value)}
-              pause={activeVideo.seeking}
-            />
-          </Box>
-
-          {app && (
-            <Box mx="2">
-              <VideoBookmarkAdd
-                key={activeVideo.id}
-                app={app}
-                disabled={!!activeBookmark || editingBookmark || isAfterRange}
-                scale={scale}
-                video={activeVideo}
-                videoTimes={videoTimes.current}
-              />
-            </Box>
-          )}
-
-          <Tooltip label="Presentation mode">
-            <Box ml="2">
-              <IconButton
-                onClick={() => setFullscreen(!fullscreen)}
-                icon={<MaximizeIcon />}
-                aria-label="Fullscreen video"
-                disabled={isAfterRange}
-                ref={fullscreenTriggerRef}
-              />
-            </Box>
-          </Tooltip>
-        </Flex>
-      </Flex>
+      <NavigationControls
+        app={app}
+        hasActiveBookmark={activeBookmark !== undefined}
+        isAfterRange={isAfterRange}
+        onHoverChange={setControlsOn}
+        onStep={handleClickStep}
+        onToggleFullscreen={() => setFullscreen(!fullscreen)}
+        fullscreenTriggerRef={fullscreenTriggerRef}
+        scale={scale}
+        video={activeVideo}
+        videoTimes={videoTimes.current}
+      />
     );
 
     const updatedPanZoomHandlers = zoomPanEnabled
