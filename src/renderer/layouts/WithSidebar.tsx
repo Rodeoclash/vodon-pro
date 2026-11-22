@@ -1,7 +1,7 @@
 import { Box, Flex } from '@chakra-ui/react';
 
 import { css } from '@emotion/react';
-import { useThrottle } from '@react-hook/throttle';
+import { useThrottleCallback } from '@react-hook/throttle';
 import * as React from 'react';
 import Draggable, { type DraggableEvent } from 'react-draggable';
 import useSettingsStore from '../services/stores/settings';
@@ -20,7 +20,11 @@ export default function WithSidebar({
   const sidebarWidth = useSettingsStore((state) => state.sidebarWidth);
   const setSidebarWidth = useSettingsStore((state) => state.setSidebarWidth);
 
-  const [resizeLastAt, setResizeLastAt] = useThrottle<number | null>(null, 10);
+  // Let anything sized from the window (the videos) re-measure, at most 10
+  // times a second while the sidebar is dragged.
+  const dispatchResize = useThrottleCallback(() => {
+    window.dispatchEvent(new Event('resize'));
+  }, 10);
 
   const mainWidth = window.innerWidth - sidebarWidth;
 
@@ -33,7 +37,7 @@ export default function WithSidebar({
     if (!('clientX' in event)) return;
     const newWidth = window.innerWidth - event.clientX;
     setSidebarWidth(newWidth);
-    setResizeLastAt(Date.now());
+    dispatchResize();
   };
 
   const handleDragStop = () => {
@@ -42,7 +46,7 @@ export default function WithSidebar({
 
   React.useEffect(() => {
     window.dispatchEvent(new Event('resize'));
-  }, [resizeLastAt]);
+  }, []);
 
   return (
     <Flex width="100%">
