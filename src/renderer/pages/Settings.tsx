@@ -41,7 +41,6 @@ export default function Settings() {
   }
 
   function handleResetSettings() {
-    // eslint-disable-next-line no-alert
     if (window.confirm('This will reset all your settings, are you sure?')) {
       resetSettings();
     }

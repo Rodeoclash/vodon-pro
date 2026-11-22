@@ -47,7 +47,6 @@ export default function SetupVideos() {
   });
 
   function handleClearVideos() {
-    // eslint-disable-next-line no-alert
     if (window.confirm('Are you sure you want to remove all videos?')) {
       clearVideos();
     }

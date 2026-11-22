@@ -446,9 +446,7 @@ export default useStore;
  * is launched.
  */
 export async function createVideosFromPaths(paths: Array<string>) {
-  // eslint-disable-next-line no-restricted-syntax
   for (const path of paths) {
-    // eslint-disable-next-line no-await-in-loop
     const video = await createFromFile(path);
     useStore.getState().addVideo(video);
   }
@@ -481,7 +479,6 @@ window.app.onLoadProjectRequest(async (project: string) => {
  * back to new.
  */
 window.app.onNewProjectRequest(async () => {
-  // eslint-disable-next-line no-alert
   if (window.confirm('This will remove all videos and bookmarks, continue?')) {
     useStore.setState({
       ...useStore.getState(),

@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 export function getRatioDimensions(
   displayAspectRatio: string,
   element: HTMLElement,

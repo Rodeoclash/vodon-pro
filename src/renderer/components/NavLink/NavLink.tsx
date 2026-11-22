@@ -21,7 +21,6 @@ export default function NavLink({ children, to, ...props }: LinkProps) {
         borderRadius="2xl"
         ml="4"
         _focus={{ boxShadow: 'none' }}
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
       >
         {children}

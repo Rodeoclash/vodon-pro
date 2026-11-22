@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 export function secondsToHms(input: number) {
   const hours = Math.floor(input / 3600);
   const minutes = Math.floor(input / 60) % 60;

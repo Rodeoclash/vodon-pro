@@ -1,5 +1,3 @@
-/* eslint global-require: off, no-console: off, promise/always-return: off */
-
 import * as fsPromise from 'node:fs/promises';
 import os from 'node:os';
 /**
@@ -133,7 +131,6 @@ const createWindow = async () => {
   });
 
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
   // new AppUpdater();
 };
 

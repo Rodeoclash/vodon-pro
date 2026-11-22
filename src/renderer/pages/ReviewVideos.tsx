@@ -634,7 +634,6 @@ export default function ReviewVideos() {
               id="overlay"
               ref={setContainer}
               style={{ touchAction: 'none' }}
-              // eslint-disable-next-line react/jsx-props-no-spreading
               {...updatedPanZoomHandlers}
             >
               {zoomPanEnabled === false && renderedDrawing}

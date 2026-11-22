@@ -90,7 +90,6 @@ export default function VideoBookmarkEditor({
             ref={setPopperElement}
             zIndex="1"
             style={styles.popper}
-            // eslint-disable-next-line react/jsx-props-no-spreading
             {...attributes.popper}
           >
             <Picker
