@@ -6,7 +6,7 @@ import {
   MenuItemConstructorOptions,
   shell,
 } from 'electron';
-import * as fs from 'fs/promises';
+import * as fs from 'node:fs/promises';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;

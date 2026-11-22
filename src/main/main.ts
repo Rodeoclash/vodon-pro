@@ -5,8 +5,8 @@ import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import ffmpegBins from 'ffmpeg-ffprobe-static';
 import ffmpeg from 'fluent-ffmpeg';
-import * as fsPromise from 'fs/promises';
-import os from 'os';
+import * as fsPromise from 'node:fs/promises';
+import os from 'node:os';
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -15,7 +15,7 @@ import os from 'os';
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import path from 'path';
+import path from 'node:path';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
