@@ -1,10 +1,5 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
-import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
-import log from 'electron-log';
-import { autoUpdater } from 'electron-updater';
-import ffmpegBins from 'ffmpeg-ffprobe-static';
-import ffmpeg from 'fluent-ffmpeg';
 import * as fsPromise from 'node:fs/promises';
 import os from 'node:os';
 /**
@@ -16,6 +11,11 @@ import os from 'node:os';
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'node:path';
+import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
+import log from 'electron-log';
+import { autoUpdater } from 'electron-updater';
+import ffmpegBins from 'ffmpeg-ffprobe-static';
+import ffmpeg from 'fluent-ffmpeg';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 

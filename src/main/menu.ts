@@ -1,3 +1,4 @@
+import * as fs from 'node:fs/promises';
 import {
   app,
   type BrowserWindow,
@@ -6,7 +7,6 @@ import {
   type MenuItemConstructorOptions,
   shell,
 } from 'electron';
-import * as fs from 'node:fs/promises';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
