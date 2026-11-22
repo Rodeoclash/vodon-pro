@@ -271,7 +271,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
     aspect-ratio: ${video.displayAspectRatio.replace(':', '/')};
   `;
 
-  if (!video || !video.durationNormalised) {
+  if (!video?.durationNormalised) {
     return null;
   }
 

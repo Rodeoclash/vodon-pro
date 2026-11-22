@@ -129,13 +129,12 @@ export default function ReviewVideos() {
 
   // True when the active video has exceded its viewable range
   const isAfterRange =
-    (activeVideo &&
-      activeVideo.durationNormalised &&
+    (activeVideo?.durationNormalised &&
       currentTime >= activeVideo.durationNormalised) ||
     false;
 
   function handleClickStep(distance: number) {
-    if (!activeVideo || !activeVideo.el) {
+    if (!activeVideo?.el) {
       return;
     }
 
