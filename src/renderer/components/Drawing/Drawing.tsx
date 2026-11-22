@@ -1,13 +1,11 @@
-import { useRef, useEffect, useCallback } from 'react';
-import { Tldraw, TldrawApp, ColorStyle } from '@tldraw/tldraw';
-import { isEmpty } from 'lodash/fp';
-
 import { Box } from '@chakra-ui/react';
-import useVideoStore from '../../services/stores/videos';
-import useSettingsStore from '../../services/stores/settings';
-
+import { ColorStyle, Tldraw, TldrawApp } from '@tldraw/tldraw';
+import { isEmpty } from 'lodash/fp';
+import { useCallback, useEffect, useRef } from 'react';
 import type { Video } from '../../services/models/Video';
 import type { VideoBookmark } from '../../services/models/VideoBookmark';
+import useSettingsStore from '../../services/stores/settings';
+import useVideoStore from '../../services/stores/videos';
 
 type Props = {
   onMount: (app: TldrawApp) => void;

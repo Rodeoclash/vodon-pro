@@ -1,5 +1,3 @@
-import { css } from '@emotion/react';
-
 import {
   Box,
   Button,
@@ -8,12 +6,12 @@ import {
   Grid,
   GridItem,
 } from '@chakra-ui/react';
+import { css } from '@emotion/react';
 
 import { X as XIcon } from 'tabler-icons-react';
-import useVideoStore from '../services/stores/videos';
-
 import VideoAdd from '../components/VideoAdd/VideoAdd';
 import VideoAligner from '../components/VideoAligner/VideoAligner';
+import useVideoStore from '../services/stores/videos';
 
 const addVideoCellStyles = css`
   aspect-ratio: 16 / 9;

@@ -1,4 +1,4 @@
-import { Flex, Heading, Text, Box, Container, Button } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, Heading, Text } from '@chakra-ui/react';
 import React from 'react';
 
 import NoSidebar from '../layouts/NoSidebar';

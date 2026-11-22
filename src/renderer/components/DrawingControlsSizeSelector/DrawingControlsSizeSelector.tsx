@@ -1,14 +1,13 @@
-import * as React from 'react';
-
 import {
   Flex,
   Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
   PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
 } from '@chakra-ui/react';
-import { TldrawApp, SizeStyle } from '@tldraw/tldraw';
+import { SizeStyle, TldrawApp } from '@tldraw/tldraw';
+import * as React from 'react';
 
 type PropsType = {
   app: TldrawApp;

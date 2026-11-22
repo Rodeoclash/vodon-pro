@@ -1,9 +1,8 @@
-import * as React from 'react';
+import { Box, Flex } from '@chakra-ui/react';
 
 import { css } from '@emotion/react';
 import { useThrottle } from '@react-hook/throttle';
-
-import { Flex, Box } from '@chakra-ui/react';
+import * as React from 'react';
 import Draggable from 'react-draggable';
 import useSettingsStore from '../services/stores/settings';
 

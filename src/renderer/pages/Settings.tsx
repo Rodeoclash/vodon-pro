@@ -2,20 +2,18 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
   Heading,
-  FormHelperText,
-  Switch,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  Switch,
 } from '@chakra-ui/react';
-
-import useSettingsStore from '../services/stores/settings';
-
 import NoSidebar from '../layouts/NoSidebar';
+import useSettingsStore from '../services/stores/settings';
 
 export default function Settings() {
   const resetSettings = useSettingsStore((state) => state.resetSettings);

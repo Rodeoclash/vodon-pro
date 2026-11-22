@@ -1,15 +1,14 @@
 import {
   Flex,
-  SliderTrack,
   Slider,
   SliderFilledTrack,
   SliderThumb,
+  SliderTrack,
 } from '@chakra-ui/react';
 
 import { Volume as VolumeIcon } from 'tabler-icons-react';
-import useStore from '../../services/stores/videos';
-
 import type { Video } from '../../services/models/Video';
+import useStore from '../../services/stores/videos';
 
 type PropsType = {
   video: Video;

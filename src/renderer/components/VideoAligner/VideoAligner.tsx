@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, { useRef, useState, useEffect } from 'react';
+
 
 import {
   Box,
@@ -8,6 +8,7 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -20,22 +21,20 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
-  IconButton,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  PlayerPause as PlayerPauseIcon,
+  PlayerPlay as PlayerPlayIcon,
   Settings as SettingsIcon,
   X as XIcon,
-  PlayerPlay as PlayerPlayIcon,
-  PlayerPause as PlayerPauseIcon,
 } from 'tabler-icons-react';
-import { secondsToHms } from '../../services/time';
-import useStore from '../../services/stores/videos';
-
-import VideoStepControl from '../VideoStepControl/VideoStepControl';
-
 import type { Video } from '../../services/models/Video';
+import useStore from '../../services/stores/videos';
+import { secondsToHms } from '../../services/time';
+import VideoStepControl from '../VideoStepControl/VideoStepControl';
 
 interface Props {
   video: Video;

@@ -1,7 +1,6 @@
+import { Box, Center, Flex, Text } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-
-import { Box, Center, Text, Flex } from '@chakra-ui/react';
 import { Plus as PlusIcon } from 'tabler-icons-react';
 import { createVideosFromPaths } from '../../services/stores/videos';
 

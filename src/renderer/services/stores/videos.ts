@@ -1,18 +1,17 @@
-import createStore from 'zustand';
-import { persist } from 'zustand/middleware';
 import { produce } from 'immer';
 import superjson from 'superjson';
+import createStore from 'zustand';
+import { persist } from 'zustand/middleware';
 
 import { getPossibleArgVMoviePaths } from '../file';
-import { createFromFile, findMaxNormalisedDuration } from '../models/Video';
-import { create as createVideoBookmark } from '../models/VideoBookmark';
-
 import type { Video } from '../models/Video';
+import { createFromFile, findMaxNormalisedDuration } from '../models/Video';
 import type {
   VideoBookmark,
   VideoBookmarkCoordinates,
   VideoBookmarkIcon,
 } from '../models/VideoBookmark';
+import { create as createVideoBookmark } from '../models/VideoBookmark';
 
 const CURRENT_PERSIST_VERSION = 0;
 

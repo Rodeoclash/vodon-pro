@@ -1,13 +1,12 @@
-import * as fs from 'fs/promises';
-
 import {
   app,
-  Menu,
-  shell,
   BrowserWindow,
-  MenuItemConstructorOptions,
   dialog,
+  Menu,
+  MenuItemConstructorOptions,
+  shell,
 } from 'electron';
+import * as fs from 'fs/promises';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;

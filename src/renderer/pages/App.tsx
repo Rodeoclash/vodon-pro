@@ -1,7 +1,3 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Global, css } from '@emotion/react';
-import { Provider as BusProvider } from 'react-bus';
-
 import {
   Box,
   Button,
@@ -32,19 +28,20 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
+import { css, Global } from '@emotion/react';
+import { useCallback, useEffect, useState } from 'react';
+import { Provider as BusProvider } from 'react-bus';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { Help as HelpIcon } from 'tabler-icons-react';
+import garet from '../assets/fonts/Garet-Heavy.otf';
+import NavLink from '../components/NavLink/NavLink';
 import { getPossibleArgVMoviePaths } from '../services/file';
-
 import useSettingsStore from '../services/stores/settings';
 import useVideoStore, {
   createVideosFromPaths,
 } from '../services/stores/videos';
 import theme from '../services/theme';
-import garet from '../assets/fonts/Garet-Heavy.otf';
-
-import NavLink from '../components/NavLink/NavLink';
 
 export default function App() {
   const addVideo = useVideoStore((state) => state.addVideo);

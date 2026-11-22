@@ -1,19 +1,17 @@
+import { Box, Flex, Heading, Kbd, Text } from '@chakra-ui/react';
+import { css } from '@emotion/react';
 import {
-  useEffect,
-  useRef,
-  useLayoutEffect,
-  useState,
   useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useListener } from 'react-bus';
-import { css } from '@emotion/react';
-import { Box, Heading, Flex, Text, Kbd } from '@chakra-ui/react';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
-
-import useVideoStore from '../../services/stores/videos';
 import { getRatioDimensions } from '../../services/layout';
-
 import type { Video } from '../../services/models/Video';
+import useVideoStore from '../../services/stores/videos';
 
 interface VideoFrameMetadata {
   presentationTime: DOMHighResTimeStamp;

@@ -1,31 +1,28 @@
-import { css } from '@emotion/react';
-import { useBus } from 'react-bus';
-
 import {
   Box,
-  Flex,
   Button,
   ButtonGroup,
-  Text,
-  Spacer,
+  Flex,
   IconButton,
+  Spacer,
+  Text,
 } from '@chakra-ui/react';
+import { css } from '@emotion/react';
+import { useBus } from 'react-bus';
 import Draggable from 'react-draggable'; // The default
 import {
   CaretLeft as CaretLeftIcon,
   CaretRight as CaretRightIcon,
 } from 'tabler-icons-react';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
-import useVideoStore from '../../services/stores/videos';
-
-import VideoBookmarkForm from '../VideoBookmarkForm/VideoBookmarkForm';
+import type { Video } from '../../services/models/Video';
 import {
   findNextBookmark,
   findPreviousBookmark,
 } from '../../services/models/Video';
-
-import type { Video } from '../../services/models/Video';
 import type { VideoBookmark } from '../../services/models/VideoBookmark';
+import useVideoStore from '../../services/stores/videos';
+import VideoBookmarkForm from '../VideoBookmarkForm/VideoBookmarkForm';
 
 type Props = {
   bookmark: VideoBookmark;

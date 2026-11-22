@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest';
+import type { Video } from './Video';
 import {
   findMaxNormalisedDuration,
   findNextBookmark,
   findPreviousBookmark,
 } from './Video';
-import type { Video } from './Video';
 import type { VideoBookmark } from './VideoBookmark';
 
 // TODO: This might need to be moved to a fixtures or similar

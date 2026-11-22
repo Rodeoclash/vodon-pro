@@ -1,10 +1,9 @@
-import * as React from 'react';
-import { usePopper } from 'react-popper';
-import { useHotkeys } from 'react-hotkeys-hook';
-
 import { Box, Flex, FormControl, FormLabel, Textarea } from '@chakra-ui/react';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import * as React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { usePopper } from 'react-popper';
 
 import type {
   VideoBookmark,

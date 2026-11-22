@@ -1,11 +1,10 @@
+import { Link } from '@chakra-ui/react';
+import type { LinkProps } from 'react-router-dom';
 import {
+  Link as RouterLink,
   useMatch,
   useResolvedPath,
-  Link as RouterLink,
 } from 'react-router-dom';
-import type { LinkProps } from 'react-router-dom';
-
-import { Link } from '@chakra-ui/react';
 
 export default function NavLink({ children, to, ...props }: LinkProps) {
   const resolved = useResolvedPath(to);

@@ -1,17 +1,4 @@
 import {
-  useRef,
-  useEffect,
-  useState,
-  useLayoutEffect,
-  useCallback,
-} from 'react';
-
-import { css } from '@emotion/react';
-
-import { useThrottle } from '@react-hook/throttle';
-import { useBus } from 'react-bus';
-
-import {
   Box,
   Flex,
   Heading,
@@ -21,36 +8,44 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 
-import {
-  PlayerPlay as PlayerPlayIcon,
-  PlayerPause as PlayerPauseIcon,
-  Maximize as MaximizeIcon,
-} from 'tabler-icons-react';
+import { css } from '@emotion/react';
 
+import { useThrottle } from '@react-hook/throttle';
 import { TldrawApp } from '@tldraw/tldraw';
-import { Link } from 'react-router-dom';
-import usePanZoom from 'use-pan-and-zoom';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { isEqual } from 'lodash';
-import { GLOBAL_TIME_CHANGE } from '../services/bus';
-import { getRatioDimensions } from '../services/layout';
-import useVideoStore from '../services/stores/videos';
-
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { useBus } from 'react-bus';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Link } from 'react-router-dom';
+import {
+  Maximize as MaximizeIcon,
+  PlayerPause as PlayerPauseIcon,
+  PlayerPlay as PlayerPlayIcon,
+} from 'tabler-icons-react';
+import usePanZoom from 'use-pan-and-zoom';
 import Drawing from '../components/Drawing/Drawing';
 import DrawingControls from '../components/DrawingControls/DrawingControls';
 import GlobalTimeControl from '../components/GlobalTimeControl/GlobalTimeControl';
 import GlobalTimeDisplay from '../components/GlobalTimeDisplay/GlobalTimeDisplay';
-import Hotkeys from './ReviewVideos/Hotkeys';
 import PlaybackSpeed from '../components/PlaybackSpeed/PlaybackSpeed';
 import ReviewVideosBanner from '../components/ReviewVideosBanner/ReviewVideosBanner';
-import VideoBookmarkShow from '../components/VideoBookmarkShow/VideoBookmarkShow';
 import VideoBookmarkAdd from '../components/VideoBookmarkAdd/VideoBookmarkAdd';
+import VideoBookmarkShow from '../components/VideoBookmarkShow/VideoBookmarkShow';
 import VideoStepControl from '../components/VideoStepControl/VideoStepControl';
 import VideoThumbnail from '../components/VideoThumbnail/VideoThumbnail';
 import VideoVolume from '../components/VideoVolume/VideoVolume';
 import WithSidebar from '../layouts/WithSidebar';
-
+import { GLOBAL_TIME_CHANGE } from '../services/bus';
+import { getRatioDimensions } from '../services/layout';
 import type { Video } from '../services/models/Video';
+import useVideoStore from '../services/stores/videos';
+import Hotkeys from './ReviewVideos/Hotkeys';
 
 export type PreciseVideoTimes = {
   [id: string]: number;

@@ -1,14 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { useBus } from 'react-bus';
 import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
+import { useCallback, useEffect, useState } from 'react';
+import { useBus } from 'react-bus';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { GLOBAL_TIME_CHANGE } from '../../services/bus';
-
-import useVideoStore from '../../services/stores/videos';
-import useSettingsStore from '../../services/stores/settings';
-import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
-
 import type { Video } from '../../services/models/Video';
+import useSettingsStore from '../../services/stores/settings';
+import useVideoStore from '../../services/stores/videos';
+import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
 
 type Props = {
   app: TldrawApp;

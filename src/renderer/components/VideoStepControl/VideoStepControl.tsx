@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
-
 import { IconButton, Tooltip } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 
 import {
-  PlayerTrackPrev as PlayerTrackPrevIcon,
   PlayerTrackNext as PlayerTrackNextIcon,
+  PlayerTrackPrev as PlayerTrackPrevIcon,
 } from 'tabler-icons-react';
 import { STEP_ADVANCE_INTERVAL } from '../../services/ui';
 

@@ -1,23 +1,21 @@
+import {
+  Box,
+  Flex,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Tooltip,
+} from '@chakra-ui/react';
+import { DashStyle, TldrawApp } from '@tldraw/tldraw';
 import * as React from 'react';
 
 import {
-  Flex,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  PopoverArrow,
-  Tooltip,
-  Box,
-} from '@chakra-ui/react';
-
-import { TldrawApp, DashStyle } from '@tldraw/tldraw';
-
-import {
-  Circle as CircleIcon,
-  SquaresFilled as SquaresFilledIcon,
   CircleDashed as CircleDashedIcon,
   CircleDotted as CircleDottedIcon,
+  Circle as CircleIcon,
+  SquaresFilled as SquaresFilledIcon,
 } from 'tabler-icons-react';
 
 type PropsType = {

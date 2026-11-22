@@ -1,9 +1,8 @@
-import * as React from 'react';
+import { Box, Flex, IconButton, Tooltip, VStack } from '@chakra-ui/react';
 
 import { css } from '@emotion/react';
-
-import { Flex, Box, VStack, IconButton, Tooltip } from '@chakra-ui/react';
 import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
+import * as React from 'react';
 import {
   ArrowUpRight as ArrowUpRightIcon,
   Circle as CircleIcon,
@@ -15,8 +14,8 @@ import {
 } from 'tabler-icons-react';
 
 import DrawingControlsColorSelector from '../DrawingControlsColorSelector/DrawingControlsColorSelector';
-import DrawingControlsSizeSelector from '../DrawingControlsSizeSelector/DrawingControlsSizeSelector';
 import DrawingControlsDashSelector from '../DrawingControlsDashSelector/DrawingControlsDashSelector';
+import DrawingControlsSizeSelector from '../DrawingControlsSizeSelector/DrawingControlsSizeSelector';
 
 type PropsType = {
   app: TldrawApp;
