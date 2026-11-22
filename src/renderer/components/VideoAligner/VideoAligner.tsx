@@ -82,8 +82,7 @@ export default function VideoAligner({ video }: Props) {
       videoEl.removeEventListener('seeking', handleSeeking);
       videoEl.removeEventListener('seeked', handleSeeked);
     };
-    // eslint-disable-next-line
-  }, []);
+  }, [video, setVideoDuration, setVideoSyncTime, recalculateOffsets]);
 
   function handlePlay() {
     if (videoRef.current === null) return;
