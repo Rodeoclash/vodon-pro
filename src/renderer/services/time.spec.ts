@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { secondsToHms } from './time';
 
 test('secondsToHms', () => {

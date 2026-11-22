@@ -14,8 +14,8 @@ Vodon Pro is an Electron + React desktop app for esports coaches to review multi
 - `npm run package` — build plus electron-builder packaging into `release/build`.
 - `npm run lint` — ESLint (airbnb + erb config). Pre-commit runs lint-staged via husky.
 - `npx tsc` — typecheck (CI runs this).
-- `npm test` — Jest (jsdom + ts-jest). **Tests require a prior build**: `.erb/scripts/check-build-exists.ts` is a Jest setup file that throws unless `release/app/dist/main/main.js` and `release/app/dist/renderer/renderer.js` exist. Run `npm run build` first.
-- Single test: `npx jest src/renderer/services/time.spec.ts` (or `npx jest -t "name"`).
+- `npm test` — Vitest (jsdom), specs are `src/**/*.spec.ts(x)`. `npm run test:watch` for watch mode.
+- Single test: `npx vitest run src/renderer/services/time.spec.ts` (or `npx vitest run -t "name"`).
 
 CI (`.github/workflows/test.yml`) runs `npm run package && npx tsc && npm test` on macOS, Ubuntu and Windows with Node 18.
 
