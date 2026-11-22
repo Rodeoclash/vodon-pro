@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/media-has-caption */
-
 import {
   Box,
   Button,
@@ -70,7 +68,6 @@ export default function VideoAligner({ video }: Props) {
       if (videoEl === null) return;
       setVideoDuration(video, videoEl.duration);
       videoEl.currentTime = video.syncTime;
-      videoEl.volume = 0;
     }
 
     if (videoEl !== null) {
@@ -255,7 +252,7 @@ export default function VideoAligner({ video }: Props) {
         </Tooltip>
 
         <Flex align="center" justifyContent="center">
-          <video src={video.filePath} ref={videoRef} />
+          <video src={video.filePath} ref={videoRef} muted />
         </Flex>
 
         {renderedControls}
