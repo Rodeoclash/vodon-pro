@@ -2,8 +2,8 @@ import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 
 import type { TldrawApp } from '@tldraw/tldraw';
 import { useEffect, useRef } from 'react';
-import type { PreciseVideoTimes } from 'renderer/pages/ReviewVideos';
 import { Bookmark as BookmarkIcon } from 'tabler-icons-react';
+import type { PreciseVideoTimes } from '../../pages/ReviewVideos';
 import type { Video } from '../../services/models/Video';
 import useStore from '../../services/stores/videos';
 

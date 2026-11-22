@@ -7,11 +7,10 @@
 
   "search.exclude": {
     ".git": true,
-    ".erb/dll": true,
-    "release/{build,app/dist}": true,
+    "out": true,
+    "release/build": true,
     "node_modules": true,
     "npm-debug.log.*": true,
-    "package-lock.json": true,
-    "*.{css,sass,scss}.d.ts": true
+    "package-lock.json": true
   }
 }

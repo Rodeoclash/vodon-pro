@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/package-lock.json", "!.erb"]
+    "includes": ["**", "!**/package-lock.json"]
   },
   "formatter": {
     "indentStyle": "space"
