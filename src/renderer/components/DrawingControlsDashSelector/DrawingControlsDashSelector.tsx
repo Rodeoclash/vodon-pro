@@ -23,10 +23,10 @@ type PropsType = {
 };
 
 const dashes = {
-  [DashStyle.Draw]: [<CircleIcon />, 'Line'],
-  [DashStyle.Solid]: [<SquaresFilledIcon />, 'Filled'],
-  [DashStyle.Dashed]: [<CircleDashedIcon />, 'Dashed'],
-  [DashStyle.Dotted]: [<CircleDottedIcon />, 'Dotted'],
+  [DashStyle.Draw]: [CircleIcon, 'Line'],
+  [DashStyle.Solid]: [SquaresFilledIcon, 'Filled'],
+  [DashStyle.Dashed]: [CircleDashedIcon, 'Dashed'],
+  [DashStyle.Dotted]: [CircleDottedIcon, 'Dotted'],
 };
 
 export default function DrawingControlsStyleSelector({ app }: PropsType) {
@@ -46,15 +46,17 @@ export default function DrawingControlsStyleSelector({ app }: PropsType) {
     setIsOpen(true);
   };
 
+  const CurrentIcon = dashes[currentStyle.dash][0];
+
   const sizesData = Object.entries(dashes) as Array<
-    [DashStyle, [JSX.Element, string]]
+    [DashStyle, [React.ComponentType, string]]
   >;
 
   const renderedSwatches = sizesData
     .filter(([key]) => {
       return key !== DashStyle.Solid;
     })
-    .map(([key, [icon, label]]) => {
+    .map(([key, [Icon, label]]) => {
       return (
         <Flex
           mx={1}
@@ -72,7 +74,9 @@ export default function DrawingControlsStyleSelector({ app }: PropsType) {
           boxSizing="border-box"
         >
           <Tooltip label={label}>
-            <Box>{icon}</Box>
+            <Box>
+              <Icon />
+            </Box>
           </Tooltip>
         </Flex>
       );
@@ -92,7 +96,7 @@ export default function DrawingControlsStyleSelector({ app }: PropsType) {
           borderColor="whiteAlpha.400"
           onClick={handleOpen}
         >
-          {dashes[currentStyle.dash][0]}
+          <CurrentIcon />
         </Flex>
       </PopoverTrigger>
       <PopoverContent width={`${sizesData.length * 2.5}rem`}>
