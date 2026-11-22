@@ -91,7 +91,7 @@ export default function Drawing({
    */
   useEffect(() => {
     rescaleDrawing();
-  }, [scale, rescaleDrawing]);
+  }, [rescaleDrawing]);
 
   /**
    * Load video bookmarks
@@ -110,7 +110,7 @@ export default function Drawing({
         loadCurrentDrawing();
       }
     }
-  }, [clearDrawing, rescaleDrawing, loadCurrentDrawing, videoBookmark]);
+  }, [loadCurrentDrawing, videoBookmark]);
 
   /**
    * Clear drawings between time changes if enabled
