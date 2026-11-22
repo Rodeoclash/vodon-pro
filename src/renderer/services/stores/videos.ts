@@ -1,5 +1,4 @@
 import { produce } from 'immer';
-import superjson from 'superjson';
 import createStore from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -12,6 +11,7 @@ import type {
   VideoBookmarkIcon,
 } from '../models/VideoBookmark';
 import { create as createVideoBookmark } from '../models/VideoBookmark';
+import { deserialize, type Persisted, serialize } from './videosPersistence';
 
 const CURRENT_PERSIST_VERSION = 0;
 
@@ -100,62 +100,12 @@ const emptyState: StateData = {
   zoomPanEnabled: false,
 };
 
-// remove video elements
-const serialize = (state: any) => {
-  const updatedState = produce(state.state, (innerState: State) => {
-    // We cannot persist the el to storage so we need to null it here before saving.
-    innerState.videos = innerState.videos.map((video: any) => {
-      return {
-        ...video,
-        el: null,
-      };
-    });
-  });
-
-  return superjson.stringify({ ...state, state: updatedState });
-};
-
-// When restoring state, we need to handle videos that might have been moved
-// TODO: This should register an error or similar that the video was removed
-const deserialize = async (str: string) => {
-  const parsedStr: any = superjson.parse(str);
-
-  const videos = [];
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const video of parsedStr.state.videos) {
-    // handle missing videos
-    // eslint-disable-next-line no-await-in-loop
-    const exists = await window.video.exists(video.filePath);
-
-    if (exists === false) {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-
-    // populate bookmarks onto videos if needed
-    if (!video.bookmarks) {
-      video.bookmarks = [];
-    }
-
-    const el = document.createElement('video');
-    el.src = video.filePath;
-
-    videos.push({
-      ...video,
-      el,
-    });
-  }
-
-  return {
-    version: parsedStr.version,
-    state: {
-      ...parsedStr.state,
-      zoomPanEnabled: false,
-      videos,
-    },
-  };
-};
+// zustand v3 types the stored value as a deep partial of State, which TypeScript
+// can't expand (State holds HTMLVideoElements), so these stay opaque to it.
+const persistSerialize = (value: unknown) =>
+  serialize(value as Persisted<State>);
+const persistDeserialize = (str: string) =>
+  deserialize<State>(str) as Promise<never>;
 
 const useStore = createStore<State>(
   persist(
@@ -482,8 +432,8 @@ const useStore = createStore<State>(
     {
       name: 'vodon-store-videos-v2',
       version: CURRENT_PERSIST_VERSION,
-      serialize,
-      deserialize,
+      serialize: persistSerialize,
+      deserialize: persistDeserialize,
     },
   ),
 );
@@ -509,7 +459,7 @@ export async function createVideosFromPaths(paths: Array<string>) {
  * then pass it back to the main thread along with the filepath to persist.
  */
 window.app.onSaveProjectRequest((filePath: string) => {
-  const serializedState = serialize({
+  const serializedState = serialize<State>({
     version: CURRENT_PERSIST_VERSION,
     state: useStore.getState(),
   });
@@ -522,7 +472,7 @@ window.app.onSaveProjectRequest((filePath: string) => {
  * then pass it back to the main thread along with the filepath to persist.
  */
 window.app.onLoadProjectRequest(async (project: string) => {
-  const unserializedState = await deserialize(project);
+  const unserializedState = await deserialize<State>(project);
   useStore.setState(unserializedState.state);
 });
 
