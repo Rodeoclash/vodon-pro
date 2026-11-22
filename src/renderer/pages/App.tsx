@@ -44,7 +44,6 @@ import useVideoStore, {
 import theme from '../services/theme';
 
 export default function App() {
-  const addVideo = useVideoStore((state) => state.addVideo);
   const clearVideos = useVideoStore((state) => state.clearVideos);
   const overrideHideControls = useVideoStore(
     (state) => state.overrideHideControls,
@@ -102,7 +101,7 @@ export default function App() {
       .catch((e) => {
         throw e;
       });
-  }, [addVideo, clearVideos]);
+  }, [clearVideos]);
 
   const showHelpButton = pathname === '/' || pathname === '/review';
 
