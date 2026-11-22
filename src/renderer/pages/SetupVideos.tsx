@@ -54,8 +54,7 @@ export default function SetupVideos() {
   }
 
   return (
-    <>
-      <Box overflowY="auto" height="calc(100vh - 5rem)" width="100%">
+    <Box overflowY="auto" height="calc(100vh - 5rem)" width="100%">
         <Flex
           boxSizing="border-box"
           borderBottom="1px"
@@ -88,6 +87,5 @@ export default function SetupVideos() {
           </GridItem>
         </Grid>
       </Box>
-    </>
   );
 }
