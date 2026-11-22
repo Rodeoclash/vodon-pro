@@ -85,22 +85,18 @@ export default function VideoAligner({ video }: Props) {
     // eslint-disable-next-line
   }, []);
 
-  useEffect(() => {
-    if (videoRef.current === null || playing === null) {
-      return;
-    }
+  function handlePlay() {
+    if (videoRef.current === null) return;
+    setPlaying(true);
+    videoRef.current.play().catch(console.error);
+  }
 
-    if (playing === true) {
-      videoRef.current.play();
-    }
-
-    if (playing === false) {
-      videoRef.current.pause();
-      setVideoSyncTime(video, videoRef.current.currentTime);
-    }
-
-    // eslint-disable-next-line
-  }, [playing]);
+  function handlePause() {
+    if (videoRef.current === null) return;
+    setPlaying(false);
+    videoRef.current.pause();
+    setVideoSyncTime(video, videoRef.current.currentTime);
+  }
 
   function handleSliderChange(newTime: number) {
     if (videoRef.current === null) return;
@@ -143,14 +139,14 @@ export default function VideoAligner({ video }: Props) {
         <Box mr="2">
           {!playing && (
             <IconButton
-              onClick={() => setPlaying(true)}
+              onClick={handlePlay}
               icon={<PlayerPlayIcon />}
               aria-label="Play"
             />
           )}
           {playing && (
             <IconButton
-              onClick={() => setPlaying(false)}
+              onClick={handlePause}
               icon={<PlayerPauseIcon />}
               aria-label="Pause"
             />
