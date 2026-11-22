@@ -328,7 +328,7 @@ export default function ReviewVideos() {
         }
 
         window.dispatchEvent(new Event('resize'));
-      })();
+      })().catch(console.error);
     } else if (document.fullscreenElement) {
       (async () => {
         await document.exitFullscreen();
@@ -338,7 +338,7 @@ export default function ReviewVideos() {
         }
 
         window.dispatchEvent(new Event('resize'));
-      })();
+      })().catch(console.error);
     }
   }, [fullscreen]);
 

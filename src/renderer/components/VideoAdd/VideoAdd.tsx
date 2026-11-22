@@ -10,7 +10,7 @@ export default function VideoAdd() {
       return file.path;
     });
 
-    createVideosFromPaths(paths);
+    createVideosFromPaths(paths).catch(console.error);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

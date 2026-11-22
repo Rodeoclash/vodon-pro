@@ -94,7 +94,7 @@ export default function App() {
 
         if (paths.length > 0) {
           clearVideos();
-          createVideosFromPaths(paths);
+          createVideosFromPaths(paths).catch(console.error);
         }
 
         return undefined;

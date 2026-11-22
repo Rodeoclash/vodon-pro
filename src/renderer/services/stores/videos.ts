@@ -547,6 +547,6 @@ window.app.onLoadAdditionalVideos(async (_event: any, argV: Array<string>) => {
   const paths = getPossibleArgVMoviePaths(argV);
 
   if (paths.length > 0) {
-    createVideosFromPaths(paths);
+    createVideosFromPaths(paths).catch(console.error);
   }
 });
