@@ -1,9 +1,9 @@
 import {
   app,
-  BrowserWindow,
+  type BrowserWindow,
   dialog,
   Menu,
-  MenuItemConstructorOptions,
+  type MenuItemConstructorOptions,
   shell,
 } from 'electron';
 import * as fs from 'node:fs/promises';

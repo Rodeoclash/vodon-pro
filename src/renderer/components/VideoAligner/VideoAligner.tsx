@@ -24,7 +24,8 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   PlayerPause as PlayerPauseIcon,
   PlayerPlay as PlayerPlayIcon,

@@ -11,7 +11,7 @@ import {
 import { css } from '@emotion/react';
 
 import { useThrottle } from '@react-hook/throttle';
-import { TldrawApp } from '@tldraw/tldraw';
+import type { TldrawApp } from '@tldraw/tldraw';
 import { isEqual } from 'lodash';
 import {
   useCallback,

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Video } from './Video';
+import type { Video } from './Video';
 
 export type VideoBookmarkIcon = {
   native: string;

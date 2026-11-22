@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@chakra-ui/react';
-import { SizeStyle, TldrawApp } from '@tldraw/tldraw';
+import { SizeStyle, type TldrawApp } from '@tldraw/tldraw';
 import * as React from 'react';
 
 type PropsType = {

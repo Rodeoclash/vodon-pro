@@ -1,6 +1,6 @@
 import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 
-import { TldrawApp } from '@tldraw/tldraw';
+import type { TldrawApp } from '@tldraw/tldraw';
 import { useEffect } from 'react';
 import type { PreciseVideoTimes } from 'renderer/pages/ReviewVideos';
 import { Bookmark as BookmarkIcon } from 'tabler-icons-react';

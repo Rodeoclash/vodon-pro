@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { ColorStyle, Tldraw, TldrawApp } from '@tldraw/tldraw';
+import { ColorStyle, Tldraw, type TldrawApp } from '@tldraw/tldraw';
 import { isEmpty } from 'lodash/fp';
 import { useCallback, useEffect, useRef } from 'react';
 import type { Video } from '../../services/models/Video';

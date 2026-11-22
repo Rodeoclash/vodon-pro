@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@chakra-ui/react';
-import { ColorStyle, TldrawApp } from '@tldraw/tldraw';
+import { ColorStyle, type TldrawApp } from '@tldraw/tldraw';
 import * as React from 'react';
 
 type PropsType = {

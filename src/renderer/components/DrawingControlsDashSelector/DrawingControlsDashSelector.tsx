@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
   Tooltip,
 } from '@chakra-ui/react';
-import { DashStyle, TldrawApp } from '@tldraw/tldraw';
+import { DashStyle, type TldrawApp } from '@tldraw/tldraw';
 import * as React from 'react';
 
 import {

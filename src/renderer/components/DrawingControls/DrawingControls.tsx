@@ -1,7 +1,7 @@
 import { Box, Flex, IconButton, Tooltip, VStack } from '@chakra-ui/react';
 
 import { css } from '@emotion/react';
-import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
+import { TDShapeType, type TDToolType, type TldrawApp } from '@tldraw/tldraw';
 import * as React from 'react';
 import {
   ArrowUpRight as ArrowUpRightIcon,

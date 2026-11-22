@@ -1,4 +1,4 @@
-import { TDShapeType, TDToolType, TldrawApp } from '@tldraw/tldraw';
+import { TDShapeType, type TDToolType, type TldrawApp } from '@tldraw/tldraw';
 import { useCallback, useEffect, useState } from 'react';
 import { useBus } from 'react-bus';
 import { useHotkeys } from 'react-hotkeys-hook';
