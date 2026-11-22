@@ -38,7 +38,7 @@ export default function DrawingControls({ app }: PropsType) {
       app.selectTool(type);
       app.toggleToolLock();
     },
-    [app]
+    [app],
   );
 
   return (

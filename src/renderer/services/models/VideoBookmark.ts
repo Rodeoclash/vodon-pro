@@ -41,7 +41,7 @@ export function create(
   content: string,
   time: number,
   scale: number,
-  drawing: object
+  drawing: object,
 ): VideoBookmark {
   return {
     content,

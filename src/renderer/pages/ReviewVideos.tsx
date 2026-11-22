@@ -88,7 +88,7 @@ export default function ReviewVideos() {
   const [mouseLastActive, setMouseLastActive] = useThrottle<number | null>(
     null,
     10,
-    true
+    true,
   );
   const [controlsOn, setControlsOn] = useState<boolean>(false);
   const [playerHeaderOn, setPlayerHeaderOn] = useState<boolean>(false);
@@ -105,7 +105,7 @@ export default function ReviewVideos() {
   const editingBookmark = useVideoStore((state) => state.editingBookmark);
   const seeking = useVideoStore((state) => state.seeking);
   const overrideHideControls = useVideoStore(
-    (state) => state.overrideHideControls
+    (state) => state.overrideHideControls,
   );
   const playing = useVideoStore((state) => state.playing);
   const videos = useVideoStore((state) => state.videos);
@@ -168,7 +168,7 @@ export default function ReviewVideos() {
     {
       keyup: true,
     },
-    [app]
+    [app],
   );
 
   /**
@@ -250,7 +250,7 @@ export default function ReviewVideos() {
         acc[bookmark.id] = bookmark.time <= currentTime || withinFudgeWindow;
         return acc;
       },
-      {}
+      {},
     );
 
     if (isEqual(newSeenBoomarks, seenBookmarks) === false) {
@@ -357,7 +357,7 @@ export default function ReviewVideos() {
 
       const dimensions = getRatioDimensions(
         activeVideo.displayAspectRatio,
-        overlayRef.current
+        overlayRef.current,
       );
 
       setVideoDimensions(dimensions);

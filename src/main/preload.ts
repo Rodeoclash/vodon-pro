@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld('app', {
   onLoadProjectRequest: (callback: (event: any, project: string) => void) =>
     ipcRenderer.on('onLoadProjectRequest', callback),
   onLoadAdditionalVideos: (
-    callback: (event: any, argV: Array<string>) => void
+    callback: (event: any, argV: Array<string>) => void,
   ) => ipcRenderer.on('onLoadAdditionalVideos', callback),
 });
 

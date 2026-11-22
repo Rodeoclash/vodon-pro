@@ -41,7 +41,7 @@ export default function DrawingControlsStyleSelector({ app }: PropsType) {
       app.style({ dash });
       setIsOpen(false);
     },
-    [app]
+    [app],
   );
 
   const handleOpen = () => {

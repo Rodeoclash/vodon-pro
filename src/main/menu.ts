@@ -110,7 +110,7 @@ export default class MenuBuilder {
               const contents = await fs.readFile(result.filePaths[0]);
               this.mainWindow.webContents.send(
                 'onLoadProjectRequest',
-                contents.toString()
+                contents.toString(),
               );
             }
           },
@@ -127,7 +127,7 @@ export default class MenuBuilder {
             if (result.canceled === false) {
               this.mainWindow.webContents.send(
                 'onSaveProjectRequest',
-                result.filePath
+                result.filePath,
               );
             }
           },
@@ -215,7 +215,7 @@ export default class MenuBuilder {
           label: 'Community Discussions',
           click() {
             shell.openExternal(
-              'https://github.com/Rodeoclash/vodon-pro/discussions'
+              'https://github.com/Rodeoclash/vodon-pro/discussions',
             );
           },
         },
@@ -223,7 +223,7 @@ export default class MenuBuilder {
           label: 'Report Issues',
           click() {
             shell.openExternal(
-              'https://github.com/Rodeoclash/vodon-pro/issues'
+              'https://github.com/Rodeoclash/vodon-pro/issues',
             );
           },
         },
@@ -269,7 +269,7 @@ export default class MenuBuilder {
                 const contents = await fs.readFile(result.filePaths[0]);
                 this.mainWindow.webContents.send(
                   'onLoadProjectRequest',
-                  contents.toString()
+                  contents.toString(),
                 );
               }
             },
@@ -285,7 +285,7 @@ export default class MenuBuilder {
               if (result.canceled === false) {
                 this.mainWindow.webContents.send(
                   'onSaveProjectRequest',
-                  result.filePath
+                  result.filePath,
                 );
               }
             },
@@ -310,7 +310,7 @@ export default class MenuBuilder {
                   accelerator: 'F11',
                   click: () => {
                     this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen()
+                      !this.mainWindow.isFullScreen(),
                     );
                   },
                 },
@@ -328,7 +328,7 @@ export default class MenuBuilder {
                   accelerator: 'F11',
                   click: () => {
                     this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen()
+                      !this.mainWindow.isFullScreen(),
                     );
                   },
                 },
@@ -354,7 +354,7 @@ export default class MenuBuilder {
             label: 'Documentation',
             click() {
               shell.openExternal(
-                'https://github.com/electron/electron/tree/main/docs#readme'
+                'https://github.com/electron/electron/tree/main/docs#readme',
               );
             },
           },

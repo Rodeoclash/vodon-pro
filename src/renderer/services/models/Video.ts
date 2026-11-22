@@ -92,7 +92,7 @@ export function findMaxNormalisedDuration(videos: Video[]): number | null {
 
       return acc;
     },
-    null
+    null,
   );
 }
 
@@ -101,7 +101,7 @@ export function findMaxNormalisedDuration(videos: Video[]): number | null {
  */
 export function findNextBookmark(
   videos: Array<Video>,
-  bookmark: VideoBookmark
+  bookmark: VideoBookmark,
 ): [Video, VideoBookmark] | undefined {
   const bookmarks = videos
     .flatMap((video) => {
@@ -135,7 +135,7 @@ export function findNextBookmark(
  */
 export function findPreviousBookmark(
   videos: Array<Video>,
-  bookmark: VideoBookmark
+  bookmark: VideoBookmark,
 ): [Video, VideoBookmark] | undefined {
   const bookmarks = videos
     .flatMap((video) => {
@@ -171,7 +171,7 @@ export async function createFromFile(filePath: string): Promise<Video> {
   const videoStream = metadata.streams.find(
     (stream: VideoStreamMetadata | AudioStreamMetadata) => {
       return stream.codec_type === 'video';
-    }
+    },
   ) as VideoStreamMetadata;
 
   // determine framerate

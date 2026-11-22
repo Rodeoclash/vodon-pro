@@ -50,27 +50,27 @@ export default function App() {
   const addVideo = useVideoStore((state) => state.addVideo);
   const clearVideos = useVideoStore((state) => state.clearVideos);
   const overrideHideControls = useVideoStore(
-    (state) => state.overrideHideControls
+    (state) => state.overrideHideControls,
   );
 
   const setShownFirstHelpReview = useSettingsStore(
-    (state) => state.setShownFirstHelpReview
+    (state) => state.setShownFirstHelpReview,
   );
 
   const setShownFirstHelpSetup = useSettingsStore(
-    (state) => state.setShownFirstHelpSetup
+    (state) => state.setShownFirstHelpSetup,
   );
 
   const showFirstHelpReview = useSettingsStore(
-    (state) => state.shownFirstHelpReview
+    (state) => state.shownFirstHelpReview,
   );
 
   const showFirstHelpSetup = useSettingsStore(
-    (state) => state.shownFirstHelpSetup
+    (state) => state.shownFirstHelpSetup,
   );
 
   const arrowKeyJumpDistance = useSettingsStore(
-    (state) => state.arrowKeyJumpDistance
+    (state) => state.arrowKeyJumpDistance,
   );
 
   const [version, setVersion] = useState<string | null>(null);

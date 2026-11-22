@@ -58,7 +58,7 @@ interface State extends StateData {
     content: string,
     time: number,
     scale: number,
-    drawing: object
+    drawing: object,
   ) => void;
   deleteVideoBookmark: (video: Video, bookmark: VideoBookmark) => void;
   startEditingBookmark: () => void;
@@ -67,22 +67,22 @@ interface State extends StateData {
     video: Video,
     bookmark: VideoBookmark,
     coords: VideoBookmarkCoordinates,
-    scale: number
+    scale: number,
   ) => void;
   setVideoBookmarkContent: (
     video: Video,
     bookmark: VideoBookmark,
-    content: string
+    content: string,
   ) => void;
   setVideoBookmarkIcon: (
     video: Video,
     bookmark: VideoBookmark,
-    icon: VideoBookmarkIcon
+    icon: VideoBookmarkIcon,
   ) => void;
   setVideoBookmarkDrawing: (
     video: Video,
     bookmark: VideoBookmark,
-    drawing: object
+    drawing: object,
   ) => void;
 
   setZoomPan: (value: boolean) => void;
@@ -184,7 +184,7 @@ const useStore = createStore<State>(
               state.videos.length === 1
                 ? state.videos[0].id
                 : state.activeVideoId;
-          })
+          }),
         ),
 
       clearVideos: () =>
@@ -208,7 +208,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].duration = duration;
-          })
+          }),
         ),
 
       // TODO: Combine with duration update
@@ -220,7 +220,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].name = name;
-          })
+          }),
         ),
 
       // TODO: Combine with duration update
@@ -232,7 +232,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].volume = volume;
-          })
+          }),
         ),
 
       // TODO: Combine with duration update
@@ -244,7 +244,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].seeking = value;
-          })
+          }),
         ),
 
       setVideoSyncTime: (video: Video, syncTime: number) =>
@@ -255,7 +255,7 @@ const useStore = createStore<State>(
             });
 
             state.videos[index].syncTime = syncTime;
-          })
+          }),
         ),
 
       /**
@@ -280,11 +280,11 @@ const useStore = createStore<State>(
               });
 
             state.videos.sort(
-              (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+              (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
             );
 
             state.fullDuration = findMaxNormalisedDuration(state.videos);
-          })
+          }),
         ),
 
       createVideoBookmark: (
@@ -292,7 +292,7 @@ const useStore = createStore<State>(
         content: string,
         time: number,
         scale: number,
-        drawing: object
+        drawing: object,
       ) =>
         set(
           produce((state: State) => {
@@ -305,11 +305,11 @@ const useStore = createStore<State>(
               content,
               time,
               scale,
-              drawing
+              drawing,
             );
 
             state.videos[index].bookmarks.push(bookmark);
-          })
+          }),
         ),
 
       /**
@@ -330,7 +330,7 @@ const useStore = createStore<State>(
             ].bookmarks.filter((innerBookmark) => {
               return bookmark.id !== innerBookmark.id;
             });
-          })
+          }),
         ),
 
       /**
@@ -344,7 +344,7 @@ const useStore = createStore<State>(
         video: Video,
         bookmark: VideoBookmark,
         coords: VideoBookmarkCoordinates,
-        scale: number
+        scale: number,
       ) =>
         set(
           produce((state: State) => {
@@ -355,7 +355,7 @@ const useStore = createStore<State>(
             const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
               (innerBookmark) => {
                 return innerBookmark.id === bookmark.id;
-              }
+              },
             );
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].position = {
@@ -364,7 +364,7 @@ const useStore = createStore<State>(
             };
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].scale = scale;
-          })
+          }),
         ),
 
       /**
@@ -377,7 +377,7 @@ const useStore = createStore<State>(
       setVideoBookmarkContent: (
         video: Video,
         bookmark: VideoBookmark,
-        content: string
+        content: string,
       ) =>
         set(
           produce((state: State) => {
@@ -388,11 +388,11 @@ const useStore = createStore<State>(
             const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
               (innerBookmark) => {
                 return innerBookmark.id === bookmark.id;
-              }
+              },
             );
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].content = content;
-          })
+          }),
         ),
 
       /**
@@ -405,7 +405,7 @@ const useStore = createStore<State>(
       setVideoBookmarkIcon: (
         video: Video,
         bookmark: VideoBookmark,
-        icon: VideoBookmarkIcon
+        icon: VideoBookmarkIcon,
       ) =>
         set(
           produce((state: State) => {
@@ -416,11 +416,11 @@ const useStore = createStore<State>(
             const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
               (innerBookmark) => {
                 return innerBookmark.id === bookmark.id;
-              }
+              },
             );
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].icon = icon;
-          })
+          }),
         ),
 
       /**
@@ -433,7 +433,7 @@ const useStore = createStore<State>(
       setVideoBookmarkDrawing: (
         video: Video,
         bookmark: VideoBookmark,
-        drawing: object
+        drawing: object,
       ) =>
         set(
           produce((state: State) => {
@@ -444,11 +444,11 @@ const useStore = createStore<State>(
             const bookmarkIndex = state.videos[videoIndex].bookmarks.findIndex(
               (innerBookmark) => {
                 return innerBookmark.id === bookmark.id;
-              }
+              },
             );
 
             state.videos[videoIndex].bookmarks[bookmarkIndex].drawing = drawing;
-          })
+          }),
         ),
 
       setActiveVideoId: (id: string | null) =>
@@ -485,8 +485,8 @@ const useStore = createStore<State>(
       version: CURRENT_PERSIST_VERSION,
       serialize,
       deserialize,
-    }
-  )
+    },
+  ),
 );
 
 export default useStore;

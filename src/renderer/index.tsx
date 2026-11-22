@@ -20,5 +20,5 @@ render(
       </Route>
     </Routes>
   </HashRouter>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );

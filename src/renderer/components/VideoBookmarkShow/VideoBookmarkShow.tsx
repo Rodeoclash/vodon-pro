@@ -55,27 +55,27 @@ export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
   const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
 
   const deleteVideoBookmark = useVideoStore(
-    (state) => state.deleteVideoBookmark
+    (state) => state.deleteVideoBookmark,
   );
 
   const startEditingBookmark = useVideoStore(
-    (state) => state.startEditingBookmark
+    (state) => state.startEditingBookmark,
   );
 
   const stopEditingBookmark = useVideoStore(
-    (state) => state.stopEditingBookmark
+    (state) => state.stopEditingBookmark,
   );
 
   const setVideoBookmarkCoords = useVideoStore(
-    (state) => state.setVideoBookmarkCoords
+    (state) => state.setVideoBookmarkCoords,
   );
 
   const setVideoBookmarkContent = useVideoStore(
-    (state) => state.setVideoBookmarkContent
+    (state) => state.setVideoBookmarkContent,
   );
 
   const setVideoBookmarkIcon = useVideoStore(
-    (state) => state.setVideoBookmarkIcon
+    (state) => state.setVideoBookmarkIcon,
   );
 
   if (playing === true) {
@@ -188,7 +188,7 @@ export default function VideoBookmarkShow({ video, bookmark, scale }: Props) {
             video,
             bookmark,
             { x: data.x, y: data.y },
-            scale
+            scale,
           )
         }
         bounds="parent"

@@ -27,18 +27,18 @@ export default function HotKeys({
   const stopPlaying = useVideoStore((state) => state.stopPlaying);
   const setCurrentTime = useVideoStore((state) => state.setCurrentTime);
   const setOverrideHideControls = useVideoStore(
-    (state) => state.setOverrideHideControls
+    (state) => state.setOverrideHideControls,
   );
 
   const currentTime = useVideoStore((state) => state.currentTime);
   const playing = useVideoStore((state) => state.playing);
   const videos = useVideoStore((state) => state.videos);
   const overrideHideControls = useVideoStore(
-    (state) => state.overrideHideControls
+    (state) => state.overrideHideControls,
   );
 
   const arrowKeyJumpDistance = useSettingsStore(
-    (state) => state.arrowKeyJumpDistance
+    (state) => state.arrowKeyJumpDistance,
   );
 
   const setZoomPan = useVideoStore((state) => state.setZoomPan);
@@ -55,7 +55,7 @@ export default function HotKeys({
       app.selectTool(type);
       app.toggleToolLock();
     },
-    [app]
+    [app],
   );
 
   /**
@@ -173,7 +173,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -184,7 +184,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -195,7 +195,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -206,7 +206,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -217,7 +217,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   useHotkeys(
@@ -228,7 +228,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [selectTool]
+    [selectTool],
   );
 
   /**
@@ -246,7 +246,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [previousFrameHeld, currentTime]
+    [previousFrameHeld, currentTime],
   );
 
   /**
@@ -260,7 +260,7 @@ export default function HotKeys({
     {
       keyup: true,
     },
-    []
+    [],
   );
 
   /**
@@ -279,7 +279,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [nextFrameHeld, currentTime]
+    [nextFrameHeld, currentTime],
   );
 
   /**
@@ -293,7 +293,7 @@ export default function HotKeys({
     {
       keyup: true,
     },
-    []
+    [],
   );
 
   /**
@@ -307,7 +307,7 @@ export default function HotKeys({
     {
       keydown: true,
     },
-    [nextFrameHeld, currentTime]
+    [nextFrameHeld, currentTime],
   );
 
   /**
@@ -321,7 +321,7 @@ export default function HotKeys({
     {
       keyup: true,
     },
-    []
+    [],
   );
 
   /**
@@ -333,7 +333,7 @@ export default function HotKeys({
       handlePreviousJump();
     },
     {},
-    []
+    [],
   );
 
   /**
@@ -345,7 +345,7 @@ export default function HotKeys({
       handleNextJump();
     },
     {},
-    []
+    [],
   );
 
   /**
@@ -360,7 +360,7 @@ export default function HotKeys({
       }
     },
     {},
-    []
+    [],
   );
 
   /**
@@ -373,7 +373,7 @@ export default function HotKeys({
       onEscape();
     },
     {},
-    []
+    [],
   );
 
   /**
@@ -389,7 +389,7 @@ export default function HotKeys({
       }
     },
     {},
-    [playing]
+    [playing],
   );
 
   /**
@@ -405,7 +405,7 @@ export default function HotKeys({
       }
     },
     {},
-    [overrideHideControls]
+    [overrideHideControls],
   );
 
   return <></>;

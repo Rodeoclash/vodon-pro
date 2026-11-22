@@ -50,7 +50,7 @@ export default function VideoBookmarkEditor({
       setShowEmojiPicker(false);
       onChangeIcon(details);
     },
-    [onChangeIcon]
+    [onChangeIcon],
   );
 
   /**
@@ -62,7 +62,7 @@ export default function VideoBookmarkEditor({
       setShowEmojiPicker(false);
     },
     {},
-    [setShowEmojiPicker]
+    [setShowEmojiPicker],
   );
 
   return (

@@ -102,7 +102,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
 
     const handleRequestVideoFrameCallback = (
       _now: DOMHighResTimeStamp,
-      metadata: VideoFrameMetadata
+      metadata: VideoFrameMetadata,
     ) => {
       if (video.el === null) {
         return;
@@ -199,7 +199,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
 
       video.el.currentTime = time - (video.offset || 0);
     },
-    [video]
+    [video],
   );
 
   useListener(GLOBAL_TIME_CHANGE, handleGlobalTimeUpdate);
@@ -232,7 +232,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
 
       const dimensions = getRatioDimensions(
         video.displayAspectRatio,
-        containerRef.current
+        containerRef.current,
       );
 
       setVideoDimensions(dimensions);
@@ -258,15 +258,15 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
   `;
 
   const containerStyles = css`
-    display: ${currentActive === true || isAfterRange === true
-      ? 'none'
-      : 'flex'};
+    display: ${
+      currentActive === true || isAfterRange === true ? 'none' : 'flex'
+    };
   `;
 
   const afterRangeStyles = css`
-    display: ${currentActive === false && isAfterRange === true
-      ? 'flex'
-      : 'none'};
+    display: ${
+      currentActive === false && isAfterRange === true ? 'flex' : 'none'
+    };
   `;
 
   const afterRangeInnerStyles = css`

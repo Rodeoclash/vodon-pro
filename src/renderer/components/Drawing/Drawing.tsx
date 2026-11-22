@@ -28,11 +28,11 @@ export default function Drawing({
   const playing = useVideoStore((state) => state.playing);
 
   const setVideoBookmarkDrawing = useVideoStore(
-    (state) => state.setVideoBookmarkDrawing
+    (state) => state.setVideoBookmarkDrawing,
   );
 
   const clearDrawingsOnPlay = useSettingsStore(
-    (state) => state.clearDrawingsOnPlay
+    (state) => state.clearDrawingsOnPlay,
   );
 
   const rescaleDrawing = useCallback(() => {
@@ -49,7 +49,7 @@ export default function Drawing({
     }
 
     tlDrawRef.current.loadDocument(
-      JSON.parse(JSON.stringify(videoBookmark.drawing)) // we need to load a copy of the document
+      JSON.parse(JSON.stringify(videoBookmark.drawing)), // we need to load a copy of the document
     );
 
     tlDrawRef.current.selectNone();

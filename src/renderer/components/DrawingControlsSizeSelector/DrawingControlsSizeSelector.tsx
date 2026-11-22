@@ -30,7 +30,7 @@ export default function DrawingControlsSizeSelector({ app }: PropsType) {
       app.style({ size });
       setIsOpen(false);
     },
-    [app]
+    [app],
   );
 
   const handleOpen = () => {

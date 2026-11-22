@@ -14,7 +14,7 @@ export const basename = (name: string): string => {
  * to prefill videos.
  */
 export const getPossibleArgVMoviePaths = (
-  possiblePaths: Array<string>
+  possiblePaths: Array<string>,
 ): Array<string> => {
   return possiblePaths.reduce((acc: Array<string>, possiblePath: string) => {
     const containsExtension = SUPPORTED_EXTENSIONS.some((extension) => {

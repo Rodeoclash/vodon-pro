@@ -25,7 +25,7 @@ if (!ffmpegBins.ffprobePath) {
 
 const ffprobePath = ffmpegBins.ffprobePath.replace(
   'app.asar',
-  'app.asar.unpacked'
+  'app.asar.unpacked',
 );
 
 if (!ffmpegBins.ffmpegPath) {
@@ -34,7 +34,7 @@ if (!ffmpegBins.ffmpegPath) {
 
 const ffmpegPath = ffmpegBins.ffmpegPath.replace(
   'app.asar',
-  'app.asar.unpacked'
+  'app.asar.unpacked',
 );
 
 ffmpeg.setFfprobePath(ffprobePath);
@@ -72,7 +72,7 @@ const installExtensions = async () => {
   return installer
     .default(
       extensions.map((name) => installer[name]),
-      forceDownload
+      forceDownload,
     )
     .catch(console.log);
 };
@@ -215,7 +215,7 @@ ipcMain.handle(
   'app:saveProject',
   async (_event, filePath: string, project: string) => {
     return fsPromise.writeFile(filePath, project);
-  }
+  },
 );
 
 /**
@@ -267,10 +267,10 @@ ipcMain.handle(
         // take 2 screenshots at predefined timemarks and size
         .takeScreenshots(
           { timemarks: [second], size: '854x480', filename: '%s.png' },
-          tmpDir
+          tmpDir,
         );
     });
-  }
+  },
 );
 
 // allow local videos

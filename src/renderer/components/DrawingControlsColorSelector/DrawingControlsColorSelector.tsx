@@ -41,7 +41,7 @@ export default function DrawingControlsColorSelector({ app }: PropsType) {
       app.style({ color });
       setIsOpen(false);
     },
-    [app]
+    [app],
   );
 
   const handleOpen = () => {
