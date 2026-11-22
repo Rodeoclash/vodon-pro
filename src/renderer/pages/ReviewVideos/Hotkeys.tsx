@@ -14,11 +14,7 @@ type Props = {
   video: Video;
 };
 
-export default function HotKeys({
-  app,
-  onEscape,
-  video,
-}: Props): null {
+export default function HotKeys({ app, onEscape, video }: Props): null {
   const bus = useBus();
   const setActiveVideoId = useVideoStore((state) => state.setActiveVideoId);
   const startPlaying = useVideoStore((state) => state.startPlaying);
