@@ -1,47 +1,14 @@
 import { describe, expect, test } from 'vitest';
+import { buildVideo, buildVideoBookmark } from '../../../test/fixtures';
 import type { Video } from './Video';
 import {
   findMaxNormalisedDuration,
   findNextBookmark,
   findPreviousBookmark,
 } from './Video';
-import type { VideoBookmark } from './VideoBookmark';
 
-// TODO: This might need to be moved to a fixtures or similar
-const baseVideo: Video = {
-  bookmarks: [],
-  codedHeight: 1080,
-  codedWidth: 1920,
-  createdAt: new Date('04 Dec 1995 00:12:00 GMT'),
-  displayAspectRatio: '16/9',
-  duration: null,
-  durationNormalised: null,
-  el: document.createElement('video'),
-  filePath: 'c:\\video.mp4',
-  frameRate: 60,
-  id: '1',
-  name: 'A Video',
-  offset: null,
-  seeking: false,
-  syncTime: 0,
-  volume: 1,
-};
-
-const baseVideoBookmark: VideoBookmark = {
-  content: '',
-  drawing: null,
-  id: '1',
-  icon: {
-    native: '🔖',
-  },
-  position: {
-    x: 0,
-    y: 0,
-  },
-  time: 1,
-  scale: 1,
-  video_id: '1',
-};
+const baseVideo = buildVideo();
+const baseVideoBookmark = buildVideoBookmark();
 
 describe('findMaxNormalisedDuration', () => {
   test('with no videos', () => {
