@@ -7,6 +7,8 @@ import {
   type MenuItemConstructorOptions,
   shell,
 } from 'electron';
+import { isDebug } from './env';
+import { createLastFolder } from './lastFolder';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -16,15 +18,45 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 
+  lastFolder = createLastFolder(app.getPath('documents'));
+
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
   }
 
+  async openProject(): Promise<void> {
+    const result = await dialog.showOpenDialog(this.mainWindow, {
+      defaultPath: this.lastFolder.get(),
+      properties: ['openFile'],
+      filters: [{ name: 'JSON', extensions: ['json'] }],
+    });
+
+    if (result.canceled === false) {
+      const [filePath] = result.filePaths;
+      this.lastFolder.rememberFile(filePath);
+      const contents = await fs.readFile(filePath);
+      this.mainWindow.webContents.send(
+        'onLoadProjectRequest',
+        contents.toString(),
+      );
+    }
+  }
+
+  async saveProjectAs(): Promise<void> {
+    const result = await dialog.showSaveDialog(this.mainWindow, {
+      defaultPath: this.lastFolder.get(),
+      properties: ['createDirectory', 'showOverwriteConfirmation'],
+      filters: [{ name: 'JSON', extensions: ['json'] }],
+    });
+
+    if (result.canceled === false && result.filePath) {
+      this.lastFolder.rememberFile(result.filePath);
+      this.mainWindow.webContents.send('onSaveProjectRequest', result.filePath);
+    }
+  }
+
   buildMenu(): Menu {
-    if (
-      process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true'
-    ) {
+    if (isDebug) {
       this.setupDevelopmentEnvironment();
     }
 
@@ -99,37 +131,12 @@ export default class MenuBuilder {
         {
           label: 'Open project...',
           accelerator: 'Command+O',
-          click: async () => {
-            const result = await dialog.showOpenDialog(this.mainWindow, {
-              properties: ['openFile'],
-              filters: [{ name: 'JSON', extensions: ['json'] }],
-            });
-
-            if (result.canceled === false) {
-              const contents = await fs.readFile(result.filePaths[0]);
-              this.mainWindow.webContents.send(
-                'onLoadProjectRequest',
-                contents.toString(),
-              );
-            }
-          },
+          click: () => this.openProject(),
         },
         {
           label: 'Save project as...',
           accelerator: 'Command+Shift+S',
-          click: async () => {
-            const result = await dialog.showSaveDialog(this.mainWindow, {
-              properties: ['createDirectory', 'showOverwriteConfirmation'],
-              filters: [{ name: 'JSON', extensions: ['json'] }],
-            });
-
-            if (result.canceled === false) {
-              this.mainWindow.webContents.send(
-                'onSaveProjectRequest',
-                result.filePath,
-              );
-            }
-          },
+          click: () => this.saveProjectAs(),
         },
       ],
     };
@@ -229,11 +236,7 @@ export default class MenuBuilder {
       ],
     };
 
-    const subMenuView =
-      process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true'
-        ? subMenuViewDev
-        : subMenuViewProd;
+    const subMenuView = isDebug ? subMenuViewDev : subMenuViewProd;
 
     return [
       subMenuAbout,
@@ -258,87 +261,60 @@ export default class MenuBuilder {
           },
           {
             label: 'Load project...',
-            click: async () => {
-              const result = await dialog.showOpenDialog(this.mainWindow, {
-                properties: ['openFile'],
-                filters: [{ name: 'JSON', extensions: ['json'] }],
-              });
-
-              if (result.canceled === false) {
-                const contents = await fs.readFile(result.filePaths[0]);
-                this.mainWindow.webContents.send(
-                  'onLoadProjectRequest',
-                  contents.toString(),
-                );
-              }
-            },
+            click: () => this.openProject(),
           },
           {
             label: 'Save project as...',
-            click: async () => {
-              const result = await dialog.showSaveDialog(this.mainWindow, {
-                properties: ['showOverwriteConfirmation'],
-                filters: [{ name: 'JSON', extensions: ['json'] }],
-              });
-
-              if (result.canceled === false) {
-                this.mainWindow.webContents.send(
-                  'onSaveProjectRequest',
-                  result.filePath,
-                );
-              }
-            },
+            click: () => this.saveProjectAs(),
           },
         ],
       },
       {
         label: '&View',
-        submenu:
-          process.env.NODE_ENV === 'development' ||
-          process.env.DEBUG_PROD === 'true'
-            ? [
-                {
-                  label: '&Reload',
-                  accelerator: 'Ctrl+R',
-                  click: () => {
-                    this.mainWindow.webContents.reload();
-                  },
+        submenu: isDebug
+          ? [
+              {
+                label: '&Reload',
+                accelerator: 'Ctrl+R',
+                click: () => {
+                  this.mainWindow.webContents.reload();
                 },
-                {
-                  label: 'Toggle &Full Screen',
-                  accelerator: 'F11',
-                  click: () => {
-                    this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen(),
-                    );
-                  },
+              },
+              {
+                label: 'Toggle &Full Screen',
+                accelerator: 'F11',
+                click: () => {
+                  this.mainWindow.setFullScreen(
+                    !this.mainWindow.isFullScreen(),
+                  );
                 },
-                {
-                  label: 'Toggle &Developer Tools',
-                  accelerator: 'Alt+Ctrl+I',
-                  click: () => {
-                    this.mainWindow.webContents.toggleDevTools();
-                  },
+              },
+              {
+                label: 'Toggle &Developer Tools',
+                accelerator: 'Alt+Ctrl+I',
+                click: () => {
+                  this.mainWindow.webContents.toggleDevTools();
                 },
-              ]
-            : [
-                {
-                  label: 'Toggle &Full Screen',
-                  accelerator: 'F11',
-                  click: () => {
-                    this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen(),
-                    );
-                  },
+              },
+            ]
+          : [
+              {
+                label: 'Toggle &Full Screen',
+                accelerator: 'F11',
+                click: () => {
+                  this.mainWindow.setFullScreen(
+                    !this.mainWindow.isFullScreen(),
+                  );
                 },
-                {
-                  label: 'Toggle &Developer Tools',
-                  accelerator: 'Alt+Ctrl+I',
-                  click: () => {
-                    this.mainWindow.webContents.toggleDevTools();
-                  },
+              },
+              {
+                label: 'Toggle &Developer Tools',
+                accelerator: 'Alt+Ctrl+I',
+                click: () => {
+                  this.mainWindow.webContents.toggleDevTools();
                 },
-              ],
+              },
+            ],
       },
       {
         label: 'Help',

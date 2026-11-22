@@ -5,20 +5,23 @@
       "name": "Electron: Main",
       "type": "node",
       "request": "launch",
-      "protocol": "inspector",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run start:main --inspect=5858 --remote-debugging-port=9223"
-      ],
-      "preLaunchTask": "Start Webpack Dev"
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-vite",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-vite.cmd"
+      },
+      "runtimeArgs": ["--sourcemap"],
+      "env": {
+        "REMOTE_DEBUGGING_PORT": "9222"
+      }
     },
     {
       "name": "Electron: Renderer",
       "type": "chrome",
       "request": "attach",
-      "port": 9223,
-      "webRoot": "${workspaceFolder}",
-      "timeout": 15000
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/src/renderer",
+      "timeout": 60000
     }
   ],
   "compounds": [
