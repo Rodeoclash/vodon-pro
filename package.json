@@ -254,10 +254,6 @@
     "uuid": "^9.0.0",
     "zustand": "^3.7.1"
   },
-  "devEngines": {
-    "node": ">=16.x",
-    "npm": ">=8.x"
-  },
   "browserslist": [],
   "prettier": {
     "overrides": [
@@ -272,5 +268,8 @@
       }
     ],
     "singleQuote": true
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
