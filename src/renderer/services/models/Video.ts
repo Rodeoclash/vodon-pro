@@ -184,9 +184,7 @@ export async function createFromFile(filePath: string): Promise<Video> {
   const el = document.createElement('video');
   el.src = filePath;
 
-  // @ts-ignore-start
   el.preservesPitch = false;
-  // @ts-ignore-end
 
   return {
     bookmarks: [],
