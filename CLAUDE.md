@@ -18,7 +18,7 @@ Vodon Pro is an Electron + React desktop app for esports coaches to review multi
 - `npm test` — Vitest (jsdom), specs are `src/**/*.spec.ts(x)`. `npm run test:watch` for watch mode.
 - Single test: `npx vitest run src/renderer/services/time.spec.ts` (or `npx vitest run -t "name"`).
 
-CI (`.github/workflows/test.yml`) runs `npm run package && npx tsc && npm test` on macOS, Ubuntu and Windows with Node 18.
+CI (`.github/workflows/test.yml`): one Ubuntu job runs gitleaks, `biome ci`, typecheck and tests; a matrix job runs `npm run package` on macOS, Ubuntu and Windows. Tool versions come from `mise.toml` via `jdx/mise-action`; actions are pinned to commit SHAs.
 
 ## Architecture
 
