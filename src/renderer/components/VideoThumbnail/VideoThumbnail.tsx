@@ -54,6 +54,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
       : currentTime >= video.durationNormalised;
 
   const currentActive = activeVideoId === video.id;
+  const hidden = currentActive || isAfterRange;
 
   const videoIndex = videos.findIndex((innerVideo) => {
     return video.id === innerVideo.id;
@@ -203,16 +204,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
   useListener(GLOBAL_TIME_CHANGE, handleGlobalTimeUpdate);
 
   /**
-   * As the video moves in and out of being active, we need to trigger resize
-   * events to ensure it has space on the screen.
-   */
-  useLayoutEffect(() => {
-    window.dispatchEvent(new Event('resize'));
-  }, [isAfterRange]);
-
-  /**
-   * As the video moves in and out of being active, we need to trigger resize
-   * events to ensure it has space on the screen.
+   * Keep the video's playback rate in step with the chosen speed.
    */
   useLayoutEffect(() => {
     if (video.el === null) {
@@ -222,7 +214,14 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
     video.el.playbackRate = playbackSpeed;
   }, [playbackSpeed, video.el]);
 
+  /**
+   * Size the thumbnail to its container whenever it's shown and on every
+   * window resize. While hidden (it's the active video, or past the end of its
+   * range) there's nothing to measure.
+   */
   useLayoutEffect(() => {
+    if (hidden) return undefined;
+
     const handleResize = () => {
       if (containerRef.current === null) {
         return;
@@ -243,7 +242,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [video, currentActive]);
+  }, [video, hidden]);
 
   const innerStyles = css`
     width: ${videoDimensions ? videoDimensions[0] : ''}px;
@@ -256,9 +255,7 @@ export default function VideoThumbnail({ video, onVideoTimeChanged }: Props) {
   `;
 
   const containerStyles = css`
-    display: ${
-      currentActive === true || isAfterRange === true ? 'none' : 'flex'
-    };
+    display: ${hidden ? 'none' : 'flex'};
   `;
 
   const afterRangeStyles = css`
