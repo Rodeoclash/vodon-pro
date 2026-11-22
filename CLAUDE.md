@@ -8,11 +8,12 @@ Vodon Pro is an Electron + React desktop app for esports coaches to review multi
 
 ## Commands
 
+- `mise install` then `lefthook install` — tool versions (Node, lefthook, gitleaks) are pinned in `mise.toml`. Git hooks: pre-commit runs gitleaks on staged changes; pre-push runs gitleaks, typecheck and tests.
 - `npm install` — also runs a postinstall that rebuilds native deps (`release/app`) and builds the renderer DLL bundle.
 - `npm start` — dev mode. Starts the webpack dev server for the renderer, which in turn spawns `start:preload` and `start:main` (electronmon) — see `.erb/configs/webpack.config.renderer.dev.ts`.
 - `npm run build` — production build of main and renderer into `release/app/dist`.
 - `npm run package` — build plus electron-builder packaging into `release/build`.
-- `npm run lint` — ESLint (airbnb + erb config). Pre-commit runs lint-staged via husky.
+- `npm run lint` — ESLint (airbnb + erb config).
 - `npx tsc` — typecheck (CI runs this).
 - `npm test` — Vitest (jsdom), specs are `src/**/*.spec.ts(x)`. `npm run test:watch` for watch mode.
 - Single test: `npx vitest run src/renderer/services/time.spec.ts` (or `npx vitest run -t "name"`).
