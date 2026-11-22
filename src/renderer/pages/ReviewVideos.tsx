@@ -250,7 +250,7 @@ export default function ReviewVideos() {
     if (isEqual(newSeenBoomarks, seenBookmarks) === false) {
       setSeenBookmarks(newSeenBoomarks);
     }
-  }, [seenBookmarks, currentTime, activeVideo, setSeenBookmarks]);
+  }, [seenBookmarks, currentTime, activeVideo]);
 
   /**
    * Watch the current time and find bookmarks that haven't been seen, if we
@@ -281,13 +281,11 @@ export default function ReviewVideos() {
     }
   }, [
     activeVideo,
-    bus,
     currentTime,
     playing,
     seeking,
     seenBookmarks,
     setCurrentTime,
-    setSeenBookmarks,
     stopPlaying,
   ]);
 
