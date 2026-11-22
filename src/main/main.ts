@@ -37,12 +37,15 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 const tmpDir = os.tmpdir();
 
-export class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify().catch(log.error);
-  }
+/**
+ * Check GitHub Releases for a newer version, download it in the background
+ * and notify the user; it installs on the next quit. Only packaged builds
+ * can update.
+ */
+function startAutoUpdates() {
+  log.transports.file.level = 'info';
+  autoUpdater.logger = log;
+  autoUpdater.checkForUpdatesAndNotify().catch(log.error);
 }
 
 let mainWindow: BrowserWindow | null = null;
@@ -120,8 +123,9 @@ const createWindow = async () => {
     return { action: 'deny' };
   });
 
-  // Remove this if your app does not use auto updates
-  // new AppUpdater();
+  if (app.isPackaged) {
+    startAutoUpdates();
+  }
 };
 
 const gotTheLock = app.requestSingleInstanceLock();
