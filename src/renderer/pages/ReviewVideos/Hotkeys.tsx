@@ -157,11 +157,15 @@ export default function HotKeys({
     }, STEP_ADVANCE_INTERVAL);
 
     return () => {
-      clearTimeout(interval);
+      clearInterval(interval);
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, previousFrameHeld, nextFrameHeld]);
+  }, [
+    playing,
+    previousFrameHeld,
+    nextFrameHeld,
+    handlePreviousFrame,
+    handleNextFrame,
+  ]);
 
   useHotkeys(
     'p',
