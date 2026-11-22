@@ -18,7 +18,7 @@ export default function HotKeys({
   app,
   onEscape,
   video,
-}: Props): React.ReactElement {
+}: Props): null {
   const bus = useBus();
   const setActiveVideoId = useVideoStore((state) => state.setActiveVideoId);
   const startPlaying = useVideoStore((state) => state.startPlaying);
@@ -410,5 +410,5 @@ export default function HotKeys({
     [overrideHideControls],
   );
 
-  return <></>;
+  return null;
 }
