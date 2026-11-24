@@ -47,7 +47,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      # .npmrc's strict-allow-scripts fails this if an install script isn't
+      # approved in package.json's allowScripts
       - run: npm ci
+
+      # Lockfile only points at the npm registry over https with sha512,
+      # registry signatures verify, and no high/critical advisories. Covers
+      # devDependencies too: the renderer's libraries are bundled into the app.
+      - name: Dependencies
+        run: npm run audit:deps
 
       - name: Typecheck
         run: npm run typecheck

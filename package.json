@@ -12,6 +12,8 @@
     "lint": "biome check",
     "format": "biome check --write",
     "typecheck": "tsc --noEmit",
+    "lint:lockfile": "lockfile-lint --path package-lock.json --type npm --allowed-hosts npm --validate-https --validate-package-names --validate-integrity",
+    "audit:deps": "npm run lint:lockfile && npm audit signatures && npm audit --audit-level=high",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test"
@@ -132,6 +134,7 @@
     "immer": "^9.0.12",
     "jsdom": "^31.0.1",
     "keyv": "^4.5.0",
+    "lockfile-lint": "^5.1.0",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-bus": "^3.0.0",
@@ -163,5 +166,10 @@
   "allowScripts": {
     "electron-winstaller@5.4.0": true,
     "ffmpeg-ffprobe-static@6.1.1": true
+  },
+  "overrides": {
+    "patch-package": {
+      "tmp": "^0.2.7"
+    }
   }
 }
