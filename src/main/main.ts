@@ -12,6 +12,7 @@ import ffmpegBins from 'ffmpeg-ffprobe-static';
 import ffmpeg from 'fluent-ffmpeg';
 import { isDebug } from './env';
 import MenuBuilder from './menu';
+import { isSafeExternalUrl, isSameDocument } from './navigation';
 import {
   assetsPath,
   preloadPath,
@@ -46,6 +47,15 @@ function startAutoUpdates() {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+/** Open a web or mail link with the OS; refuse any other kind of URL. */
+function openExternal(url: string) {
+  if (!isSafeExternalUrl(url)) {
+    log.warn('Refused to open URL externally:', url);
+    return;
+  }
+  shell.openExternal(url).catch(log.error);
+}
 
 if (isDebug) {
   import('electron-debug')
@@ -114,10 +124,21 @@ const createWindow = async () => {
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
-  // Open urls in the user's browser
-  mainWindow.webContents.setWindowOpenHandler((edata) => {
-    shell.openExternal(edata.url);
+  // Links that open a new window (target=_blank) go to the user's browser
+  // instead, if they're web or mail links. No other windows are created.
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    openExternal(url);
     return { action: 'deny' };
+  });
+
+  // The window never leaves the app's page; links that would navigate it
+  // (e.g. mailto:) are handed to the OS instead.
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (!mainWindow || isSameDocument(mainWindow.webContents.getURL(), url)) {
+      return;
+    }
+    event.preventDefault();
+    openExternal(url);
   });
 
   if (app.isPackaged) {
@@ -207,10 +228,10 @@ ipcMain.handle(
 );
 
 /**
- * Saves the given project (string'd json) to the supplied filePath
+ * Open a web link in the user's browser
  */
 ipcMain.handle('app:openBrowser', async (_event, url: string) => {
-  shell.openExternal(url);
+  openExternal(url);
 });
 
 /**

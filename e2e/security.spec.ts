@@ -1,0 +1,65 @@
+import { expect, test } from '@playwright/test';
+import { launchApp, type RunningApp } from './app';
+
+let running: RunningApp;
+
+test.beforeEach(async () => {
+  running = await launchApp(test.info().outputPath('profile'));
+  // Record what would be handed to the OS instead of opening it
+  await running.app.evaluate(({ shell }) => {
+    const opened: string[] = [];
+    Object.assign(globalThis, { opened });
+    shell.openExternal = async (url: string) => {
+      opened.push(url);
+    };
+  });
+});
+
+test.afterEach(async () => {
+  expect(running.errors).toEqual([]);
+  await running.app.close();
+});
+
+const opened = () =>
+  running.app.evaluate(
+    () => (globalThis as unknown as { opened: string[] }).opened,
+  );
+
+test('only web and mail links are opened outside the app', async () => {
+  const { page } = running;
+  await page.evaluate(() => {
+    window.open('https://example.com/new-window');
+    window.open('file:///etc/passwd');
+    window.open('smb://attacker/share');
+    window.app.openBrowser('https://example.com/ipc');
+    window.app.openBrowser('file:///C:/Windows/System32/calc.exe');
+  });
+
+  await expect
+    .poll(opened)
+    .toEqual(['https://example.com/new-window', 'https://example.com/ipc']);
+});
+
+test('the window cannot be navigated away from the app', async () => {
+  const { app, page } = running;
+  const appUrl = page.url();
+
+  await page.evaluate(() => {
+    window.location.href = 'https://example.com/navigate';
+  });
+  await expect.poll(opened).toEqual(['https://example.com/navigate']);
+
+  await page.evaluate(() => {
+    window.location.href = 'file:///etc/hosts';
+  });
+  await page.waitForTimeout(1000);
+
+  expect(await opened()).toEqual(['https://example.com/navigate']);
+  expect(
+    await app.evaluate(({ BrowserWindow }) =>
+      BrowserWindow.getAllWindows().map((window) =>
+        window.webContents.getURL(),
+      ),
+    ),
+  ).toEqual([appUrl]);
+});
