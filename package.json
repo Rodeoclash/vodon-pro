@@ -169,7 +169,8 @@
   },
   "allowScripts": {
     "electron-winstaller@5.4.0": true,
-    "ffmpeg-ffprobe-static@6.1.1": true
+    "ffmpeg-ffprobe-static@6.1.1": true,
+    "fsevents@2.3.3": false
   },
   "overrides": {
     "patch-package": {
