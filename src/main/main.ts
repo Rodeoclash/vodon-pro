@@ -10,7 +10,6 @@ import {
   BrowserWindow,
   type IpcMainInvokeEvent,
   ipcMain,
-  protocol,
   shell,
 } from 'electron';
 import log from 'electron-log/main';
@@ -31,6 +30,7 @@ import {
   unpackedBinaryPath,
 } from './paths';
 import { createPendingSave } from './pendingSave';
+import { handleMediaProtocol, registerPrivilegedSchemes } from './protocols';
 
 if (!ffmpegBins.ffprobePath) {
   throw new Error('Unable to find FFProbe path');
@@ -208,6 +208,7 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    handleMediaProtocol();
     createWindow().catch(log.error);
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
@@ -303,17 +304,4 @@ handle('video:exists', async (_event, filePath: string) => {
   }
 });
 
-// allow local videos
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: 'file',
-    privileges: {
-      standard: true,
-      bypassCSP: true,
-      allowServiceWorkers: true,
-      supportFetchAPI: true,
-      corsEnabled: true,
-      stream: true,
-    },
-  },
-]);
+registerPrivilegedSchemes();

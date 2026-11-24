@@ -29,6 +29,7 @@ import {
   Settings as SettingsIcon,
   X as XIcon,
 } from 'tabler-icons-react';
+import { mediaUrl } from '../../../shared/mediaUrl';
 import type { Video } from '../../services/models/Video';
 import useStore from '../../services/stores/videos';
 import { secondsToHms } from '../../services/time';
@@ -247,7 +248,7 @@ export default function VideoAligner({ video }: Props) {
         </Tooltip>
 
         <Flex align="center" justifyContent="center">
-          <video src={video.filePath} ref={videoRef} muted />
+          <video src={mediaUrl(video.filePath)} ref={videoRef} muted />
         </Flex>
 
         {renderedControls}

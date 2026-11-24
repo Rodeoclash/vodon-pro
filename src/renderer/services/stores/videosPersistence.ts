@@ -1,4 +1,5 @@
 import superjson from 'superjson';
+import { mediaUrl } from '../../../shared/mediaUrl';
 import type { Video } from '../models/Video';
 
 /** What zustand's persist middleware (and project files) store. */
@@ -53,7 +54,7 @@ export async function deserialize<S extends WithVideos>(
     if (!(await exists(video.filePath))) continue;
 
     const el = document.createElement('video');
-    el.src = video.filePath;
+    el.src = mediaUrl(video.filePath);
 
     videos.push({ ...video, el });
   }

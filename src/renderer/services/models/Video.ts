@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { mediaUrl } from '../../../shared/mediaUrl';
 import { basename } from '../file';
 
 import type { VideoBookmark } from './VideoBookmark';
@@ -181,7 +182,7 @@ export async function createFromFile(filePath: string): Promise<Video> {
 
   // video element
   const el = document.createElement('video');
-  el.src = filePath;
+  el.src = mediaUrl(filePath);
 
   el.preservesPitch = false;
 

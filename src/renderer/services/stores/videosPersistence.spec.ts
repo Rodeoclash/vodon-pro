@@ -1,5 +1,6 @@
 import superjson from 'superjson';
 import { describe, expect, test } from 'vitest';
+import { mediaUrl } from '../../../shared/mediaUrl';
 import { buildVideo, buildVideoBookmark } from '../../../test/fixtures';
 import type { Video } from '../models/Video';
 import { deserialize, type Persisted, serialize } from './videosPersistence';
@@ -72,7 +73,7 @@ describe('deserialize', () => {
 
     const [video] = restored.state.videos;
     expect(video.el).toBeInstanceOf(HTMLVideoElement);
-    expect(video.el.src).toContain('/vods/a.mp4');
+    expect(video.el.src).toBe(mediaUrl('/vods/a.mp4'));
   });
 
   test('skips videos whose files no longer exist', async () => {
