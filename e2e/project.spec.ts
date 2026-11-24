@@ -71,10 +71,14 @@ test('File menu saves, clears and reopens a project, starting dialogs in the las
     }, label);
 
   await clickMenu('Save project as...');
-  await expect.poll(() => fs.existsSync(projectFile)).toBe(true);
-  const saved = fs.readFileSync(projectFile, 'utf8');
-  expect(saved).toContain(JSON.stringify(VIDEOS.one).slice(1, -1));
-  expect(saved).toContain(JSON.stringify(VIDEOS.two).slice(1, -1));
+  // Wait for the whole file: it exists before it has been written
+  const savedPaths = () =>
+    fs.existsSync(projectFile)
+      ? [VIDEOS.one, VIDEOS.two].filter((video) =>
+          fs.readFileSync(projectFile, 'utf8').includes(JSON.stringify(video)),
+        )
+      : [];
+  await expect.poll(savedPaths).toEqual([VIDEOS.one, VIDEOS.two]);
 
   await clickMenu('New project');
   await expect.poll(() => videoCount(page)).toBe(0);
