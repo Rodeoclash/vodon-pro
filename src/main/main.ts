@@ -4,7 +4,6 @@
  * through IPC.
  */
 import * as fsPromise from 'node:fs/promises';
-import os from 'node:os';
 import path from 'node:path';
 import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
 import log from 'electron-log/main';
@@ -34,8 +33,6 @@ const ffmpegPath = unpackedBinaryPath(ffmpegBins.ffmpegPath);
 
 ffmpeg.setFfprobePath(ffprobePath);
 ffmpeg.setFfmpegPath(ffmpegPath);
-
-const tmpDir = os.tmpdir();
 
 /**
  * Check GitHub Releases for a newer version, download it in the background
@@ -240,29 +237,6 @@ ipcMain.handle('video:exists', async (_event, filePath: string) => {
     return false;
   }
 });
-
-/**
- * Take a screenshot of the file at particular time and return it
- */
-ipcMain.handle(
-  'video:screenshot',
-  (_event, filePath: string, second: number) => {
-    return new Promise((resolve, reject) => {
-      ffmpeg(filePath)
-        .on('end', () => {
-          resolve(path.join(tmpDir, `${second}.png`));
-        })
-        .on('error', (err: Error) => {
-          reject(err);
-        })
-        // take 2 screenshots at predefined timemarks and size
-        .takeScreenshots(
-          { timemarks: [second], size: '854x480', filename: '%s.png' },
-          tmpDir,
-        );
-    });
-  },
-);
 
 // allow local videos
 protocol.registerSchemesAsPrivileged([

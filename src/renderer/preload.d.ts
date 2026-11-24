@@ -18,7 +18,6 @@ declare global {
       getMetadata: (filepath: string) => Promise<VideoMetadata>;
       /** Path on disk of a dropped/picked file, '' if it has none */
       getPathForFile: (file: File) => string;
-      screenshot: (filepath: string, second: number) => Promise<string>;
     };
   }
 }

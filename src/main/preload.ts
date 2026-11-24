@@ -25,8 +25,6 @@ contextBridge.exposeInMainWorld('app', {
 
 contextBridge.exposeInMainWorld('video', {
   exists: (filePath: string) => ipcRenderer.invoke('video:exists', filePath),
-  screenshot: (filePath: string, second: number) =>
-    ipcRenderer.invoke('video:screenshot', filePath, second),
   getMetadata: (filePath: string) =>
     ipcRenderer.invoke('video:getMetadata', filePath),
   // File.path was removed in Electron 32; this is its replacement.
