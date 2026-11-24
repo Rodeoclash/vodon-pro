@@ -107,7 +107,11 @@ const createWindow = async () => {
     title: 'Vodon Pro',
     icon: path.join(assets, 'icon.png'),
     webPreferences: {
-      sandbox: false,
+      // The defaults, spelled out: the renderer and preload run sandboxed
+      // and isolated from the page, with no Node.js.
+      sandbox: true,
+      contextIsolation: true,
+      nodeIntegration: false,
       preload: preloadPath(__dirname),
     },
   });

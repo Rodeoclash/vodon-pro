@@ -127,3 +127,40 @@ test('app:// only serves the built renderer', async () => {
     expect({ url, status: await status(url) }).toEqual({ url, status: 404 });
   }
 });
+
+test('the renderer is sandboxed with no Node.js', async () => {
+  const { app, page } = running;
+  expect(
+    await app.evaluate(({ BrowserWindow }) => {
+      // Not in Electron's typings, but part of its API
+      const contents = BrowserWindow.getAllWindows()[0]
+        .webContents as unknown as {
+        getLastWebPreferences: () => Electron.WebPreferences | null;
+      };
+      const prefs = contents.getLastWebPreferences();
+      return {
+        sandbox: prefs?.sandbox,
+        contextIsolation: prefs?.contextIsolation,
+        nodeIntegration: prefs?.nodeIntegration,
+        webSecurity: prefs?.webSecurity,
+      };
+    }),
+  ).toEqual({
+    sandbox: true,
+    contextIsolation: true,
+    nodeIntegration: false,
+    webSecurity: true,
+  });
+
+  expect(
+    await page.evaluate(() => ({
+      require: typeof (window as unknown as { require?: unknown }).require,
+      process: typeof (window as unknown as { process?: unknown }).process,
+      // The bridge only exposes plain functions
+      app: Object.keys(window.app).every(
+        (key) =>
+          typeof window.app[key as keyof typeof window.app] === 'function',
+      ),
+    })),
+  ).toEqual({ require: 'undefined', process: 'undefined', app: true });
+});
