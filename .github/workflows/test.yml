@@ -25,10 +25,9 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # Node, Biome, gitleaks, actionlint and zizmor at the versions in mise.toml
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
-        with:
-          version: 2026.11.4
+      # Node, Biome, gitleaks, actionlint and zizmor at the versions in
+      # mise.toml, then npm ci
+      - uses: ./.github/actions/setup
 
       - name: Secrets
         run: gitleaks git --redact --no-banner --verbose
@@ -43,13 +42,9 @@ jobs:
       # Workflow security; online audits also check pinned SHAs belong to
       # their repos and that no pinned action has a known advisory
       - name: zizmor
-        run: zizmor --format=github .github/workflows
+        run: zizmor --format=github .github
         env:
           GH_TOKEN: ${{ github.token }}
-
-      # .npmrc's strict-allow-scripts fails this if an install script isn't
-      # approved in package.json's allowScripts
-      - run: npm ci
 
       # Lockfile only points at the npm registry over https with sha512,
       # registry signatures verify, and no high/critical advisories. Covers
@@ -96,12 +91,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      - uses: ./.github/actions/setup
         with:
-          version: 2026.11.4
-          install_args: node
-
-      - run: npm ci
+          tools: node
 
       - run: npm run build
 
@@ -133,12 +125,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      - uses: ./.github/actions/setup
         with:
-          version: 2026.11.4
-          install_args: node
-
-      - run: npm ci
+          tools: node
 
       - name: Package
         run: npm run package

@@ -1,0 +1,43 @@
+name: Set up
+description: >-
+  Tools from mise.toml, then npm ci with the npm, Electron and
+  electron-builder download caches restored. Not for releases, which must
+  not restore caches.
+
+inputs:
+  tools:
+    description: mise tools to install (all of mise.toml when empty)
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      with:
+        version: 2026.11.4
+        install_args: ${{ inputs.tools }}
+
+    # The default cache locations differ per OS; put them all in one place
+    - name: Cache locations
+      shell: bash
+      run: |
+        {
+          echo "npm_config_cache=$RUNNER_TEMP/cache/npm"
+          echo "ELECTRON_CACHE=$RUNNER_TEMP/cache/electron"
+          echo "ELECTRON_BUILDER_CACHE=$RUNNER_TEMP/cache/electron-builder"
+        } >> "$GITHUB_ENV"
+
+    - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: |
+          ${{ runner.temp }}/cache/npm
+          ${{ runner.temp }}/cache/electron
+          ${{ runner.temp }}/cache/electron-builder
+        # Per job: only package fills the electron-builder cache
+        key: deps-${{ github.job }}-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: deps-${{ github.job }}-${{ runner.os }}-
+
+    # .npmrc's strict-allow-scripts fails this if an install script isn't
+    # approved in package.json's allowScripts
+    - shell: bash
+      run: npm ci

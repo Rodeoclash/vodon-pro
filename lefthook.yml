@@ -20,7 +20,7 @@ pre-push:
 
     - name: workflows
       glob: ".github/**/*.yml"
-      run: actionlint && zizmor --offline --no-progress .github/workflows
+      run: actionlint && zizmor --offline --no-progress .github
 
     - name: typecheck
       run: npx tsc --noEmit
