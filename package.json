@@ -154,14 +154,14 @@
     "electron-debug": "^5.0.0",
     "electron-log": "^5.4.4",
     "electron-updater": "^6.8.11",
-    "ffmpeg-ffprobe-static": "^4.4.0-rc.11",
+    "ffmpeg-ffprobe-static": "^6.1.1",
     "fluent-ffmpeg": "^2.1.2"
   },
   "engines": {
     "node": ">=24"
   },
   "allowScripts": {
-    "ffmpeg-ffprobe-static@4.4.0-rc.11": true,
-    "electron-winstaller@5.4.0": true
+    "electron-winstaller@5.4.0": true,
+    "ffmpeg-ffprobe-static@6.1.1": true
   }
 }
