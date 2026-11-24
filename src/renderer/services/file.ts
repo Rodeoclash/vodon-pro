@@ -1,4 +1,5 @@
-const SUPPORTED_EXTENSIONS = ['mp4', 'webm', 'avi'];
+/** Arguments ending in one of these are treated as videos to open. */
+const VIDEO_PATH = /\.(mp4|webm|avi)$/i;
 
 /**
  * Returns the basename of the file path. Used to prefill default video names
@@ -16,17 +17,7 @@ export const basename = (name: string): string => {
 export const getPossibleArgVMoviePaths = (
   possiblePaths: Array<string>,
 ): Array<string> => {
-  return possiblePaths.reduce((acc: Array<string>, possiblePath: string) => {
-    const containsExtension = SUPPORTED_EXTENSIONS.some((extension) => {
-      return possiblePath.includes(extension);
-    });
-
-    if (containsExtension === true) {
-      acc.push(possiblePath);
-    }
-
-    return acc;
-  }, []);
+  return possiblePaths.filter((possiblePath) => VIDEO_PATH.test(possiblePath));
 };
 
 /**

@@ -26,6 +26,22 @@ describe('getPossibleArgVMoviePaths', () => {
       ]),
     ).toStrictEqual(['C:\\movie.mp4']);
   });
+
+  test('matches the extension case-insensitively', () => {
+    expect(
+      getPossibleArgVMoviePaths(['/videos/a.MP4', '/videos/b.WebM']),
+    ).toStrictEqual(['/videos/a.MP4', '/videos/b.WebM']);
+  });
+
+  test('ignores arguments that only contain an extension name', () => {
+    expect(
+      getPossibleArgVMoviePaths([
+        'C:\\Users\\David\\AppData\\Local\\Programs\\VodonPro\\VodonPro.exe',
+        '--user-data-dir=/tmp/navigated-away',
+        '/home/me/mp4-exports/notes.txt',
+      ]),
+    ).toStrictEqual([]);
+  });
 });
 
 describe('getDiskPaths', () => {
