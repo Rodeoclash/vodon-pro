@@ -41,11 +41,16 @@ jobs:
           # Add local sources to the default remote ones: a desktop app's
           # untrusted input is mostly argv, opened project files, file paths
           # and the environment
+          # e2e/ and scripts/ are dev and CI tools that never ship; their
+          # input is the developer's own argv and files, which the local
+          # threat model would otherwise treat as hostile
           config: |
             threat-models: local
             paths-ignore:
               - out
               - release
+              - e2e
+              - scripts
 
       - uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
         with:
