@@ -24,11 +24,13 @@ jobs:
         with:
           persist-credentials: false
 
-      # Node at the version in mise.toml
+      # Node at the version in mise.toml. No cache: a release must not
+      # restore anything a less trusted run could have written.
       - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
         with:
           version: 2026.11.4
           install_args: node
+          cache: false
 
       - name: Release
         run: npm ci && npm run publish

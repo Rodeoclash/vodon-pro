@@ -1,0 +1,5 @@
+rules:
+  # `npm run publish` runs electron-builder, which uploads to GitHub
+  # Releases; nothing is published to npm.
+  use-trusted-publishing:
+    disable: true

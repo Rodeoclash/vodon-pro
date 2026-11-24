@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # Node, Biome and gitleaks at the versions in mise.toml
+      # Node, Biome, gitleaks, actionlint and zizmor at the versions in mise.toml
       - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
         with:
           version: 2026.11.4
@@ -35,6 +35,17 @@ jobs:
 
       - name: Biome
         run: biome ci
+
+      # Workflow syntax, expressions and shellcheck on run: blocks
+      - name: actionlint
+        run: actionlint
+
+      # Workflow security; online audits also check pinned SHAs belong to
+      # their repos and that no pinned action has a known advisory
+      - name: zizmor
+        run: zizmor --format=github .github/workflows
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - run: npm ci
 
