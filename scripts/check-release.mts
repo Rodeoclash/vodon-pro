@@ -16,9 +16,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parse } from 'yaml';
 
-/** Installer size budgets in MB, by extension; about 15% over today's. */
+/**
+ * Installer size budgets in MB, by extension: about 15% over the largest
+ * of each as of 1.9.13 (AppImage 179, exe 161, dmg 163, zip 158). Raise one
+ * deliberately, when a dependency is worth the size.
+ */
 const BUDGET_MB: Record<string, number> = {
-  '.AppImage': 220,
+  '.AppImage': 205,
+  '.exe': 185,
+  '.dmg': 190,
+  '.zip': 185,
 };
 
 type FeedFile = { url: string; sha512: string; size: number };
@@ -110,9 +117,9 @@ const installers = fs
 for (const name of installers) {
   const mb = fs.statSync(path.join(dir, name)).size / 1024 / 1024;
   const budget = BUDGET_MB[path.extname(name)];
-  const note = budget ? ` (budget ${budget} MB)` : ' (no budget)';
-  console.log(`check-release: ${name} ${mb.toFixed(1)} MB${note}`);
-  if (budget && mb > budget) {
+  console.log(`check-release: ${name} ${mb.toFixed(1)} MB (budget ${budget})`);
+  if (budget === undefined) fail(`${name} has no size budget`);
+  else if (mb > budget) {
     fail(`${name} is ${mb.toFixed(1)} MB, over its ${budget} MB budget`);
   }
 }
