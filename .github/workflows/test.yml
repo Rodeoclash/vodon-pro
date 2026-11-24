@@ -60,8 +60,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # Fails if coverage drops below the thresholds in vitest.config.ts
       - name: Unit tests
-        run: npm test
+        run: npm run test:coverage
 
   # What a PR adds or changes in the dependency tree: new advisories at
   # high or above, and licences outside the list

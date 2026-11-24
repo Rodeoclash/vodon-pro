@@ -16,7 +16,8 @@
     "audit:deps": "npm run lint:lockfile && npm audit signatures && npm audit --audit-level=high",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:coverage": "vitest run --coverage"
   },
   "build": {
     "productName": "VodonPro",
@@ -125,6 +126,7 @@
     "@types/react-dom": "^17.0.14",
     "@types/uuid": "^9.0.2",
     "@vitejs/plugin-react": "^6.3.0",
+    "@vitest/coverage-v8": "^5.1.1",
     "electron": "^45.4.1",
     "electron-builder": "^26.18.0",
     "electron-devtools-installer": "^4.0.0",
