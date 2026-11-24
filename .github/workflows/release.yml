@@ -5,9 +5,14 @@ on:
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 
+permissions: {}
+
 jobs:
   release:
     runs-on: ${{ matrix.os }}
+    # electron-builder uploads the packages to a GitHub release
+    permissions:
+      contents: write
 
     strategy:
       matrix:
