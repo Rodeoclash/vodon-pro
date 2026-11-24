@@ -15,6 +15,12 @@ test.beforeEach(async () => {
   });
 });
 
+/** Chromium refusing a file: URL outright, before our handlers see it */
+const withoutLocalResourceRefusals = (errors: string[]) =>
+  errors.filter(
+    (error) => !error.startsWith('Not allowed to load local resource'),
+  );
+
 test.afterEach(async () => {
   expect(running.errors).toEqual([]);
   await running.app.close();
@@ -38,6 +44,7 @@ test('only web and mail links are opened outside the app', async () => {
   await expect
     .poll(opened)
     .toEqual(['https://example.com/new-window', 'https://example.com/ipc']);
+  running.errors = withoutLocalResourceRefusals(running.errors);
 });
 
 test('the window cannot be navigated away from the app', async () => {
@@ -62,6 +69,7 @@ test('the window cannot be navigated away from the app', async () => {
       ),
     ),
   ).toEqual([appUrl]);
+  running.errors = withoutLocalResourceRefusals(running.errors);
 });
 
 test('the renderer cannot save a project without the save dialog', async () => {

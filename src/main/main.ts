@@ -107,7 +107,6 @@ const createWindow = async () => {
     title: 'Vodon Pro',
     icon: path.join(assets, 'icon.png'),
     webPreferences: {
-      webSecurity: false,
       sandbox: false,
       preload: preloadPath(__dirname),
     },
