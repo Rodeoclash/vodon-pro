@@ -112,8 +112,9 @@ test('page scripts cannot read media bytes', async () => {
     mediaUrl(VIDEOS.one),
   );
   expect(result).toBe('refused');
-  // Chromium logs the refusal; that's the expected outcome here
+  // Chromium logs the refusal (by the CSP, or by the scheme having no
+  // fetch support); that's the expected outcome here
   running.errors = running.errors.filter(
-    (error) => !error.includes('URL scheme "vodon-media" is not supported'),
+    (error) => !error.includes('vodon-media://'),
   );
 });

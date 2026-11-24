@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
   dismissHelp,
+  goTo,
   launchApp,
   type RunningApp,
   storedState,
@@ -110,4 +111,28 @@ test('dropping a file on the setup page adds it', async () => {
       (await storedState(page))?.videos.map((video) => video.filePath),
     )
     .toEqual([VIDEOS.one, VIDEOS.two]);
+});
+
+test('every page renders without errors', async () => {
+  running = await launchApp(test.info().outputPath('profile'), [
+    VIDEOS.one,
+    VIDEOS.two,
+  ]);
+  const { page } = running;
+  await expect.poll(() => videoCount(page)).toBe(2);
+
+  await goTo(page, '#/review');
+  await expect(page.locator('main video')).toHaveCount(2);
+
+  for (const [hash, heading] of [
+    ['#/settings', 'Settings'],
+    ['#/received_vods', 'Received VODs coming soon!'],
+    ['#/about', 'About Vodon Pro'],
+  ]) {
+    await goTo(page, hash);
+    await expect(page.getByRole('heading', { name: heading })).toBeVisible();
+  }
+
+  await goTo(page, '#/');
+  await expect(page.locator('main video')).toHaveCount(2);
 });

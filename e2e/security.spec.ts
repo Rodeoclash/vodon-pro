@@ -74,3 +74,48 @@ test('the renderer cannot save a project without the save dialog', async () => {
   );
   expect(result).toContain('No project save was requested');
 });
+
+test('the app runs from app://vodon/ under a strict CSP', async () => {
+  const { app, page } = running;
+  expect(page.url()).toMatch(/^app:\/\/vodon\/index\.html/);
+
+  const csp = await app.evaluate(async ({ net }) => {
+    const response = await net.fetch('app://vodon/index.html');
+    return response.headers.get('Content-Security-Policy');
+  });
+  expect(csp).toContain("script-src 'self'");
+  expect(csp).not.toContain("'unsafe-eval'");
+
+  // An injected inline script doesn't run
+  const ran = await page.evaluate(async () => {
+    const script = document.createElement('script');
+    script.textContent = 'window.injectedRan = true';
+    document.body.appendChild(script);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    return (window as unknown as { injectedRan?: boolean }).injectedRan;
+  });
+  expect(ran).toBeUndefined();
+  running.errors = running.errors.filter(
+    (error) => !error.includes('Content Security Policy'),
+  );
+});
+
+test('app:// only serves the built renderer', async () => {
+  const status = (url: string) =>
+    running.app.evaluate(
+      async ({ net }, target) => (await net.fetch(target)).status,
+      url,
+    );
+
+  expect(await status('app://vodon/index.html')).toBe(200);
+  for (const url of [
+    'app://vodon/../main/main.js',
+    'app://vodon/%2e%2e/main/main.js',
+    'app://vodon/..%2fpreload%2fpreload.js',
+    'app://vodon/..%5cpreload%5cpreload.js',
+    'app://other/index.html',
+    'app://vodon/missing.js',
+  ]) {
+    expect({ url, status: await status(url) }).toEqual({ url, status: 404 });
+  }
+});

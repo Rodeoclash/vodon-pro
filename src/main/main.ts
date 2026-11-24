@@ -26,11 +26,16 @@ import {
 import {
   assetsPath,
   preloadPath,
-  rendererLocation,
+  rendererDir,
+  rendererUrl,
   unpackedBinaryPath,
 } from './paths';
 import { createPendingSave } from './pendingSave';
-import { handleMediaProtocol, registerPrivilegedSchemes } from './protocols';
+import {
+  handleAppProtocol,
+  handleMediaProtocol,
+  registerPrivilegedSchemes,
+} from './protocols';
 
 if (!ffmpegBins.ffprobePath) {
   throw new Error('Unable to find FFProbe path');
@@ -108,16 +113,9 @@ const createWindow = async () => {
     },
   });
 
-  const page = rendererLocation(
-    __dirname,
-    app.isPackaged,
-    process.env.ELECTRON_RENDERER_URL,
-  );
-  if (page.kind === 'url') {
-    mainWindow.loadURL(page.url).catch(log.error);
-  } else {
-    mainWindow.loadFile(page.file).catch(log.error);
-  }
+  mainWindow
+    .loadURL(rendererUrl(app.isPackaged, process.env.ELECTRON_RENDERER_URL))
+    .catch(log.error);
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
@@ -208,6 +206,7 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    handleAppProtocol(rendererDir(__dirname));
     handleMediaProtocol();
     createWindow().catch(log.error);
     app.on('activate', () => {
