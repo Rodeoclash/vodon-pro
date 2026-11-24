@@ -1,13 +1,16 @@
 name: Set up
 description: >-
   Tools from mise.toml, then npm ci with the npm, Electron and
-  electron-builder download caches restored. Not for releases, which must
-  not restore caches.
+  electron-builder download caches restored (unless `cache` is false, as
+  for releases, which must not restore anything a less trusted run wrote).
 
 inputs:
   tools:
     description: mise tools to install (all of mise.toml when empty)
     default: ""
+  cache:
+    description: Restore and save the tool and download caches
+    default: "true"
 
 runs:
   using: composite
@@ -16,6 +19,7 @@ runs:
       with:
         version: 2026.11.4
         install_args: ${{ inputs.tools }}
+        cache: ${{ inputs.cache == 'true' }}
 
     # The default cache locations differ per OS; put them all in one place
     - name: Cache locations
@@ -28,6 +32,7 @@ runs:
         } >> "$GITHUB_ENV"
 
     - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      if: inputs.cache == 'true'
       with:
         path: |
           ${{ runner.temp }}/cache/npm

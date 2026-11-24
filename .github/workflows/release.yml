@@ -1,38 +1,101 @@
 name: Release
 
+# Push a v* tag matching package.json's version. Every check in test.yml
+# runs first; the packages its package jobs built, smoke tested and checked
+# are what gets published. Run it by hand for a dry run: everything but
+# creating the release.
 on:
   push:
     tags:
-      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
+      - "v*"
+  workflow_dispatch:
 
 permissions: {}
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-    # electron-builder uploads the packages to a GitHub release
+  test:
+    uses: ./.github/workflows/test.yml
+    with:
+      release: true
     permissions:
+      contents: read
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      # Create the release and upload its files
       contents: write
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
+      # Sign and store the provenance and SBOM attestations
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    env:
+      TAG: ${{ github.ref_name }}
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      # Node at the version in mise.toml. No cache: a release must not
-      # restore anything a less trusted run could have written.
+      # Node for npm sbom. No cache: a release must not restore anything a
+      # less trusted run could have written.
       - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
         with:
           version: 2026.11.4
           install_args: node
           cache: false
 
-      - name: Release
-        run: npm ci && npm run publish
+      - name: Version
         env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+          IS_TAG: ${{ github.ref_type == 'tag' }}
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          if [ "$IS_TAG" = true ] && [ "$TAG" != "v$version" ]; then
+            echo "::error::Tag $TAG doesn't match package.json (v$version)"
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+
+      # The whole dependency tree: the renderer's devDependencies are
+      # bundled into the app, so --omit dev would leave them out
+      - name: SBOM
+        run: npm sbom --sbom-format cyclonedx --package-lock-only > "dist/VodonPro-$VERSION.cdx.json"
+
+      - name: Checksums
+        working-directory: dist
+        run: |
+          sha256sum -- * > ../SHA256SUMS
+          mv ../SHA256SUMS SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-checksums: dist/SHA256SUMS
+
+      - name: SBOM attestation
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-checksums: dist/SHA256SUMS
+          sbom-path: dist/VodonPro-${{ env.VERSION }}.cdx.json
+
+      # Draft first, then publish: with immutable releases turned on, a
+      # published release's files can't change
+      - name: Release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$TAG" --draft --verify-tag --generate-notes \
+            --title "$VERSION" dist/*
+          gh release edit "$TAG" --draft=false

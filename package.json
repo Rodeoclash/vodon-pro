@@ -7,7 +7,6 @@
     "start": "electron-vite dev --watch",
     "build": "electron-vite build",
     "package": "electron-vite build && electron-builder build --publish never",
-    "publish": "electron-vite build && electron-builder build --publish always",
     "postinstall": "install-electron",
     "lint": "biome check",
     "format": "biome check --write",
