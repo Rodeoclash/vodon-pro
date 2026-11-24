@@ -13,7 +13,8 @@
     "format": "biome check --write",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "build": {
     "productName": "VodonPro",
@@ -26,6 +27,14 @@
     "files": [
       "out/**/*"
     ],
+    "electronFuses": {
+      "runAsNode": false,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "onlyLoadAppFromAsar": true,
+      "grantFileProtocolExtraPrivileges": false,
+      "resetAdHocDarwinSignature": true
+    },
     "mac": {
       "target": {
         "target": "default",
@@ -103,6 +112,7 @@
     "@emoji-mart/react": "^1.0.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@playwright/test": "^1.65.1",
     "@popperjs/core": "^2.11.5",
     "@react-hook/throttle": "^2.2.0",
     "@testing-library/jest-dom": "^8.0.0",
@@ -144,14 +154,14 @@
     "electron-debug": "^5.0.0",
     "electron-log": "^5.4.4",
     "electron-updater": "^6.8.11",
-    "ffmpeg-ffprobe-static": "^4.4.0-rc.11",
+    "ffmpeg-ffprobe-static": "^6.1.1",
     "fluent-ffmpeg": "^2.1.2"
   },
   "engines": {
     "node": ">=24"
   },
   "allowScripts": {
-    "ffmpeg-ffprobe-static@4.4.0-rc.11": true,
-    "electron-winstaller@5.4.0": true
+    "electron-winstaller@5.4.0": true,
+    "ffmpeg-ffprobe-static@6.1.1": true
   }
 }

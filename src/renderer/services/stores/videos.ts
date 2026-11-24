@@ -453,16 +453,16 @@ export async function createVideosFromPaths(paths: Array<string>) {
 }
 
 /**
- * Handle the save request from the main thread. Calculate the current state
- * then pass it back to the main thread along with the filepath to persist.
+ * Handle the save request from the main thread: serialise the current state
+ * and hand it back to be written to the file the user chose.
  */
-window.app.onSaveProjectRequest((filePath: string) => {
+window.app.onSaveProjectRequest(() => {
   const serializedState = serialize<State>({
     version: CURRENT_PERSIST_VERSION,
     state: useStore.getState(),
   });
 
-  window.app.saveProject(filePath, serializedState);
+  window.app.saveProject(serializedState).catch(console.error);
 });
 
 /**

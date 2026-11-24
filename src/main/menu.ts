@@ -9,6 +9,7 @@ import {
 } from 'electron';
 import { isDebug } from './env';
 import { createLastFolder } from './lastFolder';
+import type { PendingSave } from './pendingSave';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -20,8 +21,11 @@ export default class MenuBuilder {
 
   lastFolder = createLastFolder(app.getPath('documents'));
 
-  constructor(mainWindow: BrowserWindow) {
+  pendingSave: PendingSave;
+
+  constructor(mainWindow: BrowserWindow, pendingSave: PendingSave) {
     this.mainWindow = mainWindow;
+    this.pendingSave = pendingSave;
   }
 
   async openProject(): Promise<void> {
@@ -51,7 +55,8 @@ export default class MenuBuilder {
 
     if (result.canceled === false && result.filePath) {
       this.lastFolder.rememberFile(result.filePath);
-      this.mainWindow.webContents.send('onSaveProjectRequest', result.filePath);
+      this.pendingSave.expect(result.filePath);
+      this.mainWindow.webContents.send('onSaveProjectRequest');
     }
   }
 

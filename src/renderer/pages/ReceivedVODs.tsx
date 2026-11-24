@@ -15,9 +15,7 @@ export default function ReceivedVODs() {
         overflow="auto"
         height="100%"
         width="100%"
-        backgroundImage={
-          'linear-gradient(rgba(0,0,0,0.80), rgba(0,0,0,0.95)), url("file:///assets/shubham-dhage-ykFTt5Dq1RU-unsplash.jpg")'
-        }
+        backgroundImage="linear-gradient(rgba(0,0,0,0.80), rgba(0,0,0,0.95))"
         backgroundRepeat="no-repeat"
         backgroundPosition="center"
         backgroundSize="cover"

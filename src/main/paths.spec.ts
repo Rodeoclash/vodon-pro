@@ -4,33 +4,67 @@ import { describe, expect, test } from 'vitest';
 import {
   assetsPath,
   preloadPath,
-  rendererLocation,
+  rendererDir,
+  rendererUrl,
+  resolveAppFile,
   unpackedBinaryPath,
 } from './paths';
 
 const mainDir = path.join('/app', 'out', 'main');
 
-describe('rendererLocation', () => {
+describe('rendererUrl', () => {
   test('uses the dev server when unpackaged and electron-vite gives a URL', () => {
-    expect(
-      rendererLocation(mainDir, false, 'http://localhost:5173'),
-    ).toStrictEqual({ kind: 'url', url: 'http://localhost:5173' });
+    expect(rendererUrl(false, 'http://localhost:5173')).toBe(
+      'http://localhost:5173',
+    );
   });
 
-  test('uses the built HTML when unpackaged without a dev server', () => {
-    expect(rendererLocation(mainDir, false, undefined)).toStrictEqual({
-      kind: 'file',
-      file: path.join('/app', 'out', 'renderer', 'index.html'),
-    });
+  test('uses the app scheme when unpackaged without a dev server', () => {
+    expect(rendererUrl(false, undefined)).toBe('app://vodon/index.html');
   });
 
   test('ignores a dev server URL once packaged', () => {
-    expect(
-      rendererLocation(mainDir, true, 'http://localhost:5173'),
-    ).toStrictEqual({
-      kind: 'file',
-      file: path.join('/app', 'out', 'renderer', 'index.html'),
-    });
+    expect(rendererUrl(true, 'http://localhost:5173')).toBe(
+      'app://vodon/index.html',
+    );
+  });
+});
+
+describe('rendererDir', () => {
+  test('is the renderer build beside main', () => {
+    expect(rendererDir(mainDir)).toBe(path.join('/app', 'out', 'renderer'));
+  });
+});
+
+describe('resolveAppFile', () => {
+  const root = path.join('/app', 'out', 'renderer');
+
+  test('maps / to index.html', () => {
+    expect(resolveAppFile(root, '/')).toBe(path.join(root, 'index.html'));
+  });
+
+  test('maps a path to the file under the root', () => {
+    expect(resolveAppFile(root, '/assets/index-abc.js')).toBe(
+      path.join(root, 'assets', 'index-abc.js'),
+    );
+  });
+
+  test('decodes the path', () => {
+    expect(resolveAppFile(root, '/assets/a%20b.otf')).toBe(
+      path.join(root, 'assets', 'a b.otf'),
+    );
+  });
+
+  test.each([
+    '/../main/main.js',
+    '/assets/../../preload/preload.js',
+    '/%2e%2e/%2e%2e/package.json',
+    '/..%2f..%2fpackage.json',
+    '/..%5c..%5cpackage.json',
+    '/%E0%A4%A',
+    '/index.html%00.js',
+  ])('refuses %s', (urlPath) => {
+    expect(resolveAppFile(root, urlPath)).toBeNull();
   });
 });
 

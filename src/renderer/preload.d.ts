@@ -9,8 +9,9 @@ declare global {
       onLoadAdditionalVideos: (cb: (paths: Array<string>) => void) => void;
       onNewProjectRequest: (cb: () => void) => void;
       onLoadProjectRequest: (cb: (project: string) => void) => void;
-      onSaveProjectRequest: (cb: (filePath: string) => void) => void;
-      saveProject: (filePath: string, project: string) => Promise<string>;
+      onSaveProjectRequest: (cb: () => void) => void;
+      /** Writes to the file the user chose in the save dialog */
+      saveProject: (project: string) => Promise<void>;
     };
 
     video: {
@@ -18,7 +19,6 @@ declare global {
       getMetadata: (filepath: string) => Promise<VideoMetadata>;
       /** Path on disk of a dropped/picked file, '' if it has none */
       getPathForFile: (file: File) => string;
-      screenshot: (filepath: string, second: number) => Promise<string>;
     };
   }
 }

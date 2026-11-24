@@ -4,9 +4,15 @@
  * through IPC.
  */
 import * as fsPromise from 'node:fs/promises';
-import os from 'node:os';
 import path from 'node:path';
-import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  type IpcMainInvokeEvent,
+  ipcMain,
+  session,
+  shell,
+} from 'electron';
 import log from 'electron-log/main';
 import { autoUpdater } from 'electron-updater';
 import ffmpegBins from 'ffmpeg-ffprobe-static';
@@ -14,11 +20,24 @@ import ffmpeg from 'fluent-ffmpeg';
 import { isDebug } from './env';
 import MenuBuilder from './menu';
 import {
+  isSafeExternalUrl,
+  isSameDocument,
+  isTrustedSender,
+} from './navigation';
+import {
   assetsPath,
   preloadPath,
-  rendererLocation,
+  rendererDir,
+  rendererUrl,
   unpackedBinaryPath,
 } from './paths';
+import { createPendingSave } from './pendingSave';
+import { isPermissionAllowed } from './permissions';
+import {
+  handleAppProtocol,
+  handleMediaProtocol,
+  registerPrivilegedSchemes,
+} from './protocols';
 
 if (!ffmpegBins.ffprobePath) {
   throw new Error('Unable to find FFProbe path');
@@ -35,8 +54,6 @@ const ffmpegPath = unpackedBinaryPath(ffmpegBins.ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-const tmpDir = os.tmpdir();
-
 /**
  * Check GitHub Releases for a newer version, download it in the background
  * and notify the user; it installs on the next quit. Only packaged builds
@@ -49,6 +66,33 @@ function startAutoUpdates() {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+const pendingSave = createPendingSave();
+
+/** Grant the page only the permissions it uses (see permissions.ts). */
+function restrictPermissions() {
+  const appUrl = () => mainWindow?.webContents.getURL() ?? '';
+  session.defaultSession.setPermissionRequestHandler(
+    (_contents, permission, callback, details) => {
+      callback(
+        isPermissionAllowed(permission, details.requestingUrl, appUrl()),
+      );
+    },
+  );
+  session.defaultSession.setPermissionCheckHandler(
+    (_contents, permission, requestingOrigin) =>
+      isPermissionAllowed(permission, requestingOrigin, appUrl()),
+  );
+}
+
+/** Open a web or mail link with the OS; refuse any other kind of URL. */
+function openExternal(url: string) {
+  if (!isSafeExternalUrl(url)) {
+    log.warn('Refused to open URL externally:', url);
+    return;
+  }
+  shell.openExternal(url).catch(log.error);
+}
 
 if (isDebug) {
   import('electron-debug')
@@ -81,22 +125,18 @@ const createWindow = async () => {
     title: 'Vodon Pro',
     icon: path.join(assets, 'icon.png'),
     webPreferences: {
-      webSecurity: false,
-      sandbox: false,
+      // The defaults, spelled out: the renderer and preload run sandboxed
+      // and isolated from the page, with no Node.js.
+      sandbox: true,
+      contextIsolation: true,
+      nodeIntegration: false,
       preload: preloadPath(__dirname),
     },
   });
 
-  const page = rendererLocation(
-    __dirname,
-    app.isPackaged,
-    process.env.ELECTRON_RENDERER_URL,
-  );
-  if (page.kind === 'url') {
-    mainWindow.loadURL(page.url).catch(log.error);
-  } else {
-    mainWindow.loadFile(page.file).catch(log.error);
-  }
+  mainWindow
+    .loadURL(rendererUrl(app.isPackaged, process.env.ELECTRON_RENDERER_URL))
+    .catch(log.error);
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
@@ -114,13 +154,24 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
+  const menuBuilder = new MenuBuilder(mainWindow, pendingSave);
   menuBuilder.buildMenu();
 
-  // Open urls in the user's browser
-  mainWindow.webContents.setWindowOpenHandler((edata) => {
-    shell.openExternal(edata.url);
+  // Links that open a new window (target=_blank) go to the user's browser
+  // instead, if they're web or mail links. No other windows are created.
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    openExternal(url);
     return { action: 'deny' };
+  });
+
+  // The window never leaves the app's page; links that would navigate it
+  // (e.g. mailto:) are handed to the OS instead.
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (!mainWindow || isSameDocument(mainWindow.webContents.getURL(), url)) {
+      return;
+    }
+    event.preventDefault();
+    openExternal(url);
   });
 
   if (app.isPackaged) {
@@ -176,6 +227,9 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    restrictPermissions();
+    handleAppProtocol(rendererDir(__dirname));
+    handleMediaProtocol();
     createWindow().catch(log.error);
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
@@ -186,40 +240,70 @@ app
   .catch(console.log);
 
 /**
+ * Register an IPC handler that only answers the app's own page (see
+ * isTrustedSender); anything else gets an error.
+ */
+function handle(
+  channel: string,
+  listener: (event: IpcMainInvokeEvent, ...args: never[]) => unknown,
+) {
+  ipcMain.handle(channel, (event, ...args) => {
+    const frame = event.senderFrame;
+    const trusted =
+      mainWindow !== null &&
+      isTrustedSender(
+        frame?.url,
+        frame === mainWindow.webContents.mainFrame,
+        mainWindow.webContents.getURL(),
+      );
+    if (!trusted) {
+      log.warn(`Refused ${channel} from ${frame?.url ?? 'a closed frame'}`);
+      throw new Error(`Refused ${channel}: untrusted sender`);
+    }
+    return listener(event, ...(args as never[]));
+  });
+}
+
+/**
  * Get the current app version
  */
-ipcMain.handle('app:getVersion', async () => {
+handle('app:getVersion', async () => {
   return app.getVersion();
 });
 
 /**
  * Get arguments passed to the app
  */
-ipcMain.handle('app:getArgv', async () => {
+handle('app:getArgv', async () => {
   return process.argv;
 });
 
 /**
- * Saves the given project (string'd json) to the supplied filePath
+ * Saves the given project (string'd json) to the file the user just chose
+ * in the "Save project as" dialog.
  */
-ipcMain.handle(
-  'app:saveProject',
-  async (_event, filePath: string, project: string) => {
-    return fsPromise.writeFile(filePath, project);
-  },
-);
+handle('app:saveProject', async (_event, project: unknown) => {
+  const filePath = pendingSave.take();
+  if (filePath === null) {
+    throw new Error('No project save was requested');
+  }
+  if (typeof project !== 'string') {
+    throw new Error('Project must be a string');
+  }
+  await fsPromise.writeFile(filePath, project);
+});
 
 /**
- * Saves the given project (string'd json) to the supplied filePath
+ * Open a web link in the user's browser
  */
-ipcMain.handle('app:openBrowser', async (_event, url: string) => {
-  shell.openExternal(url);
+handle('app:openBrowser', async (_event, url: string) => {
+  openExternal(url);
 });
 
 /**
  * Use ffprobe to find information about the given video
  */
-ipcMain.handle('video:getMetadata', async (_event, filePath: string) => {
+handle('video:getMetadata', async (_event, filePath: string) => {
   const result = await new Promise((resolve) => {
     ffmpeg.ffprobe(filePath, (_err: unknown, metadata: object) => {
       resolve(metadata);
@@ -232,7 +316,7 @@ ipcMain.handle('video:getMetadata', async (_event, filePath: string) => {
 /**
  * True if the video (filePath really) exists in the following location
  */
-ipcMain.handle('video:exists', async (_event, filePath: string) => {
+handle('video:exists', async (_event, filePath: string) => {
   try {
     await fsPromise.access(filePath);
     return true;
@@ -241,40 +325,4 @@ ipcMain.handle('video:exists', async (_event, filePath: string) => {
   }
 });
 
-/**
- * Take a screenshot of the file at particular time and return it
- */
-ipcMain.handle(
-  'video:screenshot',
-  (_event, filePath: string, second: number) => {
-    return new Promise((resolve, reject) => {
-      ffmpeg(filePath)
-        .on('end', () => {
-          resolve(path.join(tmpDir, `${second}.png`));
-        })
-        .on('error', (err: Error) => {
-          reject(err);
-        })
-        // take 2 screenshots at predefined timemarks and size
-        .takeScreenshots(
-          { timemarks: [second], size: '854x480', filename: '%s.png' },
-          tmpDir,
-        );
-    });
-  },
-);
-
-// allow local videos
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: 'file',
-    privileges: {
-      standard: true,
-      bypassCSP: true,
-      allowServiceWorkers: true,
-      supportFetchAPI: true,
-      corsEnabled: true,
-      stream: true,
-    },
-  },
-]);
+registerPrivilegedSchemes();
