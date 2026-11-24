@@ -6,7 +6,7 @@ import {
   type RunningApp,
   storedState,
   VIDEOS,
-  videoCount,
+  waitForAlignedVideos,
 } from './app';
 
 let running: RunningApp;
@@ -18,7 +18,7 @@ test.beforeEach(async () => {
     VIDEOS.two,
   ]);
   const { page } = running;
-  await expect.poll(() => videoCount(page)).toBe(2);
+  await waitForAlignedVideos(page, 2);
   await dismissHelp(page);
 });
 

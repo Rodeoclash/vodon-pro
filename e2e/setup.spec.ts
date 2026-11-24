@@ -7,6 +7,7 @@ import {
   storedState,
   VIDEOS,
   videoCount,
+  waitForAlignedVideos,
 } from './app';
 
 let running: RunningApp;
@@ -120,7 +121,7 @@ test('every page renders without errors', async () => {
     VIDEOS.two,
   ]);
   const { page } = running;
-  await expect.poll(() => videoCount(page)).toBe(2);
+  await waitForAlignedVideos(page, 2);
 
   await goTo(page, '#/review');
   await expect(page.locator('main video')).toHaveCount(2);

@@ -3,6 +3,7 @@ import path from 'node:path';
 import {
   _electron,
   type ElectronApplication,
+  expect,
   type Page,
 } from '@playwright/test';
 
@@ -71,6 +72,7 @@ export type StoredVideo = {
   duration: number | null;
   frameRate: number;
   syncTime: number;
+  durationNormalised: number | null;
   bookmarks: Array<{ drawing: unknown }>;
 };
 
@@ -89,6 +91,25 @@ export function storedState(page: Page): Promise<StoredState | null> {
 
 export function videoCount(page: Page): Promise<number> {
   return page.locator('video').count();
+}
+
+/**
+ * Wait until the setup page has loaded `count` videos and worked out their
+ * timeline. Known bug: leaving the setup page before that leaves later
+ * videos out of the review page until something recalculates the offsets.
+ */
+export async function waitForAlignedVideos(
+  page: Page,
+  count: number,
+): Promise<void> {
+  await expect.poll(() => videoCount(page)).toBe(count);
+  await expect
+    .poll(async () =>
+      (await storedState(page))?.videos.every(
+        (video) => video.durationNormalised !== null,
+      ),
+    )
+    .toBe(true);
 }
 
 /** Close the help dialog shown on the first visit to a page, if it's open. */
