@@ -5,14 +5,25 @@
  */
 import * as fsPromise from 'node:fs/promises';
 import path from 'node:path';
-import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  type IpcMainInvokeEvent,
+  ipcMain,
+  protocol,
+  shell,
+} from 'electron';
 import log from 'electron-log/main';
 import { autoUpdater } from 'electron-updater';
 import ffmpegBins from 'ffmpeg-ffprobe-static';
 import ffmpeg from 'fluent-ffmpeg';
 import { isDebug } from './env';
 import MenuBuilder from './menu';
-import { isSafeExternalUrl, isSameDocument } from './navigation';
+import {
+  isSafeExternalUrl,
+  isSameDocument,
+  isTrustedSender,
+} from './navigation';
 import {
   assetsPath,
   preloadPath,
@@ -207,16 +218,41 @@ app
   .catch(console.log);
 
 /**
+ * Register an IPC handler that only answers the app's own page (see
+ * isTrustedSender); anything else gets an error.
+ */
+function handle(
+  channel: string,
+  listener: (event: IpcMainInvokeEvent, ...args: never[]) => unknown,
+) {
+  ipcMain.handle(channel, (event, ...args) => {
+    const frame = event.senderFrame;
+    const trusted =
+      mainWindow !== null &&
+      isTrustedSender(
+        frame?.url,
+        frame === mainWindow.webContents.mainFrame,
+        mainWindow.webContents.getURL(),
+      );
+    if (!trusted) {
+      log.warn(`Refused ${channel} from ${frame?.url ?? 'a closed frame'}`);
+      throw new Error(`Refused ${channel}: untrusted sender`);
+    }
+    return listener(event, ...(args as never[]));
+  });
+}
+
+/**
  * Get the current app version
  */
-ipcMain.handle('app:getVersion', async () => {
+handle('app:getVersion', async () => {
   return app.getVersion();
 });
 
 /**
  * Get arguments passed to the app
  */
-ipcMain.handle('app:getArgv', async () => {
+handle('app:getArgv', async () => {
   return process.argv;
 });
 
@@ -224,7 +260,7 @@ ipcMain.handle('app:getArgv', async () => {
  * Saves the given project (string'd json) to the file the user just chose
  * in the "Save project as" dialog.
  */
-ipcMain.handle('app:saveProject', async (_event, project: unknown) => {
+handle('app:saveProject', async (_event, project: unknown) => {
   const filePath = pendingSave.take();
   if (filePath === null) {
     throw new Error('No project save was requested');
@@ -238,14 +274,14 @@ ipcMain.handle('app:saveProject', async (_event, project: unknown) => {
 /**
  * Open a web link in the user's browser
  */
-ipcMain.handle('app:openBrowser', async (_event, url: string) => {
+handle('app:openBrowser', async (_event, url: string) => {
   openExternal(url);
 });
 
 /**
  * Use ffprobe to find information about the given video
  */
-ipcMain.handle('video:getMetadata', async (_event, filePath: string) => {
+handle('video:getMetadata', async (_event, filePath: string) => {
   const result = await new Promise((resolve) => {
     ffmpeg.ffprobe(filePath, (_err: unknown, metadata: object) => {
       resolve(metadata);
@@ -258,7 +294,7 @@ ipcMain.handle('video:getMetadata', async (_event, filePath: string) => {
 /**
  * True if the video (filePath really) exists in the following location
  */
-ipcMain.handle('video:exists', async (_event, filePath: string) => {
+handle('video:exists', async (_event, filePath: string) => {
   try {
     await fsPromise.access(filePath);
     return true;

@@ -1,6 +1,10 @@
 // @vitest-environment node
 import { describe, expect, test } from 'vitest';
-import { isSafeExternalUrl, isSameDocument } from './navigation';
+import {
+  isSafeExternalUrl,
+  isSameDocument,
+  isTrustedSender,
+} from './navigation';
 
 describe('isSafeExternalUrl', () => {
   test.each([
@@ -50,5 +54,33 @@ describe('isSameDocument', () => {
 
   test('refuses an unparseable URL', () => {
     expect(isSameDocument(page, 'nope')).toBe(false);
+  });
+});
+
+describe('isTrustedSender', () => {
+  const app = 'file:///opt/app/out/renderer/index.html#/';
+
+  test('trusts the top frame on the app page', () => {
+    expect(
+      isTrustedSender(
+        'file:///opt/app/out/renderer/index.html#/review',
+        true,
+        app,
+      ),
+    ).toBe(true);
+  });
+
+  test('refuses a subframe, even on the app page', () => {
+    expect(
+      isTrustedSender('file:///opt/app/out/renderer/index.html', false, app),
+    ).toBe(false);
+  });
+
+  test('refuses another page', () => {
+    expect(isTrustedSender('https://example.com/', true, app)).toBe(false);
+  });
+
+  test('refuses a sender whose frame has gone', () => {
+    expect(isTrustedSender(undefined, true, app)).toBe(false);
   });
 });

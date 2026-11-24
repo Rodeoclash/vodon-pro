@@ -31,3 +31,17 @@ export function isSameDocument(current: string, target: string): boolean {
     return false;
   }
 }
+
+/**
+ * Whether an IPC message comes from the app itself: the window's top frame,
+ * still showing the app's page.
+ */
+export function isTrustedSender(
+  senderUrl: string | undefined,
+  isMainFrame: boolean,
+  appUrl: string,
+): boolean {
+  return (
+    isMainFrame && senderUrl !== undefined && isSameDocument(appUrl, senderUrl)
+  );
+}
