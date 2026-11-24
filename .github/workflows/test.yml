@@ -133,3 +133,14 @@ jobs:
         run: npm run package
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Launch the packaged, fused app: fuses flipped, bundled ffmpeg and
+      # ffprobe run from app.asar.unpacked, app://vodon/ loads sandboxed,
+      # a video plays over vodon-media://
+      - name: Smoke test (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" npm run test:smoke
+
+      - name: Smoke test
+        if: runner.os != 'Linux'
+        run: npm run test:smoke

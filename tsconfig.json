@@ -15,7 +15,12 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "allowJs": true
+    "allowJs": true,
+    // Exports-only package TS 4.9's "node" resolution can't find; drop with
+    // "moduleResolution": "bundler" on TS 5
+    "paths": {
+      "@electron/fuses": ["./node_modules/@electron/fuses/dist/index.d.ts"]
+    }
   },
   // electron.vite.config.ts is checked by running it: TS 4.9's "node"
   // resolution can't read Vite 8's package exports. Revisit with TS 5 and

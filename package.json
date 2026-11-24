@@ -17,7 +17,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:smoke": "node e2e/smoke.mts"
   },
   "build": {
     "productName": "VodonPro",
@@ -111,6 +112,7 @@
   "homepage": "https://github.com/Rodeoclash/vodon-pro/blob/main/README.md",
   "devDependencies": {
     "@chakra-ui/react": "^1.8.9",
+    "@electron/fuses": "^2.1.3",
     "@emoji-mart/data": "^1.0.5",
     "@emoji-mart/react": "^1.0.1",
     "@emotion/react": "^11.11.1",
