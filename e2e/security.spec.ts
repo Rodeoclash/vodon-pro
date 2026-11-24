@@ -164,3 +164,27 @@ test('the renderer is sandboxed with no Node.js', async () => {
     })),
   ).toEqual({ require: 'undefined', process: 'undefined', app: true });
 });
+
+test('the page only gets the permissions it uses', async () => {
+  const { page } = running;
+  expect(
+    await page.evaluate(async () => ({
+      notifications: await Notification.requestPermission(),
+      // Asks the permission check handler (no device needed)
+      camera: (
+        await navigator.permissions.query({ name: 'camera' as PermissionName })
+      ).state,
+      geolocation: (await navigator.permissions.query({ name: 'geolocation' }))
+        .state,
+      fullscreen: await document.documentElement.requestFullscreen().then(
+        () => 'granted',
+        (error: Error) => error.name,
+      ),
+    })),
+  ).toEqual({
+    notifications: 'denied',
+    camera: 'denied',
+    geolocation: 'denied',
+    fullscreen: 'granted',
+  });
+});

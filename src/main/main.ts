@@ -10,6 +10,7 @@ import {
   BrowserWindow,
   type IpcMainInvokeEvent,
   ipcMain,
+  session,
   shell,
 } from 'electron';
 import log from 'electron-log/main';
@@ -31,6 +32,7 @@ import {
   unpackedBinaryPath,
 } from './paths';
 import { createPendingSave } from './pendingSave';
+import { isPermissionAllowed } from './permissions';
 import {
   handleAppProtocol,
   handleMediaProtocol,
@@ -66,6 +68,22 @@ function startAutoUpdates() {
 let mainWindow: BrowserWindow | null = null;
 
 const pendingSave = createPendingSave();
+
+/** Grant the page only the permissions it uses (see permissions.ts). */
+function restrictPermissions() {
+  const appUrl = () => mainWindow?.webContents.getURL() ?? '';
+  session.defaultSession.setPermissionRequestHandler(
+    (_contents, permission, callback, details) => {
+      callback(
+        isPermissionAllowed(permission, details.requestingUrl, appUrl()),
+      );
+    },
+  );
+  session.defaultSession.setPermissionCheckHandler(
+    (_contents, permission, requestingOrigin) =>
+      isPermissionAllowed(permission, requestingOrigin, appUrl()),
+  );
+}
 
 /** Open a web or mail link with the OS; refuse any other kind of URL. */
 function openExternal(url: string) {
@@ -209,6 +227,7 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    restrictPermissions();
     handleAppProtocol(rendererDir(__dirname));
     handleMediaProtocol();
     createWindow().catch(log.error);
