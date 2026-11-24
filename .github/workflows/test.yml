@@ -134,6 +134,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Update feeds (latest*.yml) match the files, block maps exist,
+      # installers within their size budgets
+      - name: Check release files
+        run: npm run check:release
+
       # Launch the packaged, fused app: fuses flipped, bundled ffmpeg and
       # ffprobe run from app.asar.unpacked, app://vodon/ loads sandboxed,
       # a video plays over vodon-media://
