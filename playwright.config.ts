@@ -9,6 +9,13 @@ export default defineConfig({
   expect: { timeout: 15_000 },
   workers: 1,
   retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? [['list'], ['github']] : 'list',
+  // On CI, the JSON report feeds e2e/report-flaky.mts
+  reporter: process.env.CI
+    ? [
+        ['list'],
+        ['github'],
+        ['json', { outputFile: 'playwright-report/results.json' }],
+      ]
+    : 'list',
   use: { trace: 'retain-on-failure' },
 });
