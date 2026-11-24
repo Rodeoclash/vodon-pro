@@ -28,14 +28,15 @@ test('loads videos passed on the command line, with ffprobe metadata', async () 
   await expect
     .poll(async () =>
       (await storedState(page))?.videos.map((video) => ({
+        name: video.name,
         filePath: video.filePath,
         duration: video.duration,
         frameRate: video.frameRate,
       })),
     )
     .toEqual([
-      { filePath: VIDEOS.one, duration: 8, frameRate: 30 },
-      { filePath: VIDEOS.two, duration: 8, frameRate: 30 },
+      { name: 'player1', filePath: VIDEOS.one, duration: 8, frameRate: 30 },
+      { name: 'player2', filePath: VIDEOS.two, duration: 8, frameRate: 30 },
     ]);
 });
 

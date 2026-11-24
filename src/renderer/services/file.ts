@@ -6,8 +6,9 @@ const VIDEO_PATH = /\.(mp4|webm|avi)$/i;
  * from the name of the file on disk.
  */
 export const basename = (name: string): string => {
-  const result = /([^/\\]*|\.[^/\\]*)\..*$/gm.exec(name);
-  return result ? result[1] : name;
+  const fileName = name.split(/[/\\]/).pop() ?? name;
+  const extensionStart = fileName.lastIndexOf('.');
+  return extensionStart > 0 ? fileName.slice(0, extensionStart) : fileName;
 };
 
 /**

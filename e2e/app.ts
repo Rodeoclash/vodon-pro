@@ -66,6 +66,7 @@ export async function launchApp(
 
 export type StoredVideo = {
   id: string;
+  name: string;
   filePath: string;
   duration: number | null;
   frameRate: number;
