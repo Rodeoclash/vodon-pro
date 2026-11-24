@@ -19,6 +19,7 @@ import {
   rendererLocation,
   unpackedBinaryPath,
 } from './paths';
+import { createPendingSave } from './pendingSave';
 
 if (!ffmpegBins.ffprobePath) {
   throw new Error('Unable to find FFProbe path');
@@ -47,6 +48,8 @@ function startAutoUpdates() {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+const pendingSave = createPendingSave();
 
 /** Open a web or mail link with the OS; refuse any other kind of URL. */
 function openExternal(url: string) {
@@ -121,7 +124,7 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
+  const menuBuilder = new MenuBuilder(mainWindow, pendingSave);
   menuBuilder.buildMenu();
 
   // Links that open a new window (target=_blank) go to the user's browser
@@ -218,14 +221,19 @@ ipcMain.handle('app:getArgv', async () => {
 });
 
 /**
- * Saves the given project (string'd json) to the supplied filePath
+ * Saves the given project (string'd json) to the file the user just chose
+ * in the "Save project as" dialog.
  */
-ipcMain.handle(
-  'app:saveProject',
-  async (_event, filePath: string, project: string) => {
-    return fsPromise.writeFile(filePath, project);
-  },
-);
+ipcMain.handle('app:saveProject', async (_event, project: unknown) => {
+  const filePath = pendingSave.take();
+  if (filePath === null) {
+    throw new Error('No project save was requested');
+  }
+  if (typeof project !== 'string') {
+    throw new Error('Project must be a string');
+  }
+  await fsPromise.writeFile(filePath, project);
+});
 
 /**
  * Open a web link in the user's browser

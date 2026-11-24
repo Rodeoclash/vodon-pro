@@ -63,3 +63,14 @@ test('the window cannot be navigated away from the app', async () => {
     ),
   ).toEqual([appUrl]);
 });
+
+test('the renderer cannot save a project without the save dialog', async () => {
+  const { page } = running;
+  const result = await page.evaluate(() =>
+    window.app.saveProject('{}').then(
+      () => 'saved',
+      (error: Error) => error.message,
+    ),
+  );
+  expect(result).toContain('No project save was requested');
+});
