@@ -13,7 +13,8 @@
     "format": "biome check --write",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "build": {
     "productName": "VodonPro",
@@ -103,6 +104,7 @@
     "@emoji-mart/react": "^1.0.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@playwright/test": "^1.65.1",
     "@popperjs/core": "^2.11.5",
     "@react-hook/throttle": "^2.2.0",
     "@testing-library/jest-dom": "^8.0.0",

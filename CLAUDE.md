@@ -17,8 +17,9 @@ Vodon Pro is an Electron + React desktop app for esports coaches to review multi
 - `npm run typecheck` — `tsc --noEmit`. The builds don't use tsc (Vite transpiles), and `electron.vite.config.ts` is excluded from it because TS 4.9's `node` resolution can't read Vite 8's exports-only types; revisit with TS 5 and `moduleResolution: "bundler"`.
 - `npm test` — Vitest (jsdom), specs are `src/**/*.spec.ts(x)`. `npm run test:watch` for watch mode.
 - Single test: `npx vitest run src/renderer/services/time.spec.ts` (or `npx vitest run -t "name"`).
+- `npm run test:e2e` — Playwright end-to-end tests (`e2e/*.spec.ts`, config `playwright.config.ts`) driving the built app, so run `npm run build` first; on Linux without a display, wrap in `xvfb-run -a`. Global setup makes two 8s test videos with the bundled ffmpeg into `e2e/.videos`. Each test gets a fresh `--user-data-dir`; helpers in `e2e/app.ts` read the autosaved store from localStorage. Set `E2E_EXECUTABLE` to a packaged binary to run against it (an AppImage under WSL also needs `APPIMAGE_EXTRACT_AND_RUN=1`). Single test: `npx playwright test -g "name"`.
 
-CI (`.github/workflows/test.yml`): one Ubuntu job runs gitleaks, `biome ci`, typecheck and tests; a matrix job runs `npm run package` on macOS, Ubuntu and Windows. Tool versions come from `mise.toml` via `jdx/mise-action`; actions are pinned to commit SHAs.
+CI (`.github/workflows/test.yml`): one Ubuntu job runs gitleaks, `biome ci`, typecheck and tests; another builds and runs the e2e suite under xvfb (uploading traces on failure); a matrix job runs `npm run package` on macOS, Ubuntu and Windows. Tool versions come from `mise.toml` via `jdx/mise-action`; actions are pinned to commit SHAs.
 
 ## Architecture
 

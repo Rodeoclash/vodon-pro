@@ -23,3 +23,8 @@ release/build
 
 .idea
 npm-debug.log.*
+
+# End-to-end tests
+e2e/.videos
+test-results
+playwright-report
