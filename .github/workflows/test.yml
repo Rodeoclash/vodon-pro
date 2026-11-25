@@ -1,23 +1,41 @@
 name: Test
 
-on: [push]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  # release.yml runs these checks first, then publishes what `package` built
+  workflow_call:
+    inputs:
+      release:
+        description: Build without caches and upload the packages
+        type: boolean
+        default: false
 
-permissions:
-  contents: read
+# Each job asks for what it needs
+permissions: {}
+
+# A new push to a PR replaces its running checks; main always runs to
+# completion. A fixed prefix: when called, github.workflow is the caller's.
+concurrency:
+  group: test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
 
-      # Node, Biome and gitleaks at the versions in mise.toml
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
-        with:
-          version: 2026.11.4
+      # Node, Biome, gitleaks, actionlint and zizmor at the versions in
+      # mise.toml, then npm ci
+      - uses: ./.github/actions/setup
 
       - name: Secrets
         run: gitleaks git --redact --no-banner --verbose
@@ -25,33 +43,79 @@ jobs:
       - name: Biome
         run: biome ci
 
-      - run: npm ci
+      # Workflow syntax, expressions and shellcheck on run: blocks
+      - name: actionlint
+        run: actionlint
+
+      # Workflow security; online audits also check pinned SHAs belong to
+      # their repos and that no pinned action has a known advisory
+      - name: zizmor
+        run: zizmor --format=github .github
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Lockfile only points at the npm registry over https with sha512,
+      # registry signatures verify, and no high/critical advisories. Covers
+      # devDependencies too: the renderer's libraries are bundled into the app.
+      - name: Dependencies
+        run: npm run audit:deps
 
       - name: Typecheck
         run: npm run typecheck
 
+      # Fails if coverage drops below the thresholds in vitest.config.ts
       - name: Unit tests
-        run: npm test
+        run: npm run test:coverage
 
-  e2e:
+  # What a PR adds or changes in the dependency tree: new advisories at
+  # high or above, and licences outside the list
+  dependency-review:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      - uses: actions/dependency-review-action@bbc44d14a204704ccc493733616cd1e93a0321ec # v5.0.1
         with:
-          version: 2026.11.4
-          install_args: node
+          fail-on-severity: high
+          # The default is runtime only, but the renderer's libraries are
+          # devDependencies that ship in the app
+          fail-on-scopes: runtime, development, unknown
+          allow-licenses: >-
+            MIT, ISC, Apache-2.0, BSD-2-Clause, BSD-3-Clause, 0BSD,
+            BlueOak-1.0.0, MPL-2.0, Zlib, CC0-1.0, CC-BY-4.0, Python-2.0,
+            WTFPL, Unlicense
+          # GPL-3.0-or-later: ships FFmpeg's GPL build. Reviewed exception;
+          # anything else copyleft needs a decision before it's added.
+          allow-dependencies-licenses: pkg:npm/ffmpeg-ffprobe-static
 
-      - run: npm ci
+  e2e:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup
+        with:
+          tools: node
 
       - run: npm run build
 
       # Electron needs a display; Playwright drives the built app
       - name: End-to-end tests
         run: xvfb-run -a -s "-screen 0 1920x1080x24" npm run test:e2e
+
+      # Tests that passed only on their retry: warnings and a summary
+      - name: Flaky tests
+        if: ${{ !cancelled() }}
+        run: node e2e/report-flaky.mts
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
@@ -62,6 +126,8 @@ jobs:
 
   package:
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -70,14 +136,43 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      - uses: ./.github/actions/setup
         with:
-          version: 2026.11.4
-          install_args: node
-
-      - run: npm ci
+          tools: node
+          cache: ${{ !inputs.release }}
 
       - name: Package
         run: npm run package
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Update feeds (latest*.yml) match the files, block maps exist,
+      # installers within their size budgets
+      - name: Check release files
+        run: npm run check:release
+
+      # Launch the packaged, fused app: fuses flipped, bundled ffmpeg and
+      # ffprobe run from app.asar.unpacked, app://vodon/ loads sandboxed,
+      # a video plays over vodon-media://
+      - name: Smoke test (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" npm run test:smoke
+
+      - name: Smoke test
+        if: runner.os != 'Linux'
+        run: npm run test:smoke
+
+      # For release.yml's publish job: what was just checked is what ships
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: inputs.release
+        with:
+          name: release-${{ runner.os }}
+          path: |
+            release/build/*.AppImage
+            release/build/*.exe
+            release/build/*.dmg
+            release/build/*.zip
+            release/build/*.blockmap
+            release/build/latest*.yml
+          if-no-files-found: error
+          retention-days: 7

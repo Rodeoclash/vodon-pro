@@ -18,6 +18,10 @@ pre-push:
     - name: biome
       run: biome check
 
+    - name: workflows
+      glob: ".github/**/*.yml"
+      run: actionlint && zizmor --offline --no-progress .github
+
     - name: typecheck
       run: npx tsc --noEmit
 

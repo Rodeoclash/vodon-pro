@@ -1,0 +1,57 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Weekly, so new queries run against unchanged code
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Upload results to code scanning
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        # The app's TypeScript, and the workflows themselves
+        language: [javascript-typescript, actions]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: github/codeql-action/init@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+          # Add local sources to the default remote ones: a desktop app's
+          # untrusted input is mostly argv, opened project files, file paths
+          # and the environment
+          # e2e/ and scripts/ are dev and CI tools that never ship; their
+          # input is the developer's own argv and files, which the local
+          # threat model would otherwise treat as hostile
+          config: |
+            threat-models: local
+            paths-ignore:
+              - out
+              - release
+              - e2e
+              - scripts
+
+      - uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+        with:
+          category: /language:${{ matrix.language }}

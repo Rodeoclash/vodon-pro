@@ -1,0 +1,12 @@
+rules:
+  # `npm run publish` runs electron-builder, which uploads to GitHub
+  # Releases; nothing is published to npm.
+  use-trusted-publishing:
+    disable: true
+
+  # Prefers `uses: $/...` (GitHub, 2026-07) over `./...`, but actionlint
+  # 1.7.12 rejects that syntax. `./` is safe here: each job checks out its
+  # own commit first and nothing else writes the workspace before it.
+  # Revisit when actionlint supports `$/`.
+  self-repository:
+    disable: true
