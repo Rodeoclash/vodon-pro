@@ -55,6 +55,10 @@ jobs:
       # mise.toml, then npm ci
       - uses: ./.github/actions/setup
 
+      # TEMPORARY: prove block mode stops an unlisted endpoint (never merged)
+      - name: Unlisted endpoint
+        run: curl -sS --max-time 15 -o /dev/null https://example.com/
+
       - name: Secrets
         run: gitleaks git --redact --no-banner --verbose
 
