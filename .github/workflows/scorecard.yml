@@ -39,7 +39,9 @@ jobs:
       # Sign the results published to api.scorecard.dev
       id-token: write
     steps:
-      # Network, file and process monitoring of the runner (StepSecurity)
+      # Network, file and process monitoring of the runner (StepSecurity).
+      # Audit until runs on main (the only branch Scorecard runs on) give a
+      # baseline to block on.
       - uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
           egress-policy: audit

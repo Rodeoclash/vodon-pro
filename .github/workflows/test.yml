@@ -134,9 +134,10 @@ jobs:
       contents: read
     steps:
       # Network, file and process monitoring of the runner (StepSecurity).
-      # Egress limited to the baseline: setup only. The app under test
-      # calls Google Fonts and Chromium's component updater (*.gvt1.com),
-      # which the tests don't need.
+      # Egress limited to the baseline: setup, and Google Fonts, which the
+      # app's tldraw loads (blocked, the refused fetch is a console error the
+      # tests fail on). Chromium's component updater (*.gvt1.com) stays
+      # blocked: nothing needs it.
       - uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
           egress-policy: block
@@ -147,6 +148,7 @@ jobs:
             nodejs.org:443
             registry.npmjs.org:443
             tuf-repo-cdn.sigstore.dev:443
+            fonts.googleapis.com:443
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
