@@ -28,10 +28,23 @@ jobs:
     permissions:
       contents: read
     steps:
-      # Network, file and process monitoring of the runner (StepSecurity)
+      # Network, file and process monitoring of the runner (StepSecurity).
+      # Egress limited to the baseline: setup, plus zizmor's online audits
+      # (api.github.com, api.osv.dev) and npm audit (api.npmjs.org, npm.jsr.io).
       - uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
-          egress-policy: audit
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+            release-assets.githubusercontent.com:443
+            mise-versions.jdx.dev:443
+            nodejs.org:443
+            registry.npmjs.org:443
+            tuf-repo-cdn.sigstore.dev:443
+            api.github.com:443
+            api.osv.dev:443
+            api.npmjs.org:443
+            npm.jsr.io:443
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -85,10 +98,17 @@ jobs:
     permissions:
       contents: read
     steps:
-      # Network, file and process monitoring of the runner (StepSecurity)
+      # Network, file and process monitoring of the runner (StepSecurity).
+      # Egress limited to the baseline: GitHub's API and the advisory and
+      # licence sources dependency-review queries.
       - uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
-          egress-policy: audit
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+            api.github.com:443
+            api.securityscorecards.dev:443
+            api.deps.dev:443
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -113,10 +133,20 @@ jobs:
     permissions:
       contents: read
     steps:
-      # Network, file and process monitoring of the runner (StepSecurity)
+      # Network, file and process monitoring of the runner (StepSecurity).
+      # Egress limited to the baseline: setup only. The app under test
+      # calls Google Fonts and Chromium's component updater (*.gvt1.com),
+      # which the tests don't need.
       - uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
-          egress-policy: audit
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+            release-assets.githubusercontent.com:443
+            mise-versions.jdx.dev:443
+            nodejs.org:443
+            registry.npmjs.org:443
+            tuf-repo-cdn.sigstore.dev:443
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -152,10 +182,20 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
     steps:
-      # Network, file and process monitoring of the runner (StepSecurity)
+      # Network, file and process monitoring of the runner (StepSecurity).
+      # Linux blocks egress outside the baseline (setup, electron-builder's
+      # downloads from GitHub releases); macOS and Windows runners support
+      # audit only, and ignore the list.
       - uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
-          egress-policy: audit
+          egress-policy: ${{ runner.os == 'Linux' && 'block' || 'audit' }}
+          allowed-endpoints: >
+            github.com:443
+            release-assets.githubusercontent.com:443
+            mise-versions.jdx.dev:443
+            nodejs.org:443
+            registry.npmjs.org:443
+            tuf-repo-cdn.sigstore.dev:443
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
