@@ -1,5 +1,4 @@
 import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
-import { createBreakpoints } from '@chakra-ui/theme-tools';
 
 const config: ThemeConfig = {
   initialColorMode: 'dark',
@@ -14,7 +13,9 @@ const styles = {
   }),
 };
 
-const breakpoints = createBreakpoints({
+// A plain object: extendTheme merges it over the defaults, which keep
+// base: '0em'. createBreakpoints() is deprecated and only added that.
+const breakpoints = {
   sm: '320px',
   md: '768px',
   lg: '960px',
@@ -22,7 +23,7 @@ const breakpoints = createBreakpoints({
   '2xl': '1536px',
   '3xl': '1816px',
   '4xl': '2102px',
-});
+};
 
 const theme = extendTheme({ config, styles, breakpoints });
 
