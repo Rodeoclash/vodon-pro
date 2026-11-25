@@ -32,3 +32,6 @@ export function filePathFromMediaUrl(url: string): string | null {
     return null;
   }
 }
+
+// TEMPORARY violation test: unused, untested export
+export const unusedForKnipTest = (n: number) => n * 2;
