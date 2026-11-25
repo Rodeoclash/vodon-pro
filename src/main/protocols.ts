@@ -30,7 +30,7 @@ const APP_TYPES: Record<string, string> = {
  * (Chakra) injects <style> tags. The only network access is Google Fonts,
  * which tldraw v1 loads for text in drawings; drop it when tldraw goes.
  */
-export const CONTENT_SECURITY_POLICY = [
+const CONTENT_SECURITY_POLICY = [
   "default-src 'none'",
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",

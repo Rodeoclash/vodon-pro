@@ -7,7 +7,7 @@ import {
   type Page,
 } from '@playwright/test';
 
-export const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..');
 export const VIDEO_DIR = path.join(ROOT, 'e2e', '.videos');
 export const VIDEOS = {
   one: path.join(VIDEO_DIR, 'player1.mp4'),
@@ -65,7 +65,7 @@ export async function launchApp(
   return { app, page, errors };
 }
 
-export type StoredVideo = {
+type StoredVideo = {
   id: string;
   name: string;
   filePath: string;

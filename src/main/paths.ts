@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 /** The built app is served from this origin (see protocols.ts). */
-export const APP_ORIGIN = 'app://vodon';
+const APP_ORIGIN = 'app://vodon';
 
 /**
  * The URL the window loads: electron-vite's dev server while developing (it

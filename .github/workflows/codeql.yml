@@ -29,6 +29,16 @@ jobs:
         # The app's TypeScript, and the workflows themselves
         language: [javascript-typescript, actions]
     steps:
+      # Network, file and process monitoring of the runner (StepSecurity).
+      # Egress limited to the baseline: the CodeQL bundle and GitHub's API.
+      - uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+            api.github.com:443
+            release-assets.githubusercontent.com:443
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false

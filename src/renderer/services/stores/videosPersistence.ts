@@ -9,7 +9,7 @@ export type Persisted<S> = {
 };
 
 /** A video as written to storage: its element can't be serialised. */
-export type StoredVideo = Omit<Video, 'el'> & { el: null };
+type StoredVideo = Omit<Video, 'el'> & { el: null };
 
 type WithVideos = { videos: Video[]; zoomPanEnabled: boolean };
 
