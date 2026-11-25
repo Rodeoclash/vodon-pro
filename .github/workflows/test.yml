@@ -82,6 +82,9 @@ jobs:
       - uses: actions/dependency-review-action@bbc44d14a204704ccc493733616cd1e93a0321ec # v5.0.1
         with:
           fail-on-severity: high
+          # The default is runtime only, but the renderer's libraries are
+          # devDependencies that ship in the app
+          fail-on-scopes: runtime, development, unknown
           allow-licenses: >-
             MIT, ISC, Apache-2.0, BSD-2-Clause, BSD-3-Clause, 0BSD,
             BlueOak-1.0.0, MPL-2.0, Zlib, CC0-1.0, CC-BY-4.0, Python-2.0,
