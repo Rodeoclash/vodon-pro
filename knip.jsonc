@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/knip@6.48.0/schema.json",
+  // Dev and CI scripts run directly with node, not from the app's entries
+  "entry": ["e2e/*.mts", "scripts/*.mts"],
+  // The plugin's defaults assume src/main/index.* and src/preload/index.*;
+  // custom entries replace them rather than merging
+  "electron-vite": {
+    "entry": [
+      "src/main/main.ts",
+      "src/main/preload.ts",
+      "src/renderer/index.html"
+    ]
+  },
+  "vitest": true,
+  "playwright": true,
+  "biome": true,
+  "lefthook": true,
+  // Installed by mise (mise.toml), not npm, so package.json can't list it
+  "ignoreBinaries": ["biome"]
+}
