@@ -33,8 +33,8 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # Node, Biome, gitleaks, actionlint and zizmor at the versions in
-      # mise.toml, then npm ci
+      # Node, Biome, gitleaks, actionlint, zizmor and Renovate's config
+      # validator at the versions in mise.toml, then npm ci
       - uses: ./.github/actions/setup
 
       - name: Secrets
@@ -53,6 +53,11 @@ jobs:
         run: zizmor --format=github .github
         env:
           GH_TOKEN: ${{ github.token }}
+
+      # renovate.json against the pinned Renovate's schema; --strict also
+      # fails on options that need migrating
+      - name: Renovate config
+        run: renovate-config-validator --strict
 
       # Lockfile only points at the npm registry over https with sha512,
       # registry signatures verify, and no high/critical advisories. Covers

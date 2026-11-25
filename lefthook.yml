@@ -25,6 +25,10 @@ pre-push:
     - name: knip
       run: npx knip
 
+    - name: renovate
+      glob: "renovate.json"
+      run: renovate-config-validator --strict
+
     - name: typecheck
       run: npx tsc --noEmit
 

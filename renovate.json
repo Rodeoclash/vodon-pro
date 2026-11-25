@@ -1,0 +1,34 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    "group:allNonMajor"
+  ],
+  "timezone": "Australia/Sydney",
+  "schedule": ["* 0-5 * * 1"],
+  "minimumReleaseAge": "7 days",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["* 0-5 * * 1"],
+    "addLabels": ["check-allow-scripts"],
+    "prBodyNotes": [
+      "Lock file maintenance can bump transitive packages with install scripts (electron-winstaller, fsevents). If `npm ci` fails on `strict-allow-scripts`, re-pin them in package.json's `allowScripts` (`npm install-scripts approve <pkg>`)."
+    ]
+  },
+  "packageRules": [
+    {
+      "description": "Install-script packages: allowScripts in package.json pins their exact version, and .npmrc's strict-allow-scripts fails npm ci until the pin is updated. Kept out of the non-major group so they don't block it.",
+      "matchPackageNames": [
+        "ffmpeg-ffprobe-static",
+        "electron-winstaller",
+        "fsevents"
+      ],
+      "groupName": "install-script packages",
+      "addLabels": ["check-allow-scripts"],
+      "prBodyNotes": [
+        "**Re-pin `allowScripts`:** this package runs an install script, and package.json's `allowScripts` pins its exact version. Update the pin on this branch (`npm install-scripts approve {{depName}}`, or edit package.json for fsevents, which is denied) or `npm ci` fails."
+      ]
+    }
+  ]
+}
