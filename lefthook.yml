@@ -22,6 +22,9 @@ pre-push:
       glob: ".github/**/*.yml"
       run: actionlint && zizmor --offline --no-progress .github
 
+    - name: knip
+      run: npx knip
+
     - name: typecheck
       run: npx tsc --noEmit
 

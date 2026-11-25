@@ -9,6 +9,7 @@
     "package": "electron-vite build && electron-builder build --publish never",
     "postinstall": "install-electron",
     "lint": "biome check",
+    "knip": "knip",
     "format": "biome check --write",
     "typecheck": "tsc --noEmit",
     "lint:lockfile": "lockfile-lint --path package-lock.json --type npm --allowed-hosts npm --validate-https --validate-package-names --validate-integrity",

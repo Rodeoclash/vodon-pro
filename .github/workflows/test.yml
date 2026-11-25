@@ -60,6 +60,11 @@ jobs:
       - name: Dependencies
         run: npm run audit:deps
 
+      # Unused dependencies, exports and files; dependencies used but not
+      # declared in package.json
+      - name: knip
+        run: npm run knip -- --reporter github-actions
+
       - name: Typecheck
         run: npm run typecheck
 
